@@ -1,8 +1,11 @@
+import ContactUsMain from "@/components/home-component/ContactUsMain";
+import PageTitle from "@/components/home-component/PageTitle";
+
 export default function ContactUs() {
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-semibold mb-4">Contact Us</h1>
-      {/* Your contact form here */}
-    </section>
+    <>
+    <PageTitle title="Contact Us" subtitle="Have questions or want to work with us? Reach out using the form below or through our contact details." />
+    <ContactUsMain />
+    </>
   )
 }

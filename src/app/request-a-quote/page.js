@@ -1,8 +1,11 @@
+// import PageTitle from "@/components/home-component/PageTitle";
+import RequestQuote from "@/components/home-component/RequestQuote";
+
 export default function RequestAQuote() {
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen">
-      <h1 className="text-2xl font-semibold mb-4">Request a Quote</h1>
-      {/* Your request a quote form here */}
-    </section>
+    <>
+    {/* <PageTitle title="Request A Quote" subtitle="You can request a free quotes" /> */}
+    <RequestQuote />
+    </>
   )
 }

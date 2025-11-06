@@ -1,0 +1,48 @@
+// components/AboutSection.jsx
+import Image from 'next/image';
+
+export default function HomeAbout() {
+  return (
+    <section className="bg-gray-50 py-16">
+      <div className="container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center gap-10">
+        
+        {/* Image */}
+        <div className="flex-1">
+          <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src="/images/about1.jpg" 
+              alt="Rayob Engineering Team"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Text Content */}
+        <div className="flex-1">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
+            About Rayob Engineering
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Rayob Engineering is committed to delivering innovative and sustainable engineering solutions. 
+            With years of expertise in industrial, residential, and commercial projects, we ensure quality, 
+            efficiency, and client satisfaction in every project we undertake.
+          </p>
+          <p className="text-gray-600 mb-6">
+            Our team of skilled engineers and project managers combine technical excellence with practical experience, 
+            turning complex challenges into actionable solutions. At Rayob Engineering, we build more than structures — 
+            we build lasting relationships with our clients.
+          </p>
+
+          <a
+            href="/about"
+            className="inline-block bg-[#db3a06] text-white px-6 py-3 rounded-lg shadow hover:bg-orange-600 transition"
+          >
+            Learn More
+          </a>
+        </div>
+
+      </div>
+    </section>
+  );
+}
