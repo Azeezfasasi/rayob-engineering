@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import Link from 'next/link'
 
 const blogPosts = [
   {
@@ -59,8 +60,8 @@ export default function BlogNews() {
               onClick={() => setSelectedCategory(category)}
               className={`px-5 py-2 rounded-full font-medium transition ${
                 selectedCategory === category
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-800 border border-gray-300 hover:bg-blue-600 hover:text-white"
+                  ? "bg-[#db3a06] text-white"
+                  : "bg-white text-gray-800 border border-gray-300 hover:bg-[#db3a06] hover:text-white"
               }`}
             >
               {category}
@@ -79,17 +80,17 @@ export default function BlogNews() {
                 <Image src={post.image} alt={post.title} fill className="object-cover" />
               </div>
               <div className="p-6">
-                <span className="text-sm text-blue-600 font-semibold uppercase">
+                <span className="text-sm text-[#db3a06] font-semibold uppercase">
                   {post.category}
                 </span>
                 <h3 className="text-xl font-bold text-gray-800 mt-2 mb-2">{post.title}</h3>
                 <p className="text-gray-600 mb-4">{post.excerpt}</p>
-                <a
-                  href={`/blog/${post.slug}`}
-                  className="text-blue-600 font-semibold hover:text-blue-800 transition"
+                <Link
+                  href={post.link || (`/blog/${post.slug || ''}`)}
+                  className="text-[#db3a06] font-semibold hover:text-[#a32a04] transition"
                 >
                   Read More →
-                </a>
+                </Link>
               </div>
             </div>
           ))}

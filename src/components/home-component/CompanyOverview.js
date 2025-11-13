@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function CompanyOverview() {
   return (
@@ -29,12 +30,12 @@ export default function CompanyOverview() {
             <strong>Vision:</strong> To be a leading engineering company recognized for excellence, innovation, and integrity, shaping a future where every project meets the highest standards of quality and efficiency.
           </p>
 
-          <a
-            href="/about"
-            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-700 transition"
+          <Link
+            href="/about-us"
+            className="inline-block bg-[#db3a06] text-white px-6 py-3 rounded-lg shadow hover:bg-[#b23305] transition"
           >
             Learn More About Us
-          </a>
+          </Link>
         </div>
       </div>
     </section>

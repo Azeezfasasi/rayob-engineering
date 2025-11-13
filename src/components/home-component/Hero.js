@@ -1,5 +1,7 @@
 "use client"
-import React, { useRef, useState, useEffect } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
 
 export default function Hero() {
   const slides = [
@@ -7,25 +9,29 @@ export default function Hero() {
       title: 'Engineering excellence, delivered',
       subtitle: 'We design and build robust infrastructure and software solutions tailored to your needs.',
       cta: { label: 'Request a Quote', href: '/request-a-quote' },
-      bg: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)'
+      bg: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)',
+      image: { src: '/images/about1.jpg', alt: 'Engineering excellence' }
     },
     {
       title: 'Reliable teams. On time.',
       subtitle: 'Scale with experienced engineers and project managers who get things done.',
       cta: { label: 'Our Services', href: '/services' },
-      bg: 'linear-gradient(135deg,#e0f7fa 0%,#80deea 100%)'
+      bg: 'linear-gradient(135deg,#e0f7fa 0%,#80deea 100%)',
+      image: { src: '/images/about1.jpg', alt: 'Engineering excellence' }
     },
     {
       title: 'From concept to delivery',
       subtitle: 'We partner with you through product discovery, engineering and deployment.',
       cta: { label: 'Contact Us', href: '/contact-us' },
-      bg: 'linear-gradient(135deg,#e6e9ff 0%,#9fa8ff 100%)'
+      bg: 'linear-gradient(135deg,#e6e9ff 0%,#9fa8ff 100%)',
+      image: { src: '/images/about1.jpg', alt: 'Engineering excellence' }
     }
   ]
 
   const [index, setIndex] = useState(0)
   const [drag, setDrag] = useState({ active: false, startX: 0, dx: 0 })
   const containerRef = useRef(null)
+  const [slideWidth, setSlideWidth] = useState(0)
 
   // Note: index is controlled by setters below (clamped on update); no effect needed here.
 
@@ -60,6 +66,17 @@ export default function Hero() {
     return () => window.removeEventListener('keydown', onKey)
   }, [slides.length])
 
+  // track container width and update on resize so we translate by exact pixels
+  useLayoutEffect(() => {
+    function update() {
+      const w = containerRef.current?.offsetWidth || 0
+      setSlideWidth(w)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
   return (
     <section className="w-full">
       <div className="mx-auto ">
@@ -78,20 +95,32 @@ export default function Hero() {
           <div
             className="flex transition-transform duration-300"
             style={{
-              transform: `translateX(calc(${-(index * 100)}% + ${drag.dx}px))`
+              transform: slideWidth
+                ? `translateX(${-(index * slideWidth) + drag.dx}px)`
+                : `translateX(calc(${-(index * 100)}% + ${drag.dx}px))`
             }}
           >
             {slides.map((s, i) => (
-              <div key={i} className="min-w-full flex-none">
+              <div key={i} className="min-w-full flex-none" style={{ flex: '0 0 100%' }}>
                 <div className="h-[420px] md:h-[540px] flex items-center">
-                  <div className="w-full h-full rounded-2xl p-8 md:p-12 flex items-center" style={{ background: s.bg }}>
-                    <div className="max-w-2xl">
+                  <div className="w-full h-full rounded-2xl p-8 md:p-12 flex items-center justify-between gap-6" style={{ background: s.bg }}>
+                    <div className="flex-1 max-w-full md:max-w-2xl">
                       <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">{s.title}</h2>
                       <p className="text-gray-700 mb-6">{s.subtitle}</p>
                       <div className="flex gap-3">
-                        <a href={s.cta.href} className="inline-block px-5 py-3 bg-[#DB3A06] text-white rounded-md font-medium">{s.cta.label}</a>
-                        <a href="/about-us" className="inline-block px-5 py-3 border border-gray-200 rounded-md text-gray-700">Learn more</a>
+                        <Link href={s.cta.href} className="inline-block px-2 md:px-5 py-3 bg-[#DB3A06] text-white rounded-md font-medium">{s.cta.label}</Link>
+                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-gray-200 rounded-md text-gray-700">Learn more</Link>
                       </div>
+                    </div>
+                    {/* Right Image - visible on lg (laptop) and up only */}
+                    <div className="hidden lg:block shrink-0 lg:w-[40%]">
+                      <Image
+                        src={s.image?.src}
+                        alt={s.image?.alt}
+                        width={420}
+                        height={300}
+                        className="rounded-2xl object-cover w-full h-full"
+                      />
                     </div>
                   </div>
                 </div>

@@ -37,7 +37,7 @@ export default function ContactUsMain() {
                   onChange={handleChange}
                   placeholder="Your Name"
                   required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#db3a06]"
                 />
                 <input
                   type="email"
@@ -46,7 +46,7 @@ export default function ContactUsMain() {
                   onChange={handleChange}
                   placeholder="Your Email"
                   required
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#db3a06]"
                 />
                 <input
                   type="text"
@@ -54,7 +54,7 @@ export default function ContactUsMain() {
                   value={formData.subject}
                   onChange={handleChange}
                   placeholder="Subject"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#db3a06]"
                 />
                 <textarea
                   name="message"
@@ -62,12 +62,12 @@ export default function ContactUsMain() {
                   onChange={handleChange}
                   rows="5"
                   placeholder="Your Message"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#db3a06]"
                   required
                 ></textarea>
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-blue-700 transition"
+                  className="bg-[#db3a06] text-white font-semibold px-8 py-3 rounded-lg shadow hover:bg-[#a32a04] transition"
                 >
                   Send Message
                 </button>
@@ -91,36 +91,36 @@ export default function ContactUsMain() {
             {/* Details */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <MapPin className="text-blue-600" />
-                <p>42 Engineering Close, Ikeja Industrial Estate, Lagos, Nigeria</p>
+                <MapPin className="text-[#db3a06]" />
+                <p>Lagos, Nigeria</p>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="text-blue-600" />
-                <a href="tel:+2348000000000" className="hover:text-blue-700 transition">
+                <Phone className="text-[#db3a06]" />
+                <a href="tel:+2348000000000" className="hover:text-[#a32a04] transition">
                   +234 800 000 0000
                 </a>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="text-blue-600" />
-                <a href="mailto:info@rayobengineering.com" className="hover:text-blue-700 transition">
+                <Mail className="text-[#db3a06]" />
+                <a href="mailto:info@rayobengineering.com" className="hover:text-[#a32a04] transition">
                   info@rayobengineering.com
                 </a>
               </div>
               <div className="flex items-center gap-3">
-                <Clock className="text-blue-600" />
-                <p>Mon – Fri: 9:00 AM – 5:00 PM</p>
+                <Clock className="text-[#db3a06]" />
+                <p>Mon - Fri: 9:00 AM - 5:00 PM</p>
               </div>
             </div>
 
             {/* Social Links */}
             <div className="flex gap-4 mt-4">
-              <a href="https://facebook.com" target="_blank" className="hover:text-blue-700 transition">
+              <a href="https://facebook.com" target="_blank" className="hover:text-[#a32a04] transition">
                 <Facebook size={24} />
               </a>
-              <a href="https://linkedin.com" target="_blank" className="hover:text-blue-700 transition">
+              <a href="https://linkedin.com" target="_blank" className="hover:text-[#a32a04] transition">
                 <Linkedin size={24} />
               </a>
-              <a href="https://instagram.com" target="_blank" className="hover:text-blue-700 transition">
+              <a href="https://instagram.com" target="_blank" className="hover:text-[#a32a04] transition">
                 <Instagram size={24} />
               </a>
             </div>

@@ -31,12 +31,32 @@ export default function MainHeader() {
     { href: '/', label: 'Home' },
     { href: '/about-us', label: 'About Us' },
     { href: '/services', label: 'Services' },
-    { href: '/projects', label: 'Projects' },
     { href: '/request-a-quote', label: 'Request a Quote' },
     { href: '/blog', label: 'Blog' },
     { href: '/contact-us', label: 'Contact Us' }
   ]
   const pathname = usePathname()
+
+  // About submenu state/ref
+  const [aboutOpen, setAboutOpen] = useState(false)
+  const aboutRef = useRef(null)
+
+  // Close about submenu on outside click or Escape
+  useEffect(() => {
+    function onDocClick(e) {
+      if (!aboutRef.current) return
+      if (!aboutRef.current.contains(e.target)) setAboutOpen(false)
+    }
+    function onDocKey(e) {
+      if (e.key === 'Escape') setAboutOpen(false)
+    }
+    document.addEventListener('mousedown', onDocClick)
+    document.addEventListener('keydown', onDocKey)
+    return () => {
+      document.removeEventListener('mousedown', onDocClick)
+      document.removeEventListener('keydown', onDocKey)
+    }
+  }, [])
 
   const isActive = (href) => {
     if (!pathname) return false
@@ -58,16 +78,62 @@ export default function MainHeader() {
           </div>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex md:items-center md:space-x-6">
-            {navLinks.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={`transition ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
-              >
-                {l.label}
-              </Link>
-            ))}
+          <nav className="hidden lg:flex lg:items-center lg:space-x-6" ref={aboutRef}>
+            {navLinks.map((l) => {
+              if (l.label === 'About Us') {
+                const submenu = [
+                  { href: '/about-us', label: 'About Us' },
+                  { href: '/projects', label: 'Projects' },
+                  { href: '#', label: 'Gallery' }
+                ]
+
+                return (
+                  <div
+                    key={l.href}
+                    className="relative"
+                    onMouseEnter={() => setAboutOpen(true)}
+                    onMouseLeave={() => setAboutOpen(false)}
+                  >
+                    <button
+                      aria-haspopup="menu"
+                      aria-expanded={aboutOpen}
+                      onClick={() => setAboutOpen(s => !s)}
+                      className={`transition inline-flex items-center gap-2 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
+                    >
+                      {l.label}
+                      <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06-.02L10 10.672l3.71-3.484a.75.75 0 111.04 1.08l-4.24 3.99a.75.75 0 01-1.04 0l-4.24-3.99a.75.75 0 01-.02-1.06z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+
+                    {/* Dropdown */}
+                    {aboutOpen && (
+                      <div className="absolute left-0 mt-0 w-48 bg-white rounded-md shadow-lg py-2 z-40">
+                        {submenu.map(si => (
+                          <Link
+                            key={si.href}
+                            href={si.href}
+                            className={`block px-4 py-2 text-sm ${isActive(si.href) ? 'text-[#DB3A06] font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                          >
+                            {si.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`transition ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
+                >
+                  {l.label}
+                </Link>
+              )
+            })}
           </nav>
 
           {/* Right actions */}
@@ -77,7 +143,7 @@ export default function MainHeader() {
           </div>
 
           {/* Mobile hamburger */}
-          <div className="md:hidden flex items-center">
+          <div className="lg:hidden flex items-center">
             <button
               ref={btnRef}
               aria-label={open ? 'Close menu' : 'Open menu'}
@@ -110,16 +176,46 @@ export default function MainHeader() {
             </div>
 
             <nav className="flex flex-col space-y-3">
-              {navLinks.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className={`block px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700'}`}
-                >
-                  {l.label}
-                </Link>
-              ))}
+              {navLinks.map((l) => {
+                if (l.label === 'About Us') {
+                  const submenu = [
+                    { href: '/about-us', label: 'About Us' },
+                    { href: '/projects', label: 'Projects' },
+                    { href: '#', label: 'Gallery' }
+                  ]
+
+                  return (
+                    <div key={l.href}>
+                      <button
+                        onClick={() => setAboutOpen(s => !s)}
+                        className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700'}`}
+                      >
+                        {l.label}
+                      </button>
+                      {aboutOpen && (
+                        <div className="pl-4 mt-1 flex flex-col gap-1">
+                          {submenu.map(si => (
+                            <Link key={si.href} href={si.href} onClick={() => setOpen(false)} className={`block px-3 py-2 rounded-md ${isActive(si.href) ? 'text-[#DB3A06] font-medium' : 'text-gray-700 hover:bg-gray-50'}`}>
+                              {si.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                }
+
+                return (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className={`block px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700'}`}
+                  >
+                    {l.label}
+                  </Link>
+                )
+              })}
             </nav>
 
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">

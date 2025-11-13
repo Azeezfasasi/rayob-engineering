@@ -7,8 +7,8 @@ export default function HomeAbout() {
       <div className="container mx-auto px-6 lg:px-20 flex flex-col lg:flex-row items-center gap-10">
         
         {/* Image */}
-        <div className="flex-1">
-          <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-lg overflow-hidden shadow-lg">
+        <div className="flex-1 w-full">
+          <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-lg overflow-hidden shadow-lg">
             <Image
               src="/images/about1.jpg" 
               alt="Rayob Engineering Team"

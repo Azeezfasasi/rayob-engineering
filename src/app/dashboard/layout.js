@@ -1,20 +1,31 @@
+"use client"
+import React, { useState, useEffect } from "react"
+import DashboardHeader from "@/components/dashboard-component/DashboardHeader"
+import DashboardMenu from "@/components/dashboard-component/DashboardMenu"
 
-// import Navbar from '@/components/Navbar'
-// import Footer from '@/components/Footer'
+// This is a client layout so we can manage sidebar collapse state.
+export default function DashboardLayout({ children }) {
+  const [collapsed, setCollapsed] = useState(false)
 
-export const metadata = {
-  title: 'Rayob Engineering',
-  description: 'Innovative Engineering Solutions for Modern Projects.',
-}
+  function toggleSidebar() {
+    setCollapsed(c => !c)
+  }
+  // Add a body-level class while the dashboard is mounted so we can hide
+  // the site header that is rendered by the root layout.
+  useEffect(() => {
+    document.body.classList.add("hide-site-header")
+    return () => document.body.classList.remove("hide-site-header")
+  }, [])
 
-export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body>
-        {/* <Navbar /> */}
-        <main>{children}</main>
-        {/* <Footer /> */}
-      </body>
-    </html>
+    <div className="min-h-screen bg-gray-50">
+      <DashboardHeader onToggleSidebar={toggleSidebar} />
+
+      <div className="flex">
+        <DashboardMenu collapsed={collapsed} />
+
+        <main className="flex-1 p-6">{children}</main>
+      </div>
+    </div>
   )
 }
