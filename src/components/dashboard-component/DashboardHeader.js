@@ -2,16 +2,27 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
-export default function DashboardHeader({ onToggleSidebar }) {
+export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu }) {
   return (
     <header className="w-full bg-white border-b border-gray-100 shadow-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
+            {/* Mobile hamburger: visible on small screens */}
+            <button
+              aria-label="Open menu"
+              onClick={onToggleMobileMenu}
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 md:hidden"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+              </svg>
+            </button>
+
             <button
               aria-label="Toggle sidebar"
               onClick={onToggleSidebar}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="hidden md:inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
@@ -47,10 +58,13 @@ export default function DashboardHeader({ onToggleSidebar }) {
 
             <div className="relative">
               <button className="flex items-center gap-3 p-1 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                <div className="w-8 h-8 rounded-full overflow-hidden">
-                  <Image src="/images/avatar-placeholder.png" alt="User avatar" width={32} height={32} className="object-cover" />
+                <div className="rounded-[50%] overflow-hidden">
+                  <Image src="/images/about1.jpg" alt="User avatar" width={32} height={32} className="object-cover h-10 w-10" />
                 </div>
-                <span className="hidden sm:block text-sm text-gray-700">Admin</span>
+                <div className='flex flex-col items-start'>
+                  <span className="hidden sm:block text-sm text-gray-700">Azeez fasasi </span>
+                  <span className="hidden sm:block text-sm text-gray-700">Admin</span>
+                </div>
               </button>
             </div>
           </div>

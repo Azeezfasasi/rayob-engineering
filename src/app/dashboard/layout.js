@@ -6,9 +6,14 @@ import DashboardMenu from "@/components/dashboard-component/DashboardMenu"
 // This is a client layout so we can manage sidebar collapse state.
 export default function DashboardLayout({ children }) {
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   function toggleSidebar() {
     setCollapsed(c => !c)
+  }
+
+  function toggleMobileMenu() {
+    setMobileOpen(v => !v)
   }
   // Add a body-level class while the dashboard is mounted so we can hide
   // the site header that is rendered by the root layout.
@@ -19,10 +24,10 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <DashboardHeader onToggleSidebar={toggleSidebar} />
+      <DashboardHeader onToggleSidebar={toggleSidebar} onToggleMobileMenu={toggleMobileMenu} />
 
       <div className="flex">
-        <DashboardMenu collapsed={collapsed} />
+        <DashboardMenu collapsed={collapsed} mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
         <main className="flex-1 p-6">{children}</main>
       </div>
