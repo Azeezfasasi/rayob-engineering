@@ -2,148 +2,56 @@
 
 import React, { useState, useCallback, useEffect } from 'react'
 import { Trash2, Eye, Reply, Search, Filter, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { useAuth } from '../../../context/AuthContext';
+
 
 const ContactFormResponses = () => {
+		useEffect(() => {
+			loadResponses();
+			// eslint-disable-next-line react-hooks/exhaustive-deps
+		}, []);
+
+		async function loadResponses() {
+			setLoading(true);
+			try {
+				const res = await fetch('/api/contact');
+				const data = await res.json();
+				if (data.success && Array.isArray(data.contacts)) {
+					setResponses(data.contacts);
+					applyFilters(data.contacts, searchQuery, statusFilter);
+				} else {
+					setResponses([]);
+					applyFilters([], searchQuery, statusFilter);
+				}
+			} catch (error) {
+				setResponses([]);
+				applyFilters([], searchQuery, statusFilter);
+			} finally {
+				setLoading(false);
+			}
+		}
 	const [responses, setResponses] = useState([])
 	const [filteredResponses, setFilteredResponses] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [searchQuery, setSearchQuery] = useState('')
-	const [statusFilter, setStatusFilter] = useState('all') // all, new, replied, archived
+	const [statusFilter, setStatusFilter] = useState('all') // all, pending, replied, closed
 	const [showViewModal, setShowViewModal] = useState(false)
 	const [showReplyModal, setShowReplyModal] = useState(false)
 	const [showDeleteModal, setShowDeleteModal] = useState(false)
+	const [showStatusModal, setShowStatusModal] = useState(false)
 	const [selectedResponse, setSelectedResponse] = useState(null)
 	const [replyText, setReplyText] = useState('')
 	const [replyEmail, setReplyEmail] = useState('')
-
-	const responsesPerPage = 10
-
-	// Mock data - Replace with actual API calls
-	useEffect(() => {
-		loadResponses()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	const loadResponses = async () => {
-		setLoading(true)
-		try {
-			// Mock API call - Replace with actual endpoint
-			const mockResponses = [
-				{
-					id: 1,
-					name: 'John Smithson',
-					email: 'john.smith@example.com',
-					subject: 'Project Inquiry - Commercial Building',
-					message: 'Hello, I would like to inquire about your commercial building services...',
-					status: 'new',
-					createdAt: new Date('2025-01-15T10:30:00'),
-					replied: false,
-				},
-				{
-					id: 2,
-					name: 'Mary Johnson',
-					email: 'mary.j@company.com',
-					subject: 'Partnership Opportunity',
-					message: 'We are interested in partnering with Rayob Engineering for upcoming projects...',
-					status: 'replied',
-					createdAt: new Date('2025-01-14T14:20:00'),
-					replied: true,
-					replyDate: new Date('2025-01-14T15:45:00'),
-				},
-				{
-					id: 3,
-					name: 'Ahmed Hassan',
-					email: 'ahmed.hassan@mail.com',
-					subject: 'General Inquiry',
-					message: 'Can you provide information about your company and services?',
-					status: 'new',
-					createdAt: new Date('2025-01-13T09:15:00'),
-					replied: false,
-				},
-				{
-					id: 4,
-					name: 'Blessing Okonkwo',
-					email: 'blessing.ok@email.com',
-					subject: 'Project Proposal Request',
-					message: 'We have a construction project that requires professional engineering services...',
-					status: 'replied',
-					createdAt: new Date('2025-01-12T11:00:00'),
-					replied: true,
-					replyDate: new Date('2025-01-12T16:30:00'),
-				},
-				{
-					id: 5,
-					name: 'Zainab Muhammed',
-					email: 'zainab.m@company.ng',
-					subject: 'Support Request',
-					message: 'I need technical support regarding a previous project...',
-					status: 'new',
-					createdAt: new Date('2025-01-11T13:45:00'),
-					replied: false,
-				},
-				{
-					id: 6,
-					name: 'David Okoye',
-					email: 'david.okoye@firm.com',
-					subject: 'Consultation Request',
-					message: 'Looking for consultation on infrastructure project planning...',
-					status: 'archived',
-					createdAt: new Date('2025-01-10T08:20:00'),
-					replied: false,
-				},
-				{
-					id: 7,
-					name: 'Chioma Eze',
-					email: 'chioma.eze@mail.ng',
-					subject: 'Service Inquiry',
-					message: 'Interested in learning more about your structural engineering services...',
-					status: 'new',
-					createdAt: new Date('2025-01-09T16:00:00'),
-					replied: false,
-				},
-				{
-					id: 8,
-					name: 'Peter Adeyemi',
-					email: 'peter.adeyemi@company.com',
-					subject: 'Urgent: Project Update',
-					message: 'Need urgent update on the ongoing construction project status...',
-					status: 'replied',
-					createdAt: new Date('2025-01-08T10:30:00'),
-					replied: true,
-					replyDate: new Date('2025-01-08T11:15:00'),
-				},
-				{
-					id: 9,
-					name: 'Ngozi Chukwu',
-					email: 'ngozi.chukwu@email.ng',
-					subject: 'Feedback on Service',
-					message: 'Great service! Would like to discuss future collaborations...',
-					status: 'new',
-					createdAt: new Date('2025-01-07T14:20:00'),
-					replied: false,
-				},
-				{
-					id: 10,
-					name: 'Ibrahim Yusuf',
-					email: 'ibrahim.yusuf@firm.ng',
-					subject: 'Quote Request',
-					message: 'Requesting detailed quote for the proposed commercial development...',
-					status: 'new',
-					createdAt: new Date('2025-01-06T09:00:00'),
-					replied: false,
-				},
-			]
-
-			setResponses(mockResponses)
-			applyFilters(mockResponses, searchQuery, statusFilter)
-		} catch (error) {
-			console.error('Failed to load responses:', error)
-		} finally {
-			setLoading(false)
-		}
-	}
-
+	const [newStatus, setNewStatus] = useState('')
+	const responsesPerPage = 10;
+	// If you use AuthContext, import and use it here:
+	// import { useAuth } from '../../../context/AuthContext';
+	const { user } = useAuth();
+	// For now, set user to null to avoid errors if not using AuthContext
+	// const user = null;
+	// You must define loadResponses and useEffect for fetching data
+	// Add your loadResponses and useEffect here if not present
 	const applyFilters = useCallback((data, search, status) => {
 		let filtered = data
 
@@ -197,6 +105,7 @@ const ContactFormResponses = () => {
 		setShowViewModal(true)
 	}
 
+
 	// Reply to response
 	const handleReplyClick = (response) => {
 		setSelectedResponse(response)
@@ -211,31 +120,25 @@ const ContactFormResponses = () => {
 			alert('Please enter a reply message')
 			return
 		}
-
+		if (!user || !user._id) {
+			alert('You must be logged in as an admin or staff to reply.')
+			return
+		}
 		try {
-			// Mock API call - Replace with actual endpoint
-			// const response = await fetch(`/api/contact-responses/${selectedResponse.id}/reply`, {
-			//   method: 'POST',
-			//   headers: { 'Content-Type': 'application/json' },
-			//   body: JSON.stringify({ reply: replyText, replyEmail })
-			// })
-
-			// Update local state
-			const updatedResponses = responses.map((r) =>
-				r.id === selectedResponse.id
-					? {
-							...r,
-							status: 'replied',
-							replied: true,
-							replyDate: new Date(),
-					  }
-					: r
-			)
-			setResponses(updatedResponses)
-			applyFilters(updatedResponses, searchQuery, statusFilter)
-
-			setShowReplyModal(false)
-			alert('Reply sent successfully!')
+			console.log('Replying to contact ID:', selectedResponse?._id);
+			const res = await fetch(`/api/contact/${selectedResponse._id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ message: replyText, senderId: user._id }),
+			})
+			const data = await res.json()
+			if (data.success) {
+				loadResponses()
+				setShowReplyModal(false)
+				alert('Reply sent successfully!')
+			} else {
+				alert(data.message || 'Failed to send reply')
+			}
 		} catch (error) {
 			console.error('Failed to send reply:', error)
 			alert('Failed to send reply')
@@ -245,18 +148,44 @@ const ContactFormResponses = () => {
 	// Delete response
 	const handleDelete = async () => {
 		try {
-			// Mock API call - Replace with actual endpoint
-			// await fetch(`/api/contact-responses/${selectedResponse.id}`, { method: 'DELETE' })
-
-			const updatedResponses = responses.filter((r) => r.id !== selectedResponse.id)
-			setResponses(updatedResponses)
-			applyFilters(updatedResponses, searchQuery, statusFilter)
-
-			setShowDeleteModal(false)
-			alert('Response deleted successfully!')
+			const res = await fetch(`/api/contact/${selectedResponse._id}`, { method: 'DELETE' })
+			const data = await res.json()
+			if (data.success) {
+				loadResponses()
+				setShowDeleteModal(false)
+				alert('Response deleted successfully!')
+			} else {
+				alert(data.message || 'Failed to delete response')
+			}
 		} catch (error) {
 			console.error('Failed to delete response:', error)
 			alert('Failed to delete response')
+		}
+	}
+
+	// Change status
+	const handleChangeStatus = async (response, newStatus) => {
+		if (!user || !user._id) {
+			alert('You must be logged in as an admin or staff to change status.')
+			return
+		}
+		try {
+			console.log('Changing status for contact ID:', response?._id);
+			const res = await fetch(`/api/contact/${response._id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ status: newStatus, senderId: user._id }),
+			})
+			const data = await res.json()
+			if (data.success) {
+				loadResponses()
+				alert('Status updated successfully!')
+			} else {
+				alert(data.message || 'Failed to update status')
+			}
+		} catch (error) {
+			console.error('Failed to update status:', error)
+			alert('Failed to update status')
 		}
 	}
 
@@ -269,11 +198,11 @@ const ContactFormResponses = () => {
 	// Get status badge color
 	const getStatusColor = (status) => {
 		switch (status) {
-			case 'new':
+			case 'pending':
 				return 'bg-blue-100 text-blue-800'
 			case 'replied':
 				return 'bg-green-100 text-green-800'
-			case 'archived':
+			case 'closed':
 				return 'bg-gray-100 text-gray-800'
 			default:
 				return 'bg-gray-100 text-gray-800'
@@ -320,46 +249,46 @@ const ContactFormResponses = () => {
 						{/* Filters and Clear Button */}
 						<div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
 							<div className="flex flex-wrap gap-2">
-								<button
-									onClick={() => handleStatusFilter('all')}
-									className={`px-4 py-2 rounded-lg font-medium transition ${
-										statusFilter === 'all'
-											? 'bg-orange-600 text-white'
-											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-									}`}
-								>
-									All ({responses.length})
-								</button>
-								<button
-									onClick={() => handleStatusFilter('new')}
-									className={`px-4 py-2 rounded-lg font-medium transition ${
-										statusFilter === 'new'
-											? 'bg-blue-600 text-white'
-											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-									}`}
-								>
-									New ({responses.filter((r) => r.status === 'new').length})
-								</button>
-								<button
-									onClick={() => handleStatusFilter('replied')}
-									className={`px-4 py-2 rounded-lg font-medium transition ${
-										statusFilter === 'replied'
-											? 'bg-green-600 text-white'
-											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-									}`}
-								>
-									Replied ({responses.filter((r) => r.status === 'replied').length})
-								</button>
-								<button
-									onClick={() => handleStatusFilter('archived')}
-									className={`px-4 py-2 rounded-lg font-medium transition ${
-										statusFilter === 'archived'
-											? 'bg-gray-600 text-white'
-											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-									}`}
-								>
-									Archived ({responses.filter((r) => r.status === 'archived').length})
-								</button>
+									<button
+										onClick={() => handleStatusFilter('all')}
+										className={`px-4 py-2 rounded-lg font-medium transition ${
+											statusFilter === 'all'
+												? 'bg-orange-600 text-white'
+												: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+										}`}
+									>
+										All ({responses.length})
+									</button>
+									<button
+										onClick={() => handleStatusFilter('pending')}
+										className={`px-4 py-2 rounded-lg font-medium transition ${
+											statusFilter === 'pending'
+												? 'bg-blue-600 text-white'
+												: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+										}`}
+									>
+										Pending ({responses.filter((r) => r.status === 'pending').length})
+									</button>
+									<button
+										onClick={() => handleStatusFilter('replied')}
+										className={`px-4 py-2 rounded-lg font-medium transition ${
+											statusFilter === 'replied'
+												? 'bg-green-600 text-white'
+												: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+										}`}
+									>
+										Replied ({responses.filter((r) => r.status === 'replied').length})
+									</button>
+									<button
+										onClick={() => handleStatusFilter('closed')}
+										className={`px-4 py-2 rounded-lg font-medium transition ${
+											statusFilter === 'closed'
+												? 'bg-gray-600 text-white'
+												: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+										}`}
+									>
+										Closed ({responses.filter((r) => r.status === 'closed').length})
+									</button>
 							</div>
 
 							{(searchQuery || statusFilter !== 'all') && (
@@ -412,7 +341,7 @@ const ContactFormResponses = () => {
 								</thead>
 								<tbody className="divide-y divide-gray-200">
 									{currentResponses.map((response) => (
-										<tr key={response.id} className="hover:bg-gray-50 transition">
+										<tr key={response._id} className="hover:bg-gray-50 transition">
 											<td className="px-6 py-4 whitespace-nowrap">
 												<div className="font-medium text-gray-900">{response.name}</div>
 												<div className="text-sm text-gray-500">{response.email}</div>
@@ -447,6 +376,75 @@ const ContactFormResponses = () => {
 													>
 														<Reply className="w-4 h-4" />
 													</button>
+													<button
+														onClick={() => setShowStatusModal(true) || setSelectedResponse(response)}
+														className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition"
+														title="Change Status"
+													>
+														<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+															<path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487a2.25 2.25 0 0 1 2.647 2.647l-2.25 9a2.25 2.25 0 0 1-1.615 1.615l-9 2.25a2.25 2.25 0 0 1-2.647-2.647l2.25-9a2.25 2.25 0 0 1 1.615-1.615l9-2.25z" />
+														</svg>
+													</button>
+																	{/* Status Change Modal */}
+																	{showStatusModal && selectedResponse && (
+																		<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+																			<div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+																				<div className="p-6 border-b border-gray-200 flex justify-between items-center">
+																					<h3 className="text-lg font-semibold text-gray-900">Change Response Status</h3>
+																					<button
+																						onClick={() => setShowStatusModal(false)}
+																						className="text-gray-500 hover:text-gray-700"
+																					>
+																						<X className="w-6 h-6" />
+																					</button>
+																				</div>
+
+																				<div className="p-6 space-y-4">
+																					<div>
+																						<label className="block text-sm font-medium text-gray-700 mb-2">Current Status</label>
+																						<span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(selectedResponse.status)}`}>
+																							{selectedResponse.status}
+																						</span>
+																					</div>
+																					<div>
+																						<label className="block text-sm font-medium text-gray-700 mb-2">New Status *</label>
+																						<select
+																							value={newStatus}
+																							onChange={(e) => setNewStatus(e.target.value)}
+																							className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none"
+																						>
+																							<option value="">Select a status</option>
+																							<option value="pending">Pending</option>
+																							<option value="replied">Replied</option>
+																							<option value="closed">Closed</option>
+																						</select>
+																					</div>
+																				</div>
+
+																				<div className="p-6 border-t border-gray-200 flex justify-end gap-3 bg-gray-50">
+																					<button
+																						onClick={() => setShowStatusModal(false)}
+																						className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 font-medium transition"
+																					>
+																						Cancel
+																					</button>
+																					<button
+																						onClick={async () => {
+																							if (!newStatus) {
+																								alert('Please select a status');
+																								return;
+																							}
+																							await handleChangeStatus(selectedResponse, newStatus);
+																							setShowStatusModal(false);
+																						}}
+																						className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-medium transition flex items-center gap-2"
+																					>
+																						Update Status
+																					</button>
+																				</div>
+																			</div>
+																		</div>
+																	)}
 													<button
 														onClick={() => {
 															setSelectedResponse(response)

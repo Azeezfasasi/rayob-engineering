@@ -1,15 +1,83 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
+import { useAuth } from '../../../context/AuthContext'
 import { Trash2, Eye, Reply, Search, Filter, ChevronLeft, ChevronRight, X, CheckCircle } from 'lucide-react'
 
 const ManageQuoteRequests = () => {
+				const { user } = useAuth();
+			// Handle submit reply
+			const handleSubmitReply = async () => {
+				if (!replyText.trim()) {
+					alert('Please enter a response or quote.');
+					return;
+				}
+				try {
+					if (!user || !user._id) {
+						alert('You must be logged in as an admin or staff to reply.');
+						return;
+					}
+					const res = await fetch(`/api/quote/${selectedRequest._id}`, {
+						method: 'PUT',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ message: replyText, senderId: user._id }),
+					});
+					const data = await res.json();
+					if (data.success) {
+						setShowReplyModal(false);
+						setReplyText("");
+						setReplyEmail("");
+						alert('Reply sent successfully!');
+						loadRequests();
+					} else {
+						alert(data.message || 'Failed to send reply.');
+					}
+				} catch (error) {
+					console.error('Failed to send reply:', error);
+					alert('Failed to send reply.');
+				}
+			};
+		// Handle view action
+		const handleView = (request) => {
+			setSelectedRequest(request);
+			setShowViewModal(true);
+		};
+
+		// Handle reply action
+		const handleReplyClick = (request) => {
+			setSelectedRequest(request);
+			setReplyEmail(request.email);
+			setReplyText("");
+			setShowReplyModal(true);
+		};
+	// Handle search
+	const handleSearch = (e) => {
+		const value = e.target.value;
+		setSearchQuery(value);
+		setFilteredRequests(applyFilters(requests, value, statusFilter));
+		setCurrentPage(1);
+	};
+
+	// Handle status filter
+	const handleStatusFilter = (status) => {
+		setStatusFilter(status);
+		setFilteredRequests(applyFilters(requests, searchQuery, status));
+		setCurrentPage(1);
+	};
+
+	// Clear all filters
+	const clearFilters = () => {
+		setSearchQuery("");
+		setStatusFilter("all");
+		setFilteredRequests(applyFilters(requests, "", "all"));
+		setCurrentPage(1);
+	};
 	const [requests, setRequests] = useState([])
 	const [filteredRequests, setFilteredRequests] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [searchQuery, setSearchQuery] = useState('')
-	const [statusFilter, setStatusFilter] = useState('all') // all, pending, quoted, rejected, completed
+	const [statusFilter, setStatusFilter] = useState('all') // all, pending, in-progress, completed, replied, closed
 	const [showViewModal, setShowViewModal] = useState(false)
 	const [showReplyModal, setShowReplyModal] = useState(false)
 	const [showStatusModal, setShowStatusModal] = useState(false)
@@ -21,7 +89,7 @@ const ManageQuoteRequests = () => {
 
 	const requestsPerPage = 10
 
-	// Mock data - Replace with actual API calls
+	// Load requests from backend API
 	useEffect(() => {
 		loadRequests()
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -30,134 +98,28 @@ const ManageQuoteRequests = () => {
 	const loadRequests = async () => {
 		setLoading(true)
 		try {
-			// Mock API call - Replace with actual endpoint
-			const mockRequests = [
-				{
-					id: 1,
-					name: 'John Smithson',
-					email: 'john.smith@example.com',
-					phone: '+234 801 000 0001',
-					company: 'Smithson Construction',
-					service: 'Civil Engineering',
-					message: 'Looking for civil engineering services for a 5-story commercial building project in Lagos.',
-					status: 'pending',
-					createdAt: new Date('2025-01-15T10:30:00'),
-					updatedAt: new Date('2025-01-15T10:30:00'),
-				},
-				{
-					id: 2,
-					name: 'Mary Johnson',
-					email: 'mary.j@company.com',
-					phone: '+234 802 000 0002',
-					company: 'Johnson Developments',
-					service: 'Project Management',
-					message: 'Need project management support for infrastructure development project. Timeline: 18 months.',
-					status: 'quoted',
-					createdAt: new Date('2025-01-14T14:20:00'),
-					updatedAt: new Date('2025-01-14T15:45:00'),
-				},
-				{
-					id: 3,
-					name: 'Ahmed Hassan',
-					email: 'ahmed.hassan@mail.com',
-					phone: '+234 803 000 0003',
-					company: 'Hassan Group',
-					service: 'Electrical Installations',
-					message: 'Electrical installation for new office complex. High-voltage requirements.',
-					status: 'pending',
-					createdAt: new Date('2025-01-13T09:15:00'),
-					updatedAt: new Date('2025-01-13T09:15:00'),
-				},
-				{
-					id: 4,
-					name: 'Blessing Okonkwo',
-					email: 'blessing.ok@email.com',
-					phone: '+234 804 000 0004',
-					company: 'Okonkwo Enterprises',
-					service: 'Mechanical Works',
-					message: 'HVAC system installation and mechanical works for manufacturing facility.',
-					status: 'quoted',
-					createdAt: new Date('2025-01-12T11:00:00'),
-					updatedAt: new Date('2025-01-12T16:30:00'),
-				},
-				{
-					id: 5,
-					name: 'Zainab Muhammed',
-					email: 'zainab.m@company.ng',
-					phone: '+234 805 000 0005',
-					company: 'Muhammed Industries',
-					service: 'Consultancy',
-					message: 'Technical consultancy for energy-efficient building design and implementation.',
-					status: 'pending',
-					createdAt: new Date('2025-01-11T13:45:00'),
-					updatedAt: new Date('2025-01-11T13:45:00'),
-				},
-				{
-					id: 6,
-					name: 'David Okoye',
-					email: 'david.okoye@firm.com',
-					phone: '+234 806 000 0006',
-					company: 'Okoye & Associates',
-					service: 'Civil Engineering',
-					message: 'Bridge construction project spanning 500 meters. Geotechnical survey required.',
-					status: 'completed',
-					createdAt: new Date('2025-01-10T08:20:00'),
-					updatedAt: new Date('2025-01-11T10:00:00'),
-				},
-				{
-					id: 7,
-					name: 'Chioma Eze',
-					email: 'chioma.eze@mail.ng',
-					phone: '+234 807 000 0007',
-					company: 'Eze Solutions',
-					service: 'Project Management',
-					message: 'Project management for renovation of historical building complex.',
-					status: 'rejected',
-					createdAt: new Date('2025-01-09T16:00:00'),
-					updatedAt: new Date('2025-01-09T17:30:00'),
-				},
-				{
-					id: 8,
-					name: 'Peter Adeyemi',
-					email: 'peter.adeyemi@company.com',
-					phone: '+234 808 000 0008',
-					company: 'Adeyemi Corp',
-					service: 'Electrical Installations',
-					message: 'Smart building automation systems installation for residential complex.',
-					status: 'quoted',
-					createdAt: new Date('2025-01-08T10:30:00'),
-					updatedAt: new Date('2025-01-08T14:15:00'),
-				},
-				{
-					id: 9,
-					name: 'Ngozi Chukwu',
-					email: 'ngozi.chukwu@email.ng',
-					phone: '+234 809 000 0009',
-					company: 'Chukwu Holdings',
-					service: 'Mechanical Works',
-					message: 'Industrial plant machinery installation and commissioning services.',
-					status: 'pending',
-					createdAt: new Date('2025-01-07T14:20:00'),
-					updatedAt: new Date('2025-01-07T14:20:00'),
-				},
-				{
-					id: 10,
-					name: 'Ibrahim Yusuf',
-					email: 'ibrahim.yusuf@firm.ng',
-					phone: '+234 810 000 0010',
-					company: 'Yusuf Engineering',
-					service: 'Consultancy',
-					message: 'Feasibility study for new industrial estate development in Northern Nigeria.',
-					status: 'pending',
-					createdAt: new Date('2025-01-06T09:00:00'),
-					updatedAt: new Date('2025-01-06T09:00:00'),
-				},
-			]
-
-			setRequests(mockRequests)
-			applyFilters(mockRequests, searchQuery, statusFilter)
+			const res = await fetch('/api/quote')
+			const data = await res.json()
+			if (data.success) {
+				setRequests(data.quotes)
+				setFilteredRequests(applyFilters(data.quotes, '', 'all'));
+				setSearchQuery('');
+				setStatusFilter('all');
+				setCurrentPage(1);
+			} else {
+				setRequests([])
+				setFilteredRequests([]);
+				setSearchQuery('');
+				setStatusFilter('all');
+				setCurrentPage(1);
+			}
 		} catch (error) {
 			console.error('Failed to load requests:', error)
+			setRequests([])
+			setFilteredRequests([]);
+			setSearchQuery('');
+			setStatusFilter('all');
+			setCurrentPage(1);
 		} finally {
 			setLoading(false)
 		}
@@ -184,120 +146,59 @@ const ManageQuoteRequests = () => {
 		}
 
 		// Sort by date (newest first)
-		filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-
-		setFilteredRequests(filtered)
-		setCurrentPage(1)
-	}, [])
-
-	// Handle search
-	const handleSearch = (e) => {
-		const query = e.target.value
-		setSearchQuery(query)
-		applyFilters(requests, query, statusFilter)
-	}
-
-	// Handle status filter
-	const handleStatusFilter = (status) => {
-		setStatusFilter(status)
-		applyFilters(requests, searchQuery, status)
-	}
-
-	// Clear filters
-	const clearFilters = () => {
-		setSearchQuery('')
-		setStatusFilter('all')
-		setCurrentPage(1)
-		setFilteredRequests(requests)
-	}
-
-	// View request
-	const handleView = (request) => {
-		setSelectedRequest(request)
-		setShowViewModal(true)
-	}
-
-	// Reply to request
-	const handleReplyClick = (request) => {
-		setSelectedRequest(request)
-		setReplyEmail(request.email)
-		setReplyText('')
-		setShowReplyModal(true)
-	}
-
-	// Submit reply
-	const handleSubmitReply = async () => {
-		if (!replyText.trim()) {
-			alert('Please enter a reply message')
-			return
-		}
-
-		try {
-			// Mock API call - Replace with actual endpoint
-			const updatedRequests = requests.map((r) =>
-				r.id === selectedRequest.id
-					? {
-							...r,
-							status: 'quoted',
-							updatedAt: new Date(),
-					  }
-					: r
-			)
-			setRequests(updatedRequests)
-			applyFilters(updatedRequests, searchQuery, statusFilter)
-
-			setShowReplyModal(false)
-			alert('Reply sent successfully!')
-		} catch (error) {
-			console.error('Failed to send reply:', error)
-			alert('Failed to send reply')
-		}
-	}
+		filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+		return filtered;
+	}, []);
 
 	// Change status
 	const handleChangeStatus = async () => {
 		if (!newStatus) {
-			alert('Please select a status')
-			return
+			alert('Please select a status');
+			return;
 		}
-
+		if (!user || !user._id) {
+			alert('You must be logged in as an admin or staff to change status.');
+			return;
+		}
 		try {
-			// Mock API call - Replace with actual endpoint
-			const updatedRequests = requests.map((r) =>
-				r.id === selectedRequest.id
-					? {
-							...r,
-							status: newStatus,
-							updatedAt: new Date(),
-					  }
-					: r
-			)
-			setRequests(updatedRequests)
-			applyFilters(updatedRequests, searchQuery, statusFilter)
-
-			setShowStatusModal(false)
-			alert('Status updated successfully!')
+			const res = await fetch(`/api/quote/${selectedRequest._id}`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ status: newStatus, senderId: user._id }),
+			});
+			const data = await res.json();
+			if (data.success) {
+				loadRequests();
+				setShowStatusModal(false);
+				alert("Status updated successfully!");
+			} else {
+				alert(data.message || "Failed to update status");
+			}
 		} catch (error) {
-			console.error('Failed to update status:', error)
-			alert('Failed to update status')
+			console.error("Failed to update status:", error);
+			alert("Failed to update status");
 		}
-	}
+	};
 
 	// Delete request
 	const handleDelete = async () => {
 		try {
-			// Mock API call - Replace with actual endpoint
-			const updatedRequests = requests.filter((r) => r.id !== selectedRequest.id)
-			setRequests(updatedRequests)
-			applyFilters(updatedRequests, searchQuery, statusFilter)
-
-			setShowDeleteModal(false)
-			alert('Request deleted successfully!')
+			const res = await fetch(`/api/quote/${selectedRequest._id}`, {
+				method: "DELETE",
+			});
+			const data = await res.json();
+			if (data.success) {
+				loadRequests();
+				setShowDeleteModal(false);
+				alert("Quote request deleted.");
+			} else {
+				alert(data.message || "Failed to delete request");
+			}
 		} catch (error) {
-			console.error('Failed to delete request:', error)
-			alert('Failed to delete request')
+			console.error("Failed to delete request:", error);
+			alert("Failed to delete request");
 		}
-	}
+	};
 
 	// Pagination
 	const totalPages = Math.ceil(filteredRequests.length / requestsPerPage)
@@ -310,11 +211,13 @@ const ManageQuoteRequests = () => {
 		switch (status) {
 			case 'pending':
 				return 'bg-yellow-100 text-yellow-800'
-			case 'quoted':
+			case 'in-progress':
 				return 'bg-blue-100 text-blue-800'
 			case 'completed':
 				return 'bg-green-100 text-green-800'
-			case 'rejected':
+			case 'replied':
+				return 'bg-purple-100 text-purple-800'
+			case 'closed':
 				return 'bg-red-100 text-red-800'
 			default:
 				return 'bg-gray-100 text-gray-800'
@@ -382,14 +285,14 @@ const ManageQuoteRequests = () => {
 									Pending ({requests.filter((r) => r.status === 'pending').length})
 								</button>
 								<button
-									onClick={() => handleStatusFilter('quoted')}
+									onClick={() => handleStatusFilter('in-progress')}
 									className={`px-4 py-2 rounded-lg font-medium transition ${
-										statusFilter === 'quoted'
+										statusFilter === 'in-progress'
 											? 'bg-blue-600 text-white'
 											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
 									}`}
 								>
-									Quoted ({requests.filter((r) => r.status === 'quoted').length})
+									In-Progress ({requests.filter((r) => r.status === 'in-progress').length})
 								</button>
 								<button
 									onClick={() => handleStatusFilter('completed')}
@@ -402,14 +305,24 @@ const ManageQuoteRequests = () => {
 									Completed ({requests.filter((r) => r.status === 'completed').length})
 								</button>
 								<button
-									onClick={() => handleStatusFilter('rejected')}
+									onClick={() => handleStatusFilter('replied')}
 									className={`px-4 py-2 rounded-lg font-medium transition ${
-										statusFilter === 'rejected'
+										statusFilter === 'replied'
+											? 'bg-purple-600 text-white'
+											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+									}`}
+								>
+									Replied ({requests.filter((r) => r.status === 'replied').length})
+								</button>
+								<button
+									onClick={() => handleStatusFilter('closed')}
+									className={`px-4 py-2 rounded-lg font-medium transition ${
+										statusFilter === 'closed'
 											? 'bg-red-600 text-white'
 											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
 									}`}
 								>
-									Rejected ({requests.filter((r) => r.status === 'rejected').length})
+									Closed ({requests.filter((r) => r.status === 'closed').length})
 								</button>
 							</div>
 
@@ -462,8 +375,8 @@ const ManageQuoteRequests = () => {
 									</tr>
 								</thead>
 								<tbody className="divide-y divide-gray-200">
-									{currentRequests.map((request) => (
-										<tr key={request.id} className="hover:bg-gray-50 transition">
+									{currentRequests.map((request, idx) => (
+										<tr key={request._id || request.id || idx} className="hover:bg-gray-50 transition">
 											<td className="px-6 py-4 whitespace-nowrap">
 												<div className="font-medium text-gray-900">{request.name}</div>
 												<div className="text-sm text-gray-500">{request.company}</div>
@@ -753,9 +666,10 @@ const ManageQuoteRequests = () => {
 									>
 										<option value="">Select a status</option>
 										<option value="pending">Pending</option>
-										<option value="quoted">Quoted</option>
+										<option value="in-progress">In-Progress</option>
 										<option value="completed">Completed</option>
-										<option value="rejected">Rejected</option>
+										<option value="replied">Replied</option>
+										<option value="closed">Closed</option>
 									</select>
 								</div>
 							</div>

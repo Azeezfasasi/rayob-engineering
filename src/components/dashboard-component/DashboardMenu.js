@@ -65,7 +65,27 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
       icon: 'blog',
       children: [
         { href: '/dashboard/all-users', label: 'All Users' },
-        { href: '/dashboard/add-user', label: 'Add User' }
+        { href: '/dashboard/add-user', label: 'Add User' },
+        { href: '/dashboard/change-user-password', label: 'Change User Password' }
+      ]
+    },
+    {
+      href: '/dashboard/all-newsletter',
+      label: 'Newsletter Management',
+      icon: 'blog',
+      children: [
+        { href: '/dashboard/send-newsletter', label: 'Send Newsletter' },
+        { href: '/dashboard/all-newsletters', label: 'All Newsletters' },
+        { href: '/dashboard/subscribers', label: 'Subscribers' },
+      ]
+    },
+    {
+      href: '/dashboard/all-gallery',
+      label: 'Gallery Management',
+      icon: 'blog',
+      children: [
+        { href: '/dashboard/add-gallery', label: 'Add Gallery' },
+        { href: '/dashboard/all-gallery', label: 'All Gallery' },
       ]
     },
   ]

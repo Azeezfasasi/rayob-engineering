@@ -206,6 +206,87 @@ export const login = async (req) => {
   }
 };
 
+// ADMIN: CREATE USER WITH ROLE ASSIGNMENT
+export const createUserByAdmin = async (req) => {
+  try {
+    await connectDB();
+
+    // Only allow admins/super-admins
+    if (!req.user || !["admin", "super-admin"].includes(req.user.role)) {
+      return NextResponse.json(
+        { success: false, message: "Forbidden: Admins only" },
+        { status: 403 }
+      );
+    }
+
+    const body = await req.json();
+    const { firstName, lastName, email, password, confirmPassword, role } = body;
+
+    // Validation
+    if (!firstName || !lastName || !email || !password || !role) {
+      return NextResponse.json(
+        { success: false, message: "All fields are required" },
+        { status: 400 }
+      );
+    }
+    if (password !== confirmPassword) {
+      return NextResponse.json(
+        { success: false, message: "Passwords do not match" },
+        { status: 400 }
+      );
+    }
+    if (!["client", "admin", "staff-member", "super-admin"].includes(role)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid role" },
+        { status: 400 }
+      );
+    }
+
+    // Check if user exists
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
+      return NextResponse.json(
+        { success: false, message: "Email already registered" },
+        { status: 409 }
+      );
+    }
+
+    // Create user with role
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      password,
+      role,
+      isEmailVerified: true, // Admin-created users are auto-verified
+      createdBy: req.user.id,
+    });
+    await user.save();
+
+    // Generate token for user (optional, not returned to admin)
+    // const token = generateToken(user._id);
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: "User created successfully",
+        user: user.getPublicProfile(),
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Admin create user error:", error);
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Failed to create user",
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+};
+
 // 3. VERIFY EMAIL - Confirm email address
 export const verifyEmail = async (req) => {
   try {

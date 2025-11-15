@@ -14,11 +14,25 @@ export default function ContactUsMain() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Thank you! Your message has been submitted.");
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Thank you! Your message has been submitted.");
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        alert(data.message || "Failed to submit message.");
+      }
+    } catch (error) {
+      alert("Failed to submit message.");
+      console.error("Contact form error:", error);
+    }
   };
 
   return (

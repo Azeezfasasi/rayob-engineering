@@ -15,19 +15,40 @@ export default function RequestQuote() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // TODO: connect to your backend API or Netlify form handler
-    alert("Thank you! Your request has been submitted.");
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      company: "",
-      service: "",
-      message: "",
-    });
+    setLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const res = await fetch("/api/quote", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess("Thank you! Your request has been submitted.");
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          company: "",
+          service: "",
+          message: "",
+        });
+      } else {
+        setError(data.message || "Failed to submit request.");
+      }
+    } catch (err) {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -133,13 +154,21 @@ export default function RequestQuote() {
               ></textarea>
             </div>
 
+            {/* Error/Success Messages */}
+            {error && (
+              <div className="md:col-span-2 text-center text-red-600 font-medium">{error}</div>
+            )}
+            {success && (
+              <div className="md:col-span-2 text-center text-green-600 font-medium">{success}</div>
+            )}
             {/* Submit */}
             <div className="md:col-span-2 text-center mt-4">
               <button
                 type="submit"
-                className="bg-[#db3a06] text-white px-10 py-3 rounded-lg font-semibold shadow hover:bg-orange-700 transition cursor-pointer"
+                className="bg-[#db3a06] text-white px-10 py-3 rounded-lg font-semibold shadow hover:bg-orange-700 transition cursor-pointer disabled:opacity-50"
+                disabled={loading}
               >
-                Submit Request
+                {loading ? "Submitting..." : "Submit Request"}
               </button>
             </div>
           </form>
