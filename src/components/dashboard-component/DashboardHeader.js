@@ -108,7 +108,7 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
                       <Link href="/" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Back to Home</Link>
                     </li>
                     <li>
-                      <Link href="/dashboard/settings" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Settings</Link>
+                      <Link href="/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Settings</Link>
                     </li>
                     <li>
                       <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition">Logout</button>
