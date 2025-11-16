@@ -1,4 +1,4 @@
-import { connectDB } from '@/src/utils/db';
+import { connectDB } from '../../../../utils/db';
 import { getBlogById, updateBlog, deleteBlog, changeBlogStatus } from '../../../server/controllers/blogController';
 
 export async function GET(req, context) {
