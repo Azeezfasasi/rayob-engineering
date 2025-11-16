@@ -6,25 +6,21 @@ import { Edit2, Trash2, Eye, EyeOff, Search, Filter, ChevronLeft, ChevronRight }
 import Link from 'next/link'
 
 const ManageBlogPage = () => {
-	// Router
 	const router = useRouter()
-
-	// State management
 	const [posts, setPosts] = useState([])
 	const [filteredPosts, setFilteredPosts] = useState([])
 	const [loading, setLoading] = useState(false)
 	const [currentPage, setCurrentPage] = useState(1)
 	const [searchQuery, setSearchQuery] = useState('')
-	const [statusFilter, setStatusFilter] = useState('all') // all, published, draft
+	const [statusFilter, setStatusFilter] = useState('all')
 	const [authorFilter, setAuthorFilter] = useState('all')
-	const [sortBy, setSortBy] = useState('date-desc') // date-desc, date-asc, title-asc, title-desc
+	const [sortBy, setSortBy] = useState('date-desc')
 	const [showDeleteModal, setShowDeleteModal] = useState(false)
 	const [postToDelete, setPostToDelete] = useState(null)
 	const [authors, setAuthors] = useState([])
 
 	const postsPerPage = 10
 
-	// Mock data - Replace with actual API calls
 	useEffect(() => {
 		loadPosts()
 		loadAuthors()
@@ -33,75 +29,9 @@ const ManageBlogPage = () => {
 	const loadPosts = async () => {
 		setLoading(true)
 		try {
-			// Mock API call - Replace with actual endpoint
-			const mockPosts = [
-				{
-					id: 1,
-					title: 'Getting Started with Next.js',
-					slug: 'getting-started-nextjs',
-					excerpt: 'Learn the basics of Next.js framework',
-					author: 'John Doe',
-					authorId: 1,
-					status: 'published',
-					createdAt: new Date('2025-01-10'),
-					updatedAt: new Date('2025-01-10'),
-					views: 245,
-					comments: 12,
-				},
-				{
-					id: 2,
-					title: 'Advanced React Patterns',
-					slug: 'advanced-react-patterns',
-					excerpt: 'Master advanced React design patterns',
-					author: 'Jane Smith',
-					authorId: 2,
-					status: 'published',
-					createdAt: new Date('2025-01-08'),
-					updatedAt: new Date('2025-01-08'),
-					views: 189,
-					comments: 8,
-				},
-				{
-					id: 3,
-					title: 'Tailwind CSS Best Practices',
-					slug: 'tailwind-css-best-practices',
-					excerpt: 'Tips and tricks for efficient Tailwind usage',
-					author: 'John Doe',
-					authorId: 1,
-					status: 'draft',
-					createdAt: new Date('2025-01-15'),
-					updatedAt: new Date('2025-01-15'),
-					views: 0,
-					comments: 0,
-				},
-				{
-					id: 4,
-					title: 'Building Scalable Applications',
-					slug: 'building-scalable-apps',
-					excerpt: 'Architecture patterns for large-scale systems',
-					author: 'Mike Johnson',
-					authorId: 3,
-					status: 'published',
-					createdAt: new Date('2025-01-05'),
-					updatedAt: new Date('2025-01-05'),
-					views: 512,
-					comments: 34,
-				},
-				{
-					id: 5,
-					title: 'Database Optimization Tips',
-					slug: 'database-optimization',
-					excerpt: 'Performance tuning for databases',
-					author: 'Jane Smith',
-					authorId: 2,
-					status: 'draft',
-					createdAt: new Date('2025-01-20'),
-					updatedAt: new Date('2025-01-20'),
-					views: 0,
-					comments: 0,
-				},
-			]
-			setPosts(mockPosts)
+			const res = await fetch('/api/blog')
+			const data = await res.json()
+			setPosts(data)
 		} catch (error) {
 			console.error('Failed to load posts:', error)
 		} finally {
@@ -109,84 +39,74 @@ const ManageBlogPage = () => {
 		}
 	}
 
-	const loadAuthors = () => {
-		// Mock authors data
-		const mockAuthors = [
-			{ id: 1, name: 'John Doe' },
-			{ id: 2, name: 'Jane Smith' },
-			{ id: 3, name: 'Mike Johnson' },
-		]
-		setAuthors(mockAuthors)
+	const loadAuthors = async () => {
+		// Extract authors from posts
+		try {
+			const res = await fetch('/api/blog')
+			const data = await res.json()
+			const uniqueAuthors = [...new Set(data.map(post => post.author))]
+			setAuthors(uniqueAuthors.map((name, idx) => ({ id: idx + 1, name })))
+		} catch (error) {
+			setAuthors([])
+		}
 	}
 
-	// Filter and search logic
 	useEffect(() => {
 		let filtered = [...posts]
-
-		// Search filter
 		if (searchQuery.trim()) {
 			const query = searchQuery.toLowerCase()
 			filtered = filtered.filter(
 				(post) =>
-					post.title.toLowerCase().includes(query) ||
-					post.excerpt.toLowerCase().includes(query) ||
-					post.author.toLowerCase().includes(query)
+					post.postTitle?.toLowerCase().includes(query) ||
+					post.content?.toLowerCase().includes(query) ||
+					post.author?.toLowerCase().includes(query)
 			)
 		}
-
-		// Status filter
 		if (statusFilter !== 'all') {
 			filtered = filtered.filter((post) => post.status === statusFilter)
 		}
-
-		// Author filter
 		if (authorFilter !== 'all') {
-			filtered = filtered.filter((post) => post.authorId === parseInt(authorFilter))
+			filtered = filtered.filter((post) => post.author === authors.find(a => a.id === parseInt(authorFilter))?.name)
 		}
-
-		// Sorting
 		if (sortBy === 'date-desc') {
-			filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+			filtered.sort((a, b) => new Date(b.publishDate) - new Date(a.publishDate))
 		} else if (sortBy === 'date-asc') {
-			filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+			filtered.sort((a, b) => new Date(a.publishDate) - new Date(b.publishDate))
 		} else if (sortBy === 'title-asc') {
-			filtered.sort((a, b) => a.title.localeCompare(b.title))
+			filtered.sort((a, b) => a.postTitle.localeCompare(b.postTitle))
 		} else if (sortBy === 'title-desc') {
-			filtered.sort((a, b) => b.title.localeCompare(a.title))
+			filtered.sort((a, b) => b.postTitle.localeCompare(a.postTitle))
 		}
-
 		setFilteredPosts(filtered)
-		setCurrentPage(1) // Reset to first page when filters change
-	}, [posts, searchQuery, statusFilter, authorFilter, sortBy])
+		setCurrentPage(1)
+	}, [posts, searchQuery, statusFilter, authorFilter, sortBy, authors])
 
-	// Pagination
 	const indexOfLastPost = currentPage * postsPerPage
 	const indexOfFirstPost = indexOfLastPost - postsPerPage
 	const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost)
 	const totalPages = Math.ceil(filteredPosts.length / postsPerPage)
 
-	// Actions
 	const handleEdit = (postId) => {
-		// Navigate to edit page using Next.js router
 		router.push(`/dashboard/manage-blog/${postId}`)
 	}
 
 	const handleStatusChange = useCallback(
 		async (postId, newStatus) => {
 			try {
-				// Mock API call - Replace with actual endpoint
-				setPosts(
-					posts.map((post) =>
-						post.id === postId ? { ...post, status: newStatus, updatedAt: new Date() } : post
-					)
-				)
-				// Show success message
-				console.log(`Post ${postId} status changed to ${newStatus}`)
+				const res = await fetch(`/api/blog/${postId}`, {
+					method: 'PATCH',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ status: newStatus })
+				})
+				if (res.ok) {
+					loadPosts()
+					console.log(`Post ${postId} status changed to ${newStatus}`)
+				}
 			} catch (error) {
 				console.error('Failed to change status:', error)
 			}
 		},
-		[posts]
+		[]
 	)
 
 	const handleDeleteClick = (post) => {
@@ -196,13 +116,14 @@ const ManageBlogPage = () => {
 
 	const handleDeleteConfirm = async () => {
 		if (!postToDelete) return
-
 		try {
-			// Mock API call - Replace with actual endpoint
-			setPosts(posts.filter((post) => post.id !== postToDelete.id))
-			setShowDeleteModal(false)
-			setPostToDelete(null)
-			console.log(`Post ${postToDelete.id} deleted successfully`)
+			const res = await fetch(`/api/blog/${postToDelete._id}`, { method: 'DELETE' })
+			if (res.ok) {
+				loadPosts()
+				setShowDeleteModal(false)
+				setPostToDelete(null)
+				console.log(`Post ${postToDelete._id} deleted successfully`)
+			}
 		} catch (error) {
 			console.error('Failed to delete post:', error)
 		}
@@ -217,7 +138,7 @@ const ManageBlogPage = () => {
 	}
 
 	return (
-		<div className="space-y-6 border overflow-x-hidden">
+		<div className="space-y-6 overflow-x-hidden">
 			{/* Header with Create Button */}
 			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 overflow-hidden">
 				<h2 className="text-2xl font-bold text-gray-900">Manage Blog Posts</h2>
@@ -369,11 +290,11 @@ const ManageBlogPage = () => {
 							</thead>
 							<tbody className="divide-y divide-gray-200">
 								{currentPosts.map((post) => (
-									<tr key={post.id} className="hover:bg-gray-50 transition-colors">
+									<tr key={post._id} className="hover:bg-gray-50 transition-colors">
 										<td className="px-6 py-4 text-sm">
 											<div>
-												<p className="font-medium text-gray-900">{post.title}</p>
-												<p className="text-xs text-gray-500 truncate">{post.excerpt}</p>
+												<p className="font-medium text-gray-900">{post.postTitle}</p>
+												<p className="text-xs text-gray-500 truncate">{post.content?.slice(0, 80) || ''}</p>
 											</div>
 										</td>
 										<td className="px-6 py-4 text-sm text-gray-700">{post.author}</td>
@@ -395,44 +316,43 @@ const ManageBlogPage = () => {
 												</span>
 											</div>
 										</td>
-										<td className="px-6 py-4 text-sm text-gray-700">{formatDate(post.createdAt)}</td>
-										<td className="px-6 py-4 text-sm text-gray-700">{post.views}</td>
+										<td className="px-6 py-4 text-sm text-gray-700">{formatDate(post.publishDate)}</td>
+										<td className="px-6 py-4 text-sm text-gray-700">{post.views || 0}</td>
 										<td className="px-6 py-4 text-right">
 											<div className="flex items-center justify-end gap-2">
 												{/* Status Toggle Dropdown */}
 												<div className="relative group">
 													<button
-														title="Change Status"
-														className={`p-2 rounded-lg transition-colors ${
-															post.status === 'published'
-																? 'text-green-600 hover:bg-green-100 bg-green-50'
-																: 'text-yellow-600 hover:bg-yellow-100 bg-yellow-50'
-														}`}
-													>
-														{post.status === 'published' ? (
-															<Eye className="w-4 h-4" />
-														) : (
-															<EyeOff className="w-4 h-4" />
-														)}
+															title="Change Status"
+															className={`p-2 rounded-lg transition-colors ${
+																post.status === 'published'
+																	? 'text-green-600 hover:bg-green-100 bg-green-50'
+																	: 'text-yellow-600 hover:bg-yellow-100 bg-yellow-50'
+															}`}
+														>
+															{post.status === 'published' ? (
+																<Eye className="w-4 h-4" />
+															) : (
+																<EyeOff className="w-4 h-4" />
+															)}
 													</button>
 													<div className="absolute right-0 bottom-full mb-2 hidden group-hover:block bg-white border border-gray-200 rounded-lg shadow-lg z-10">
 														<button
-															onClick={() =>
-																handleStatusChange(
-																	post.id,
-																	post.status === 'published' ? 'draft' : 'published'
-																)
-															}
-															className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 whitespace-nowrap first:rounded-t-lg last:rounded-b-lg"
-														>
-															{post.status === 'published' ? 'Move to Draft' : 'Publish'}
-														</button>
+																	onClick={() =>
+																		handleStatusChange(
+																		post._id,
+																		post.status === 'published' ? 'draft' : 'published'
+																	)
+																}
+																className="block w-full px-4 py-2 text-left text-sm hover:bg-gray-100 whitespace-nowrap first:rounded-t-lg last:rounded-b-lg"
+															>
+																{post.status === 'published' ? 'Move to Draft' : 'Publish'}
+															</button>
 													</div>
 												</div>
-
 												{/* Edit Button */}
 												<button
-													onClick={() => handleEdit(post.id)}
+													onClick={() => handleEdit(post._id)}
 													title="Edit Post"
 													className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors bg-blue-50"
 												>

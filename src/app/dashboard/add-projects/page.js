@@ -3,23 +3,23 @@ import React, { useState } from 'react'
 
 export default function AddProjectsPage() {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    projectName: '',
+    projectDescription: '',
     category: '',
     location: '',
     budget: '',
     startDate: '',
-    endDate: '',
-    status: 'in-progress',
-    client: '',
+    expectedEndDate: '',
+    projectStatus: 'planning',
+    clientName: '',
     teamLead: '',
-    teamMembers: '',
+    teamMembers: '', // comma separated string, will convert to array
     featuredImage: null,
     galleryImages: [],
-    technologies: '',
-    materials: '',
-    completionPercentage: 0,
-    highlights: ''
+    technologies: '', // comma separated string, will convert to array
+    materialsUsed: '', // comma separated string, will convert to array
+    completion: 0,
+    projectHighlights: ''
   })
 
   const [loading, setLoading] = useState(false)
@@ -47,25 +47,43 @@ export default function AddProjectsPage() {
     try {
       // Prepare FormData for file uploads
       const data = new FormData()
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'galleryImages' && Array.isArray(value)) {
-          value.forEach((file, i) => data.append(`galleryImages[${i}]`, file))
-        } else if (value instanceof File) {
-          data.append(key, value)
-        } else if (value !== null && value !== '') {
-          data.append(key, value)
-        }
-      })
+      // Prepare fields for backend (convert comma separated to arrays)
+      const fields = {
+        ...formData,
+        teamMembers: formData.teamMembers
+          ? formData.teamMembers.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        technologies: formData.technologies
+          ? formData.technologies.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        materialsUsed: formData.materialsUsed
+          ? formData.materialsUsed.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        budget: formData.budget ? Number(formData.budget) : 0,
+        completion: formData.completion ? Number(formData.completion) : 0,
+      };
+      // Remove file fields from fields object
+      delete fields.featuredImage;
+      delete fields.galleryImages;
+      // Send all fields as JSON string
+      data.append('fields', JSON.stringify(fields));
+      // Attach images
+      if (formData.featuredImage) {
+        data.append('featuredImage', formData.featuredImage);
+      }
+      if (formData.galleryImages && formData.galleryImages.length > 0) {
+        formData.galleryImages.forEach((file) => data.append('galleryImages', file));
+      }
 
-      const response = await fetch('/api/projects/add', { method: 'POST', body: data })
+      const response = await fetch('/api/project', { method: 'POST', body: data })
       const result = await response.json()
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Project added successfully!' })
         setFormData({
-          name: '', description: '', category: '', location: '', budget: '', startDate: '', endDate: '',
-          status: 'in-progress', client: '', teamLead: '', teamMembers: '', featuredImage: null,
-          galleryImages: [], technologies: '', materials: '', completionPercentage: 0, highlights: ''
+          projectName: '', projectDescription: '', category: '', location: '', budget: '', startDate: '', expectedEndDate: '',
+          projectStatus: 'planning', clientName: '', teamLead: '', teamMembers: '', featuredImage: null,
+          galleryImages: [], technologies: '', materialsUsed: '', completion: 0, projectHighlights: ''
         })
       } else {
         setMessage({ type: 'error', text: result.message || 'Failed to add project' })
@@ -100,8 +118,8 @@ export default function AddProjectsPage() {
             <legend className="text-lg font-semibold text-gray-900 mb-4">Project Basics</legend>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Commercial Complex" />
+                <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
+                <input type="text" id="projectName" name="projectName" value={formData.projectName} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Commercial Complex" />
               </div>
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
@@ -115,8 +133,8 @@ export default function AddProjectsPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="client" className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
-                <input type="text" id="client" name="client" value={formData.client} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="Client name" />
+                <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
+                <input type="text" id="clientName" name="clientName" value={formData.clientName} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="Client name" />
               </div>
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
@@ -127,8 +145,8 @@ export default function AddProjectsPage() {
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Project Description *</label>
-            <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows="4" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Describe the project in detail..." />
+            <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 mb-2">Project Description *</label>
+            <textarea id="projectDescription" name="projectDescription" value={formData.projectDescription} onChange={handleInputChange} required rows="4" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Describe the project in detail..." />
           </div>
 
           {/* Timeline & Budget */}
@@ -140,28 +158,28 @@ export default function AddProjectsPage() {
                 <input type="date" id="startDate" name="startDate" value={formData.startDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
               <div>
-                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">Expected End Date *</label>
-                <input type="date" id="endDate" name="endDate" value={formData.endDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                <label htmlFor="expectedEndDate" className="block text-sm font-medium text-gray-700 mb-2">Expected End Date *</label>
+                <input type="date" id="expectedEndDate" name="expectedEndDate" value={formData.expectedEndDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
               <div>
                 <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">Budget (₦) *</label>
                 <input type="number" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} required step="1000" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="0" />
               </div>
               <div>
-                <label htmlFor="completionPercentage" className="block text-sm font-medium text-gray-700 mb-2">Completion % (0-100)</label>
-                <input type="number" id="completionPercentage" name="completionPercentage" value={formData.completionPercentage} onChange={handleInputChange} min="0" max="100" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                <label htmlFor="completion" className="block text-sm font-medium text-gray-700 mb-2">Completion % (0-100)</label>
+                <input type="number" id="completion" name="completion" value={formData.completion} onChange={handleInputChange} min="0" max="100" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
             </div>
           </fieldset>
 
           {/* Status */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">Project Status *</label>
-            <select id="status" name="status" value={formData.status} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
+            <label htmlFor="projectStatus" className="block text-sm font-medium text-gray-700 mb-2">Project Status *</label>
+            <select id="projectStatus" name="projectStatus" value={formData.projectStatus} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
               <option value="planning">Planning</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
-              <option value="on-hold">On Hold</option>
+              <option value="on hold">On Hold</option>
             </select>
           </div>
 
@@ -189,16 +207,16 @@ export default function AddProjectsPage() {
                 <textarea id="technologies" name="technologies" value={formData.technologies} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="e.g., BIM, sustainable materials, etc." />
               </div>
               <div>
-                <label htmlFor="materials" className="block text-sm font-medium text-gray-700 mb-2">Materials Used</label>
-                <textarea id="materials" name="materials" value={formData.materials} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="e.g., concrete, steel, etc." />
+                <label htmlFor="materialsUsed" className="block text-sm font-medium text-gray-700 mb-2">Materials Used</label>
+                <textarea id="materialsUsed" name="materialsUsed" value={formData.materialsUsed} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="e.g., concrete, steel, etc." />
               </div>
             </div>
           </fieldset>
 
           {/* Highlights */}
           <div>
-            <label htmlFor="highlights" className="block text-sm font-medium text-gray-700 mb-2">Project Highlights</label>
-            <textarea id="highlights" name="highlights" value={formData.highlights} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Key achievements, awards, special features..." />
+            <label htmlFor="projectHighlights" className="block text-sm font-medium text-gray-700 mb-2">Project Highlights</label>
+            <textarea id="projectHighlights" name="projectHighlights" value={formData.projectHighlights} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Key achievements, awards, special features..." />
           </div>
 
           {/* Images */}

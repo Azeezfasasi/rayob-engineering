@@ -1,33 +1,31 @@
-import Image from "next/image";
+"use client";
 
-const projects = [
-  {
-    id: 1,
-    title: "Industrial Plant Construction",
-    description:
-      "Design and execution of a state-of-the-art manufacturing facility with advanced safety systems and energy efficiency.",
-    image: "/images/projectplaceholder.png", // Replace with real image
-    category: "Industrial",
-  },
-  {
-    id: 2,
-    title: "Commercial Building Renovation",
-    description:
-      "Full-scale renovation of a multi-floor office complex, upgrading electrical, plumbing, and HVAC systems.",
-    image: "/images/projectplaceholder.png",
-    category: "Commercial",
-  },
-  {
-    id: 3,
-    title: "Residential Estate Development",
-    description:
-      "Construction of a modern residential estate featuring sustainable materials and smart home technologies.",
-    image: "/images/projectplaceholder.png",
-    category: "Residential",
-  },
-];
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 export default function FeaturedProjects() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProjects() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/project");
+        const data = await res.json();
+        // Sort by createdAt descending and take the latest 3
+        const sorted = (data.projects || []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setProjects(sorted.slice(0, 3));
+      } catch (err) {
+        setProjects([]);
+      }
+      setLoading(false);
+    }
+    fetchProjects();
+  }, []);
+
   return (
     <section className="bg-white py-16">
       <div className="container mx-auto px-6 lg:px-20">
@@ -44,37 +42,49 @@ export default function FeaturedProjects() {
 
         {/* Project Grid */}
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-gray-50 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
-            >
-              <div className="relative w-full h-56">
-                <Image
-                  src={project.image}
-                  alt={project.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              <div className="p-6">
-                <span className="text-sm text-[#db3a06] font-semibold uppercase">
-                  {project.category}
-                </span>
-                <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3">
-                  {project.title}
-                </h3>
-                <p className="text-gray-600 mb-4">{project.description}</p>
-                <a
-                  href={`/projects/${project.id}`} // Future dynamic route
-                  className="text-[#db3a06] font-semibold hover:text-orange-600 transition"
-                >
-                  View Details →
-                </a>
-              </div>
+          {loading ? (
+            <div className="col-span-full text-center py-10">
+              <p className="text-gray-500">Loading projects...</p>
             </div>
-          ))}
+          ) : projects.length === 0 ? (
+            <div className="col-span-full text-center py-10">
+              <p className="text-gray-500">No featured projects found.</p>
+            </div>
+          ) : (
+            projects.map((project) => (
+              <div
+                key={project._id}
+                className="bg-gray-50 rounded-xl shadow-md hover:shadow-lg transition overflow-hidden"
+              >
+                <div className="relative w-full h-56">
+                  <Image
+                    src={project.featuredImage}
+                    alt={project.projectName}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+
+                <div className="p-6">
+                  <span className="text-sm text-[#db3a06] font-semibold uppercase">
+                    {project.category}
+                  </span>
+                  <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3">
+                    {project.projectName}
+                  </h3>
+                  <p className="text-gray-600 mb-4">
+                    {project.projectDescription}
+                  </p>
+                  <a
+                    href={`/projects/${project._id}`}
+                    className="text-[#db3a06] font-semibold hover:text-orange-600 transition"
+                  >
+                    View Details →
+                  </a>
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* CTA */}

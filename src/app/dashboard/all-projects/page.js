@@ -2,15 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 
-// Sample project data - replace with API call
-const SAMPLE_PROJECTS = [
-  { id: 1, name: 'Commercial Complex Alpha', category: 'commercial', location: 'Lagos', budget: 50000000, status: 'in-progress', completion: 65, enabled: true },
-  { id: 2, name: 'Residential Estate Beta', category: 'residential', location: 'Abuja', budget: 35000000, status: 'completed', completion: 100, enabled: true },
-  { id: 3, name: 'Industrial Facility Gamma', category: 'industrial', location: 'Port Harcourt', budget: 80000000, status: 'in-progress', completion: 45, enabled: true },
-  { id: 4, name: 'Infrastructure Highway', category: 'infrastructure', location: 'Lagos-Ibadan', budget: 120000000, status: 'planning', completion: 20, enabled: false },
-  { id: 5, name: 'Office Renovation Delta', category: 'renovation', location: 'Lagos', budget: 15000000, status: 'completed', completion: 100, enabled: true },
-  { id: 6, name: 'Shopping Mall Epsilon', category: 'commercial', location: 'Abuja', budget: 90000000, status: 'in-progress', completion: 55, enabled: true },
-]
+// Backend integration: fetch projects from API
 
 function getStatusColor(status) {
   switch (status) {
@@ -34,8 +26,8 @@ function getCategoryBadge(category) {
 }
 
 export default function AllProjectsPage() {
-  const [projects, setProjects] = useState(SAMPLE_PROJECTS)
-  const [filteredProjects, setFilteredProjects] = useState(SAMPLE_PROJECTS)
+  const [projects, setProjects] = useState([])
+  const [filteredProjects, setFilteredProjects] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterCategory, setFilterCategory] = useState('all')
@@ -44,25 +36,42 @@ export default function AllProjectsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
+  // Fetch projects from backend
+  useEffect(() => {
+    async function fetchProjects() {
+      setLoading(true);
+      try {
+        const res = await fetch('/api/project');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.projects)) {
+          setProjects(data.projects);
+        } else {
+          setProjects([]);
+        }
+      } catch (err) {
+        setProjects([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
+
   // Filter projects based on search and filters
   useEffect(() => {
-    let filtered = projects
-
+    let filtered = projects;
     if (searchTerm) {
-      filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.location.toLowerCase().includes(searchTerm.toLowerCase()))
+      filtered = filtered.filter(p => (p.projectName || '').toLowerCase().includes(searchTerm.toLowerCase()) || (p.location || '').toLowerCase().includes(searchTerm.toLowerCase()));
     }
-
     if (filterStatus !== 'all') {
-      filtered = filtered.filter(p => p.status === filterStatus)
+      filtered = filtered.filter(p => p.projectStatus === filterStatus);
     }
-
     if (filterCategory !== 'all') {
-      filtered = filtered.filter(p => p.category === filterCategory)
+      filtered = filtered.filter(p => p.category === filterCategory);
     }
-
-    setFilteredProjects(filtered)
-    setCurrentPage(1) // Reset to page 1 when filters change
-  }, [searchTerm, filterStatus, filterCategory, projects])
+    setFilteredProjects(filtered);
+    setCurrentPage(1);
+  }, [searchTerm, filterStatus, filterCategory, projects]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredProjects.length / itemsPerPage)
@@ -71,66 +80,56 @@ export default function AllProjectsPage() {
   const paginatedProjects = filteredProjects.slice(startIndex, endIndex)
 
   async function handleDelete(id) {
-    if (!confirm('Are you sure you want to delete this project?')) return
-
-    setLoading(true)
+    if (!confirm('Are you sure you want to delete this project?')) return;
+    setLoading(true);
     try {
-      // Try API call, but fall back to local state if it fails
-      try {
-        const response = await fetch(`/api/projects/${id}`, { method: 'DELETE' })
-        if (response.ok) {
-          setProjects(projects.filter(p => p.id !== id))
-          setMessage({ type: 'success', text: 'Project deleted successfully!' })
-          setTimeout(() => setMessage(null), 3000)
-          return
-        }
-      } catch (apiErr) {
-        console.log('API not available, using local state')
+      const response = await fetch(`/api/project/${id}`, { method: 'DELETE' });
+      if (response.ok) {
+        setProjects(projects.filter(p => p._id !== id));
+        setMessage({ type: 'success', text: 'Project deleted successfully!' });
+        setTimeout(() => setMessage(null), 3000);
+        return;
       }
-
-      // Fall back to local state management
-      setProjects(projects.filter(p => p.id !== id))
-      setMessage({ type: 'success', text: 'Project deleted successfully!' })
-      setTimeout(() => setMessage(null), 3000)
+      let result = { message: 'Failed to delete project' };
+      try {
+        result = await response.json();
+      } catch (e) {
+        const text = await response.text();
+        result = { message: text };
+      }
+      setMessage({ type: 'error', text: result.message || 'Failed to delete project' });
     } catch (err) {
-      setMessage({ type: 'error', text: `Error: ${err.message}` })
+      setMessage({ type: 'error', text: `Error: ${err.message}` });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   async function handleToggle(id) {
-    const project = projects.find(p => p.id === id)
-    if (!project) return
-
-    setLoading(true)
+    const project = projects.find(p => p._id === id);
+    if (!project) return;
+    setLoading(true);
     try {
-      // Try API call, but fall back to local state if it fails
-      try {
-        const response = await fetch(`/api/projects/${id}/toggle`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ enabled: !project.enabled })
-        })
-
-        if (response.ok) {
-          setProjects(projects.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p))
-          setMessage({ type: 'success', text: `Project ${!project.enabled ? 'enabled' : 'disabled'} successfully!` })
-          setTimeout(() => setMessage(null), 3000)
-          return
-        }
-      } catch (apiErr) {
-        console.log('API not available, using local state')
+      // PATCH to disable/enable project
+      const response = await fetch(`/api/project/${id}?disable=${project.isDisabled ? '0' : '1'}`, { method: 'PATCH' });
+      if (response.ok) {
+        setProjects(projects.map(p => p._id === id ? { ...p, isDisabled: !p.isDisabled, projectStatus: !p.isDisabled ? 'disabled' : 'planning' } : p));
+        setMessage({ type: 'success', text: `Project ${!project.isDisabled ? 'disabled' : 'enabled'} successfully!` });
+        setTimeout(() => setMessage(null), 3000);
+        return;
       }
-
-      // Fall back to local state management
-      setProjects(projects.map(p => p.id === id ? { ...p, enabled: !p.enabled } : p))
-      setMessage({ type: 'success', text: `Project ${!project.enabled ? 'enabled' : 'disabled'} successfully!` })
-      setTimeout(() => setMessage(null), 3000)
+      let result = { message: 'Failed to update project' };
+      try {
+        result = await response.json();
+      } catch (e) {
+        const text = await response.text();
+        result = { message: text };
+      }
+      setMessage({ type: 'error', text: result.message || 'Failed to update project' });
     } catch (err) {
-      setMessage({ type: 'error', text: `Error: ${err.message}` })
+      setMessage({ type: 'error', text: `Error: ${err.message}` });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -213,17 +212,17 @@ export default function AllProjectsPage() {
             <tbody className="divide-y divide-gray-200">
               {paginatedProjects.length > 0 ? (
                 paginatedProjects.map(project => (
-                  <tr key={project.id} className={`hover:bg-gray-50 ${!project.enabled ? 'opacity-60' : ''}`}>
-                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{project.name}</td>
+                  <tr key={project._id} className={`hover:bg-gray-50 ${project.isDisabled ? 'opacity-60' : ''}`}>
+                    <td className="px-6 py-4 text-sm font-medium text-gray-900">{project.projectName}</td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getCategoryBadge(project.category)}`}>
-                        {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${getCategoryBadge(project.category || '')}`}>
+                        {(project.category || '').charAt(0).toUpperCase() + (project.category || '').slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-600">{project.location}</td>
                     <td className="px-6 py-4 text-sm">
-                      <span className={`inline-block px-3 py-1 rounded-md border text-xs font-medium ${getStatusColor(project.status)}`}>
-                        {project.status.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                      <span className={`inline-block px-3 py-1 rounded-md border text-xs font-medium ${getStatusColor(project.projectStatus || '')}`}>
+                        {(project.projectStatus || '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-gray-900">₦{(project.budget / 1000000).toFixed(1)}M</td>
@@ -237,13 +236,13 @@ export default function AllProjectsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm space-y-2">
                       <div className="flex gap-2">
-                        <Link href={`/dashboard/all-projects/${project.id}/edit`} className="px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-xs font-medium">
+                        <Link href={`/dashboard/all-projects/${project._id}/edit`} className="px-3 py-1 bg-blue-50 text-blue-600 rounded hover:bg-blue-100 text-xs font-medium">
                           Edit
                         </Link>
-                        <button onClick={() => handleToggle(project.id)} disabled={loading} className={`px-3 py-1 rounded text-xs font-medium ${project.enabled ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
-                          {project.enabled ? 'Disable' : 'Enable'}
+                        <button onClick={() => handleToggle(project._id)} disabled={loading} className={`px-3 py-1 rounded text-xs font-medium ${!project.isDisabled ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
+                          {!project.isDisabled ? 'Disable' : 'Enable'}
                         </button>
-                        <button onClick={() => handleDelete(project.id)} disabled={loading} className="px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 text-xs font-medium">
+                        <button onClick={() => handleDelete(project._id)} disabled={loading} className="px-3 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100 text-xs font-medium">
                           Delete
                         </button>
                       </div>
@@ -290,22 +289,22 @@ export default function AllProjectsPage() {
         <div className="lg:hidden space-y-4">
           {paginatedProjects.length > 0 ? (
             paginatedProjects.map(project => (
-              <div key={project.id} className={`bg-white rounded-lg shadow-sm p-4 border border-gray-200 ${!project.enabled ? 'opacity-60' : ''}`}>
+              <div key={project._id} className={`bg-white rounded-lg shadow-sm p-4 border border-gray-200 ${project.isDisabled ? 'opacity-60' : ''}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <h3 className="font-semibold text-gray-900">{project.name}</h3>
+                    <h3 className="font-semibold text-gray-900">{project.projectName}</h3>
                     <p className="text-sm text-gray-600">{project.location}</p>
                   </div>
-                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryBadge(project.category)}`}>
-                    {project.category.charAt(0).toUpperCase() + project.category.slice(1)}
+                  <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getCategoryBadge(project.category || '')}`}>
+                    {(project.category || '').charAt(0).toUpperCase() + (project.category || '').slice(1)}
                   </span>
                 </div>
 
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Status:</span>
-                    <span className={`inline-block px-3 py-1 rounded-md border text-xs font-medium ${getStatusColor(project.status)}`}>
-                      {project.status.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                    <span className={`inline-block px-3 py-1 rounded-md border text-xs font-medium ${getStatusColor(project.projectStatus || '')}`}>
+                      {(project.projectStatus || '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -324,13 +323,13 @@ export default function AllProjectsPage() {
                 </div>
 
                 <div className="flex gap-2">
-                  <Link href={`/dashboard/all-projects/${project.id}/edit`} className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded text-sm font-medium text-center hover:bg-blue-100">
+                  <Link href={`/dashboard/all-projects/${project._id}/edit`} className="flex-1 px-3 py-2 bg-blue-50 text-blue-600 rounded text-sm font-medium text-center hover:bg-blue-100">
                     Edit
                   </Link>
-                  <button onClick={() => handleToggle(project.id)} disabled={loading} className={`flex-1 px-3 py-2 rounded text-sm font-medium ${project.enabled ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
-                    {project.enabled ? 'Disable' : 'Enable'}
+                  <button onClick={() => handleToggle(project._id)} disabled={loading} className={`flex-1 px-3 py-2 rounded text-sm font-medium ${!project.isDisabled ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}>
+                    {!project.isDisabled ? 'Disable' : 'Enable'}
                   </button>
-                  <button onClick={() => handleDelete(project.id)} disabled={loading} className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded text-sm font-medium hover:bg-red-100">
+                  <button onClick={() => handleDelete(project._id)} disabled={loading} className="flex-1 px-3 py-2 bg-red-50 text-red-600 rounded text-sm font-medium hover:bg-red-100">
                     Delete
                   </button>
                 </div>

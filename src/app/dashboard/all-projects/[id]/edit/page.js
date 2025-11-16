@@ -3,71 +3,72 @@ import React, { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 
-// Sample project data - replace with API call
-const SAMPLE_PROJECTS = [
-  { id: 1, name: 'Commercial Complex Alpha', category: 'commercial', location: 'Lagos', budget: 50000000, status: 'in-progress', completion: 65, enabled: true, description: 'A large commercial complex with modern facilities', startDate: '2023-01-15', endDate: '2024-12-31', client: 'XYZ Corp', teamLead: 'John Doe', teamMembers: 'Jane Smith, Bob Johnson', technologies: 'BIM, CAD', materials: 'Concrete, Steel, Glass', highlights: 'LEED Certified, Green Building' },
-  { id: 2, name: 'Residential Estate Beta', category: 'residential', location: 'Abuja', budget: 35000000, status: 'completed', completion: 100, enabled: true, description: 'Premium residential estate', startDate: '2022-06-01', endDate: '2023-12-15', client: 'Home Builders Inc', teamLead: 'Alice Johnson', teamMembers: 'Charlie Brown, Diana Prince', technologies: 'Traditional methods', materials: 'Brick, Concrete', highlights: 'Award-winning architecture' },
-  { id: 3, name: 'Industrial Facility Gamma', category: 'industrial', location: 'Port Harcourt', budget: 80000000, status: 'in-progress', completion: 45, enabled: true, description: 'Manufacturing facility', startDate: '2023-03-10', endDate: '2024-09-30', client: 'Industrial Co', teamLead: 'Mark Wilson', teamMembers: 'Sarah Davis, Tom Hardy', technologies: 'Advanced automation', materials: 'Steel, Reinforced Concrete', highlights: 'State-of-the-art equipment' },
-  { id: 4, name: 'Infrastructure Highway', category: 'infrastructure', location: 'Lagos-Ibadan', budget: 120000000, status: 'planning', completion: 20, enabled: false, description: 'Major highway construction', startDate: '2024-01-01', endDate: '2026-06-30', client: 'Federal Government', teamLead: 'Gov Official', teamMembers: 'Contractor A, Contractor B', technologies: 'Road engineering standards', materials: 'Asphalt, Concrete', highlights: 'Economic corridor' },
-  { id: 5, name: 'Office Renovation Delta', category: 'renovation', location: 'Lagos', budget: 15000000, status: 'completed', completion: 100, enabled: true, description: 'Corporate office renovation', startDate: '2023-08-01', endDate: '2023-11-30', client: 'Tech Corp', teamLead: 'Emma Stone', teamMembers: 'Oliver Wood', technologies: 'Modern design software', materials: 'Wood, Glass, Aluminum', highlights: 'Modern workspace design' },
-  { id: 6, name: 'Shopping Mall Epsilon', category: 'commercial', location: 'Abuja', budget: 90000000, status: 'in-progress', completion: 55, enabled: true, description: 'Large shopping complex', startDate: '2023-05-20', endDate: '2025-03-31', client: 'Retail Group', teamLead: 'Henry Ford', teamMembers: 'Grace Lee, Ivan Chen', technologies: 'Smart building systems', materials: 'Composite materials', highlights: 'Multi-level parking, Entertainment zone' },
-]
 
 export default function EditProjectPage() {
   const router = useRouter()
   const params = useParams()
-  const projectId = parseInt(params.id)
+  const projectId = params.id
 
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    projectName: '',
+    projectDescription: '',
     category: '',
     location: '',
     budget: '',
     startDate: '',
-    endDate: '',
-    status: 'in-progress',
-    client: '',
+    expectedEndDate: '',
+    projectStatus: 'planning',
+    clientName: '',
     teamLead: '',
     teamMembers: '',
     featuredImage: null,
     galleryImages: [],
     technologies: '',
-    materials: '',
-    completionPercentage: 0,
-    highlights: ''
+    materialsUsed: '',
+    completion: 0,
+    projectHighlights: ''
   })
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
 
-  // Load project data on mount
+  // Load project data from backend on mount
   useEffect(() => {
-    const project = SAMPLE_PROJECTS.find(p => p.id === projectId)
-    if (project) {
-      setFormData({
-        name: project.name,
-        description: project.description || '',
-        category: project.category,
-        location: project.location,
-        budget: project.budget,
-        startDate: project.startDate,
-        endDate: project.endDate,
-        status: project.status,
-        client: project.client || '',
-        teamLead: project.teamLead || '',
-        teamMembers: project.teamMembers || '',
-        featuredImage: null,
-        galleryImages: [],
-        technologies: project.technologies || '',
-        materials: project.materials || '',
-        completionPercentage: project.completion,
-        highlights: project.highlights || ''
-      })
+    async function fetchProject() {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/project/${projectId}`);
+        const data = await res.json();
+        if (data.success && data.project) {
+          setFormData({
+            projectName: data.project.projectName,
+            projectDescription: data.project.projectDescription || '',
+            category: data.project.category,
+            location: data.project.location,
+            budget: data.project.budget,
+            startDate: data.project.startDate ? data.project.startDate.substring(0, 10) : '',
+            expectedEndDate: data.project.expectedEndDate ? data.project.expectedEndDate.substring(0, 10) : '',
+            projectStatus: data.project.projectStatus,
+            clientName: data.project.clientName || '',
+            teamLead: data.project.teamLead || '',
+            teamMembers: (data.project.teamMembers || []).join(', '),
+            featuredImage: null,
+            galleryImages: [],
+            technologies: (data.project.technologies || []).join(', '),
+            materialsUsed: (data.project.materialsUsed || []).join(', '),
+            completion: data.project.completion,
+            projectHighlights: data.project.projectHighlights || ''
+          });
+        }
+      } catch (err) {
+        setMessage({ type: 'error', text: 'Failed to load project' });
+      } finally {
+        setLoading(false);
+      }
     }
-    setLoading(false)
-  }, [projectId])
+    fetchProject();
+  }, [projectId]);
 
   function handleInputChange(e) {
     const { name, value } = e.target
@@ -84,40 +85,47 @@ export default function EditProjectPage() {
   }
 
   async function handleSubmit(e) {
-    e.preventDefault()
-    setSaving(true)
-    setMessage(null)
-
+    e.preventDefault();
+    setSaving(true);
+    setMessage(null);
     try {
-      // Prepare FormData for file uploads
-      const data = new FormData()
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'galleryImages' && Array.isArray(value)) {
-          value.forEach((file, i) => {
-            if (file instanceof File) {
-              data.append(`galleryImages[${i}]`, file)
-            }
-          })
-        } else if (value instanceof File) {
-          data.append(key, value)
-        } else if (value !== null && value !== '') {
-          data.append(key, value)
-        }
-      })
-
-      const response = await fetch(`/api/projects/${projectId}`, { method: 'PUT', body: data })
-      const result = await response.json()
-
+      const data = new FormData();
+      // Prepare fields for backend (convert comma separated to arrays)
+      const fields = {
+        ...formData,
+        teamMembers: formData.teamMembers
+          ? formData.teamMembers.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        technologies: formData.technologies
+          ? formData.technologies.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        materialsUsed: formData.materialsUsed
+          ? formData.materialsUsed.split(',').map((s) => s.trim()).filter(Boolean)
+          : [],
+        budget: formData.budget ? Number(formData.budget) : 0,
+        completion: formData.completion ? Number(formData.completion) : 0,
+      };
+      delete fields.featuredImage;
+      delete fields.galleryImages;
+      data.append('fields', JSON.stringify(fields));
+      if (formData.featuredImage) {
+        data.append('featuredImage', formData.featuredImage);
+      }
+      if (formData.galleryImages && formData.galleryImages.length > 0) {
+        formData.galleryImages.forEach((file) => data.append('galleryImages', file));
+      }
+      const response = await fetch(`/api/project/${projectId}`, { method: 'PUT', body: data });
+      const result = await response.json();
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Project updated successfully!' })
-        setTimeout(() => router.push('/dashboard/all-projects'), 2000)
+        setMessage({ type: 'success', text: 'Project updated successfully!' });
+        setTimeout(() => router.push('/dashboard/all-projects'), 2000);
       } else {
-        setMessage({ type: 'error', text: result.message || 'Failed to update project' })
+        setMessage({ type: 'error', text: result.message || 'Failed to update project' });
       }
     } catch (err) {
-      setMessage({ type: 'error', text: `Error: ${err.message}` })
+      setMessage({ type: 'error', text: `Error: ${err.message}` });
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
   }
 
@@ -163,8 +171,8 @@ export default function EditProjectPage() {
             <legend className="text-lg font-semibold text-gray-900 mb-4">Project Basics</legend>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Commercial Complex" />
+                <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
+                <input type="text" id="projectName" name="projectName" value={formData.projectName} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Commercial Complex" />
               </div>
               <div>
                 <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
@@ -178,8 +186,8 @@ export default function EditProjectPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="client" className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
-                <input type="text" id="client" name="client" value={formData.client} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="Client name" />
+                <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">Client Name</label>
+                <input type="text" id="clientName" name="clientName" value={formData.clientName} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="Client name" />
               </div>
               <div>
                 <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
@@ -190,8 +198,8 @@ export default function EditProjectPage() {
 
           {/* Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">Project Description *</label>
-            <textarea id="description" name="description" value={formData.description} onChange={handleInputChange} required rows="4" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Describe the project in detail..." />
+            <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 mb-2">Project Description *</label>
+            <textarea id="projectDescription" name="projectDescription" value={formData.projectDescription} onChange={handleInputChange} required rows="4" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Describe the project in detail..." />
           </div>
 
           {/* Timeline & Budget */}
@@ -203,28 +211,28 @@ export default function EditProjectPage() {
                 <input type="date" id="startDate" name="startDate" value={formData.startDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
               <div>
-                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 mb-2">Expected End Date *</label>
-                <input type="date" id="endDate" name="endDate" value={formData.endDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                <label htmlFor="expectedEndDate" className="block text-sm font-medium text-gray-700 mb-2">Expected End Date *</label>
+                <input type="date" id="expectedEndDate" name="expectedEndDate" value={formData.expectedEndDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
               <div>
                 <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">Budget (₦) *</label>
                 <input type="number" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} required step="1000" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="0" />
               </div>
               <div>
-                <label htmlFor="completionPercentage" className="block text-sm font-medium text-gray-700 mb-2">Completion % (0-100)</label>
-                <input type="number" id="completionPercentage" name="completionPercentage" value={formData.completionPercentage} onChange={handleInputChange} min="0" max="100" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                <label htmlFor="completion" className="block text-sm font-medium text-gray-700 mb-2">Completion % (0-100)</label>
+                <input type="number" id="completion" name="completion" value={formData.completion} onChange={handleInputChange} min="0" max="100" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
             </div>
           </fieldset>
 
           {/* Status */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">Project Status *</label>
-            <select id="status" name="status" value={formData.status} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
+            <label htmlFor="projectStatus" className="block text-sm font-medium text-gray-700 mb-2">Project Status *</label>
+            <select id="projectStatus" name="projectStatus" value={formData.projectStatus} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
               <option value="planning">Planning</option>
               <option value="in-progress">In Progress</option>
               <option value="completed">Completed</option>
-              <option value="on-hold">On Hold</option>
+              <option value="on hold">On Hold</option>
             </select>
           </div>
 
@@ -252,16 +260,16 @@ export default function EditProjectPage() {
                 <textarea id="technologies" name="technologies" value={formData.technologies} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="e.g., BIM, sustainable materials, etc." />
               </div>
               <div>
-                <label htmlFor="materials" className="block text-sm font-medium text-gray-700 mb-2">Materials Used</label>
-                <textarea id="materials" name="materials" value={formData.materials} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="e.g., concrete, steel, etc." />
+                <label htmlFor="materialsUsed" className="block text-sm font-medium text-gray-700 mb-2">Materials Used</label>
+                <textarea id="materialsUsed" name="materialsUsed" value={formData.materialsUsed} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="e.g., concrete, steel, etc." />
               </div>
             </div>
           </fieldset>
 
           {/* Highlights */}
           <div>
-            <label htmlFor="highlights" className="block text-sm font-medium text-gray-700 mb-2">Project Highlights</label>
-            <textarea id="highlights" name="highlights" value={formData.highlights} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Key achievements, awards, special features..." />
+            <label htmlFor="projectHighlights" className="block text-sm font-medium text-gray-700 mb-2">Project Highlights</label>
+            <textarea id="projectHighlights" name="projectHighlights" value={formData.projectHighlights} onChange={handleInputChange} rows="3" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Key achievements, awards, special features..." />
           </div>
 
           {/* Images */}
