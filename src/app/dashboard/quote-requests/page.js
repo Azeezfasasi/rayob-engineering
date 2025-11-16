@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { useAuth } from '../../../context/AuthContext'
 import { Trash2, Eye, Reply, Search, Filter, ChevronLeft, ChevronRight, X, CheckCircle } from 'lucide-react'
+import { Commet } from "react-loading-indicators";
 
 const ManageQuoteRequests = () => {
 				const { user } = useAuth();
@@ -238,7 +239,7 @@ const ManageQuoteRequests = () => {
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center py-12">
-				<p className="text-gray-600">Loading requests...</p>
+				<p className="text-gray-600"><Commet color="#32cd32" size="medium" text="" textColor="" /></p>
 			</div>
 		)
 	}

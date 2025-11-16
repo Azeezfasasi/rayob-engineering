@@ -5,6 +5,7 @@ import DashboardWelcome from "@/components/dashboard-component/DashboardWelcome"
 
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
+import { Commet } from "react-loading-indicators";
 
 export default function Dashboard() {
   const { isAuthenticated, loading } = useAuth();
@@ -18,7 +19,7 @@ export default function Dashboard() {
   }, [isAuthenticated, loading, router]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>;
+    return <div className="flex items-center justify-center h-screen"><Commet color="#32cd32" size="medium" text="" textColor="" /></div>;
   }
   if (!isAuthenticated) {
     return null;

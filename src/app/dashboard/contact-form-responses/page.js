@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Trash2, Eye, Reply, Search, Filter, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext';
+import { Commet } from "react-loading-indicators";
 
 
 const ContactFormResponses = () => {
@@ -223,7 +224,7 @@ const ContactFormResponses = () => {
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center py-12">
-				<p className="text-gray-600">Loading responses...</p>
+				<p className="text-gray-600"><Commet color="#32cd32" size="medium" text="" textColor="" /></p>
 			</div>
 		)
 	}
