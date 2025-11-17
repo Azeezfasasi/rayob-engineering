@@ -50,7 +50,7 @@ export default function ProjectDetails({ projectId }) {
     <section className="py-10">
       <div className="container mx-auto px-4 max-w-3xl">
         <h1 className="text-3xl font-bold mb-4 text-gray-800">{project.projectName}</h1>
-        <span className="text-sm text-[#db3a06] font-semibold uppercase mb-2 block">{project.category}</span>
+        <span className="text-sm text-blue-500 font-semibold uppercase mb-2 block">{project.category}</span>
         <div className="relative w-full h-80 mb-6">
           <Image
             src={project.featuredImage}
@@ -142,7 +142,7 @@ export default function ProjectDetails({ projectId }) {
                 {project.galleryImages.map((img, i) => (
                   <button
                     key={img + 'popup-dot' + i}
-                    className={`w-3 h-3 rounded-full border ${i === popupIndex ? 'bg-[#db3a06] border-[#db3a06]' : 'bg-gray-200 border-gray-300'}`}
+                    className={`w-3 h-3 rounded-full border ${i === popupIndex ? 'bg-blue-500 border-blue-500' : 'bg-gray-200 border-gray-300'}`}
                     onClick={() => setPopupIndex(i)}
                     aria-label={`Go to image ${i + 1}`}
                   />

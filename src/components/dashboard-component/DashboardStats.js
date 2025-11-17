@@ -113,17 +113,6 @@ export default function DashboardStats({ data = {} }) {
         <LastUpdated />
       </div>
 
-
-{/* // Client-only last updated time to prevent hydration mismatch
-import React, { useEffect, useState } from 'react';
-function LastUpdated() {
-  const [now, setNow] = useState("");
-  useEffect(() => {
-    setNow(new Date().toLocaleString());
-  }, []);
-  return <p className="text-sm text-gray-500">Last updated: <time>{now}</time></p>;
-} */}
-
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.map(item => (
           <div key={item.key} className="bg-white rounded-lg shadow-sm p-4 flex items-start gap-4">

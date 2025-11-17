@@ -73,7 +73,7 @@ export default function TestimonialsSection() {
         <div className="text-center mt-12">
           <a
             href="/contact"
-            className="inline-block bg-[#db3a06] text-white px-8 py-3 rounded-lg shadow hover:bg-orange-600 transition"
+            className="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition"
           >
             Work With Us
           </a>

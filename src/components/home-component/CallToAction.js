@@ -1,8 +1,8 @@
 export default function CallToAction() {
   return (
-    <section className="relative bg-[#db3a06] text-white py-16 overflow-hidden">
+    <section className="relative bg-blue-500 text-white py-16 overflow-hidden">
       {/* Decorative Overlay */}
-      <div className="absolute inset-0 bg-[#db3a06]/40"></div>
+      <div className="absolute inset-0 bg-blue-500/40"></div>
 
       <div className="relative container mx-auto px-6 lg:px-20 text-center">
         {/* Headline */}
@@ -21,13 +21,13 @@ export default function CallToAction() {
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <a
             href="/request-quote"
-            className="bg-white text-[#db3a06] font-semibold px-8 py-3 rounded-lg shadow hover:bg-gray-100 transition"
+            className="bg-white text-blue-500 font-semibold px-8 py-3 rounded-lg shadow hover:bg-gray-100 transition"
           >
             Request a Quote
           </a>
           <a
             href="/contact"
-            className="border-2 border-white text-white font-semibold px-8 py-3 rounded-lg hover:bg-white hover:text-[#db3a06] transition"
+            className="border-2 border-white text-white font-semibold px-8 py-3 rounded-lg hover:bg-white hover:text-blue-500 transition"
           >
             Contact Us
           </a>

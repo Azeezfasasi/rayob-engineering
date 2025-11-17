@@ -49,6 +49,7 @@ export default function TeamSection() {
                   src={member.photo}
                   alt={member.name}
                   fill
+                  sizes="100%"
                   className="object-cover"
                 />
               </div>

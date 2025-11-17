@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function FeaturedProjects() {
@@ -66,7 +67,7 @@ export default function FeaturedProjects() {
                 </div>
 
                 <div className="p-6">
-                  <span className="text-sm text-[#db3a06] font-semibold uppercase">
+                  <span className="text-sm text-blue-500 font-semibold uppercase">
                     {project.category}
                   </span>
                   <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3">
@@ -77,7 +78,7 @@ export default function FeaturedProjects() {
                   </p>
                   <a
                     href={`/projects/${project._id}`}
-                    className="text-[#db3a06] font-semibold hover:text-orange-600 transition"
+                    className="text-blue-500 font-semibold hover:text-blue-600 transition"
                   >
                     View Details →
                   </a>
@@ -89,12 +90,12 @@ export default function FeaturedProjects() {
 
         {/* CTA */}
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/projects"
-            className="inline-block bg-[#db3a06] text-white px-8 py-3 rounded-lg shadow hover:bg-orange-600 transition"
+            className="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition"
           >
             View All Projects
-          </a>
+          </Link>
         </div>
       </div>
     </section>

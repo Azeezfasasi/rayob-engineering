@@ -13,7 +13,8 @@ export default function HomeAbout() {
               src="/images/about1.jpg" 
               alt="Rayob Engineering Team"
               fill
-              className="object-cover"
+              sizes='100%'
+              className="object-contain"
             />
           </div>
         </div>
@@ -36,7 +37,7 @@ export default function HomeAbout() {
 
           <a
             href="/about"
-            className="inline-block bg-[#db3a06] text-white px-6 py-3 rounded-lg shadow hover:bg-orange-600 transition"
+            className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 transition"
           >
             Learn More
           </a>

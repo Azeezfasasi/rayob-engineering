@@ -40,7 +40,7 @@ export default function WhyChooseUs() {
               key={index}
               className="bg-white rounded-xl shadow-md hover:shadow-lg transition p-6 text-center"
             >
-              <CheckCircle className="mx-auto text-[#db3a06] mb-4" size={40} />
+              <CheckCircle className="mx-auto text-blue-500 mb-4" size={40} />
               <h3 className="text-lg font-semibold text-gray-800 mb-2">{feature.title}</h3>
               <p className="text-gray-600 text-sm">{feature.description}</p>
             </div>

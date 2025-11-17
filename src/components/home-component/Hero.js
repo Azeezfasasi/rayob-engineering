@@ -2,6 +2,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
+import { ArrowBigRightDash, ArrowBigLeftDash } from 'lucide-react';
 
 export default function Hero() {
   const slides = [
@@ -82,7 +83,7 @@ export default function Hero() {
       <div className="mx-auto ">
         <div
           ref={containerRef}
-          className="relative overflow-hidden rounded-2xl"
+          className="relative overflow-hidden"
           onMouseDown={handlePointerDown}
           onMouseMove={handlePointerMove}
           onMouseUp={handlePointerUp}
@@ -103,13 +104,13 @@ export default function Hero() {
             {slides.map((s, i) => (
               <div key={i} className="min-w-full flex-none" style={{ flex: '0 0 100%' }}>
                 <div className="h-[420px] md:h-[540px] flex items-center">
-                  <div className="w-full h-full rounded-2xl p-8 md:p-12 flex items-center justify-between gap-6" style={{ background: s.bg }}>
+                  <div className="w-full h-full p-8 md:p-12 flex items-center justify-between gap-6" style={{ background: s.bg }}>
                     <div className="flex-1 max-w-full md:max-w-2xl">
                       <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">{s.title}</h2>
                       <p className="text-gray-700 mb-6">{s.subtitle}</p>
                       <div className="flex gap-3">
-                        <Link href={s.cta.href} className="inline-block px-2 md:px-5 py-3 bg-[#DB3A06] text-white rounded-md font-medium">{s.cta.label}</Link>
-                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-gray-200 rounded-md text-gray-700">Learn more</Link>
+                        <Link href={s.cta.href} className="inline-block px-2 md:px-5 py-3 bg-blue-500 text-white rounded-md font-medium">{s.cta.label}</Link>
+                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-blue-500 rounded-md text-gray-700">Learn more</Link>
                       </div>
                     </div>
                     {/* Right Image - visible on lg (laptop) and up only */}
@@ -132,17 +133,17 @@ export default function Hero() {
           <button
             aria-label="Previous"
             onClick={() => setIndex(i => Math.max(0, i - 1))}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-500 cursor-pointer"
           >
-            ‹
+            <ArrowBigLeftDash />
           </button>
           <button
             aria-label="Next"
             onClick={() => setIndex(i => Math.min(slides.length - 1, i + 1))}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-500 cursor-pointer"
           >
-            ›
-          </button>
+            <ArrowBigRightDash />
+          </button>          
 
           {/* Dots */}
           <div className="absolute left-1/2 -translate-x-1/2 bottom-6 flex gap-2">
@@ -151,7 +152,7 @@ export default function Hero() {
                 key={i}
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => setIndex(i)}
-                className={`w-3 h-3 rounded-full ${i === index ? 'bg-[#DB3A06]' : 'bg-white/70 border border-gray-200'}`}
+                className={`w-3 h-3 rounded-full ${i === index ? 'bg-blue-500' : 'bg-white/70 border border-gray-200'}`}
               />
             ))}
           </div>

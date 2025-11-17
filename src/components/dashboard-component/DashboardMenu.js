@@ -88,6 +88,28 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
         { href: '/dashboard/all-gallery', label: 'All Gallery' },
       ]
     },
+    {
+      href: '#',
+      label: 'Homepage Settings',
+      icon: 'blog',
+      children: [
+        { href: '/dashboard/homepage/hero', label: 'Hero Section' },
+        { href: '#', label: 'Call to Action' },
+        { href: '#', label: 'Our Services' },
+        { href: '#', label: 'Testimonial' },
+      ]
+    },
+    {
+      href: '#',
+      label: 'About Page Settings',
+      icon: 'blog',
+      children: [
+        { href: '#', label: 'Mission & Vision' },
+        { href: '#', label: 'History & Milestones' },
+        { href: '#', label: 'Team Members' },
+        { href: '#', label: 'Testimonial' },
+      ]
+    },
   ]
 
   const [openKey, setOpenKey] = useState(null)

@@ -4,31 +4,35 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
+
 export default function Login() {
   const router = useRouter();
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({ email: "", password: "", remember: false });
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    if (error) setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setError("");
     try {
       const result = await login(formData.email, formData.password);
       if (result?.success) {
         router.push("/dashboard");
         return;
       }
-      alert(result?.message || "Login failed");
+      setError(result?.message || "Login failed");
     } catch (err) {
       console.error(err);
-      alert(err.message || "Login error");
+      setError(err.message || "Login error");
     } finally {
       setSubmitting(false);
     }
@@ -41,6 +45,11 @@ export default function Login() {
         <p className="text-gray-600 mb-8 text-center">Please login to your account</p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-2 text-center">
+              {error}
+            </div>
+          )}
           <div>
             <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email Address</label>
             <input

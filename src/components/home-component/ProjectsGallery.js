@@ -42,7 +42,7 @@ export default function ProjectsGalleryModal() {
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-lg font-semibold transition-all flex items-center gap-2
-              ${selectedCategory === category ? 'bg-[#db3a06] text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+              ${selectedCategory === category ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
             >
               {category}
             </button>
@@ -77,10 +77,10 @@ export default function ProjectsGalleryModal() {
                 </div>
                 <div className="p-6">
                   <div className="flex flex-row justify-between">
-                    <span className="text-sm text-[#db3a06] font-semibold uppercase">
+                    <span className="text-sm text-blue-500 font-semibold uppercase">
                       {project.category}
                     </span>
-                    <span className="text-sm text-[#db3a06] font-semibold uppercase">
+                    <span className="text-sm text-blue-500 font-semibold uppercase">
                     {project.location}
                     </span>
                   </div>

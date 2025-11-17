@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
 
 export default function MainHeader() {
   const [open, setOpen] = useState(false)
@@ -40,11 +41,14 @@ export default function MainHeader() {
   // About submenu state/ref
   const [aboutOpen, setAboutOpen] = useState(false)
   const aboutRef = useRef(null)
+  const mobileSubmenuRef = useRef(null)
 
   // Close about submenu on outside click or Escape
   useEffect(() => {
     function onDocClick(e) {
       if (!aboutRef.current) return
+      // Don't close if clicking inside the mobile submenu
+      if (mobileSubmenuRef.current && mobileSubmenuRef.current.contains(e.target)) return
       if (!aboutRef.current.contains(e.target)) setAboutOpen(false)
     }
     function onDocKey(e) {
@@ -68,12 +72,11 @@ export default function MainHeader() {
     <>
     <header className="w-full bg-white/60 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-30 shadow-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-linear-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center text-white font-bold">R</div>
-              <span className="text-lg font-semibold text-gray-800">Rayob</span>
+              <Image src="/images/rayob.svg" alt="Rayob Logo" width={170} height={50} className="w-45 block rounded-md" />
             </Link>
           </div>
 
@@ -84,7 +87,8 @@ export default function MainHeader() {
                 const submenu = [
                   { href: '/about-us', label: 'About Us' },
                   { href: '/projects', label: 'Projects' },
-                  { href: '#', label: 'Gallery' }
+                  { href: '/gallery', label: 'Gallery' },
+                  { href: '/careers', label: 'Careers' }
                 ]
 
                 return (
@@ -128,7 +132,7 @@ export default function MainHeader() {
                 <Link
                   key={l.href}
                   href={l.href}
-                  className={`transition ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
+                  className={`transition ${isActive(l.href) ? 'text-blue-500 font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
                 >
                   {l.label}
                 </Link>
@@ -138,8 +142,8 @@ export default function MainHeader() {
 
           {/* Right actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link href="/login" className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900">Login</Link>
-            <Link href="/register" className="px-4 py-2 bg-[#DB3A06] text-white rounded-md text-sm font-medium hover:bg-orange-600">Get Started</Link>
+            <Link href="/login" className="px-4 py-2 text-sm font-semibold border border-blue-500 text-gray-700 hover:text-blue-600 rounded-md">Login</Link>
+            <Link href="/register" className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Get Started</Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -162,15 +166,14 @@ export default function MainHeader() {
 
     {/* Mobile panel (render only when open) */}
     {open && (
-      <div ref={panelRef} className="fixed inset-0 z-10" aria-hidden={!open}>
+      <div ref={panelRef} className="fixed inset-0 z-50" aria-hidden={!open}>
         <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)}></div>
 
-        <div className="fixed right-0 top-0 h-full w-80 max-w-full bg-white shadow-2xl">
+        <div className="absolute right-0 top-0 h-full w-80 max-w-full bg-white shadow-2xl">
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <Link href="/" className="flex items-center gap-3">
-                <div className="w-9 h-9 bg-linear-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center text-white font-bold">R</div>
-                <span className="font-semibold text-gray-800">Rayob</span>
+                <Image src="/images/rayob.svg" alt="Rayob Logo" width={100} height={50} className="hidden md:block" />
               </Link>
               <button onClick={() => setOpen(false)} className="text-gray-600">✕</button>
             </div>
@@ -181,7 +184,8 @@ export default function MainHeader() {
                   const submenu = [
                     { href: '/about-us', label: 'About Us' },
                     { href: '/projects', label: 'Projects' },
-                    { href: '#', label: 'Gallery' }
+                    { href: '/gallery', label: 'Gallery' },
+                    { href: '/careers', label: 'Careers' },
                   ]
 
                   return (
@@ -193,9 +197,12 @@ export default function MainHeader() {
                         {l.label}
                       </button>
                       {aboutOpen && (
-                        <div className="pl-4 mt-1 flex flex-col gap-1">
+                        <div ref={mobileSubmenuRef} className="pl-4 mt-1 flex flex-col gap-1">
                           {submenu.map(si => (
-                            <Link key={si.href} href={si.href} onClick={() => setOpen(false)} className={`block px-3 py-2 rounded-md ${isActive(si.href) ? 'text-[#DB3A06] font-medium' : 'text-gray-700 hover:bg-gray-50'}`}>
+                            <Link key={si.href} href={si.href} onClick={() => {
+                              setOpen(false)
+                              setAboutOpen(false)
+                            }} className={`block px-3 py-2 rounded-md ${isActive(si.href) ? 'text-[#DB3A06] font-medium' : 'text-gray-700 hover:bg-gray-50'}`}>
                               {si.label}
                             </Link>
                           ))}
@@ -210,7 +217,7 @@ export default function MainHeader() {
                     key={l.href}
                     href={l.href}
                     onClick={() => setOpen(false)}
-                    className={`block px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700'}`}
+                    className={`block px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-blue-500 font-semibold' : 'text-gray-700'}`}
                   >
                     {l.label}
                   </Link>
@@ -219,8 +226,8 @@ export default function MainHeader() {
             </nav>
 
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">
-              <Link href="/login" onClick={() => setOpen(false)} className="block text-center text-gray-700">Login</Link>
-              <Link href="/register" onClick={() => setOpen(false)} className="block bg-[#DB3A06] text-white px-4 py-2 rounded-md text-center">Get Started</Link>
+              <Link href="/login" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">Login</Link>
+              <Link href="/register" onClick={() => setOpen(false)} className="block bg-blue-500 text-white px-4 py-2 rounded-md text-center">Get Started</Link>
             </div>
           </div>
         </div>
