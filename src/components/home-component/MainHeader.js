@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
+import { Menu } from 'lucide-react';
 
 export default function MainHeader() {
   const [open, setOpen] = useState(false)
@@ -102,7 +103,7 @@ export default function MainHeader() {
                       aria-haspopup="menu"
                       aria-expanded={aboutOpen}
                       onClick={() => setAboutOpen(s => !s)}
-                      className={`transition inline-flex items-center gap-2 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
+                      className={`transition inline-flex items-center gap-2 ${isActive(l.href) ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
                     >
                       {l.label}
                       <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
@@ -117,7 +118,7 @@ export default function MainHeader() {
                           <Link
                             key={si.href}
                             href={si.href}
-                            className={`block px-4 py-2 text-sm ${isActive(si.href) ? 'text-[#DB3A06] font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                            className={`block px-4 py-2 text-sm ${isActive(si.href) ? 'text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
                           >
                             {si.label}
                           </Link>
@@ -153,11 +154,9 @@ export default function MainHeader() {
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               onClick={() => setOpen((s) => !s)}
-              className="relative z-20 flex items-center justify-center w-11 h-11 rounded-lg bg-white/70 backdrop-blur border border-gray-100 shadow-sm"
+              className="relative z-20 flex items-center justify-center w-11 h-11 rounded-lg bg-white/70 backdrop-blur border border-blue-200 shadow-sm"
             >
-              <span className={`block w-6 h-0.5 bg-gray-800 transform transition duration-300 ${open ? 'rotate-45 translate-y-0.5' : '-translate-y-1.5'}`}></span>
-              <span className={`block w-6 h-0.5 bg-gray-800 mt-1 transform transition duration-300 ${open ? 'opacity-0' : 'opacity-100'}`}></span>
-              <span className={`block w-6 h-0.5 bg-gray-800 mt-1 transform transition duration-300 ${open ? '-rotate-45 -translate-y-0.5' : 'translate-y-1.5'}`}></span>
+              <Menu size={24} className="text-blue-600" /> 
             </button>
           </div>
         </div>
@@ -173,9 +172,9 @@ export default function MainHeader() {
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <Link href="/" className="flex items-center gap-3">
-                <Image src="/images/rayob.svg" alt="Rayob Logo" width={100} height={50} className="hidden md:block" />
+                <Image src="/images/rayob.svg" alt="Rayob Logo" width={100} height={50} className="w-40 block rounded-md" />
               </Link>
-              <button onClick={() => setOpen(false)} className="text-gray-600">✕</button>
+              <button onClick={() => setOpen(false)} className="text-red-600 text-2xl font-semibold">✕</button>
             </div>
 
             <nav className="flex flex-col space-y-3">
@@ -192,7 +191,7 @@ export default function MainHeader() {
                     <div key={l.href}>
                       <button
                         onClick={() => setAboutOpen(s => !s)}
-                        className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-[#DB3A06] font-semibold' : 'text-gray-700'}`}
+                        className={`w-full text-left px-3 py-2 rounded-md hover:bg-gray-50 ${isActive(l.href) ? 'text-blue-600 font-semibold' : 'text-gray-700'}`}
                       >
                         {l.label}
                       </button>
@@ -202,7 +201,7 @@ export default function MainHeader() {
                             <Link key={si.href} href={si.href} onClick={() => {
                               setOpen(false)
                               setAboutOpen(false)
-                            }} className={`block px-3 py-2 rounded-md ${isActive(si.href) ? 'text-[#DB3A06] font-medium' : 'text-gray-700 hover:bg-gray-50'}`}>
+                            }} className={`block px-3 py-2 rounded-md ${isActive(si.href) ? 'text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}>
                               {si.label}
                             </Link>
                           ))}
