@@ -65,8 +65,8 @@ export default function AddUserPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-8 bg-white rounded-xl shadow-lg mt-8">
-      <h1 className="text-2xl font-bold mb-6">Add New User</h1>
+    <div className="max-w-xl mx-auto p-4 md:p-8 bg-white rounded-xl shadow-lg mt-3 md:mt-8">
+      <h1 className="text-[20px] md:text-2xl font-bold mb-6">Add New User</h1>
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block mb-1 font-medium">First Name</label>
@@ -75,7 +75,7 @@ export default function AddUserPage() {
             name="firstName"
             value={form.firstName}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
+            className="w-full border border-gray-50 px-3 py-2 rounded-lg ring-1 focus:ring-blue-300 outline-none"
             required
           />
         </div>
@@ -86,7 +86,7 @@ export default function AddUserPage() {
             name="lastName"
             value={form.lastName}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
+            className="w-full border border-gray-50 px-3 py-2 rounded-lg ring-1 focus:ring-blue-300 outline-none"
             required
           />
         </div>
@@ -97,7 +97,7 @@ export default function AddUserPage() {
             name="email"
             value={form.email}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
+            className="w-full border border-gray-50 px-3 py-2 rounded-lg ring-1 focus:ring-blue-300 outline-none"
             required
           />
         </div>
@@ -109,7 +109,7 @@ export default function AddUserPage() {
               name="password"
               value={form.password}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded-lg"
+              className="w-full border border-gray-50 px-3 py-2 rounded-lg ring-1 focus:ring-blue-300 outline-none"
               required
             />
           </div>
@@ -120,7 +120,7 @@ export default function AddUserPage() {
               name="confirmPassword"
               value={form.confirmPassword}
               onChange={handleChange}
-              className="w-full border px-3 py-2 rounded-lg"
+              className="w-full border border-gray-50 px-3 py-2 rounded-lg ring-1 focus:ring-blue-300 outline-none"
               required
             />
           </div>
@@ -131,7 +131,7 @@ export default function AddUserPage() {
             name="role"
             value={form.role}
             onChange={handleChange}
-            className="w-full border px-3 py-2 rounded-lg"
+            className="w-full border border-gray-50 px-3 py-2 rounded-lg ring-1 focus:ring-blue-300 outline-none"
             required
           >
             {roles.map(r => (

@@ -13,7 +13,7 @@ export default function CompanyOverview() {
             <div className="order-2 lg:order-1">
               <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg">
                 <Image
-                  src="/images/projectplaceholder.png"
+                  src="/images/abt1.jpeg"
                   alt="Rayob Engineering Overview"
                   fill
                   sizes="100%"

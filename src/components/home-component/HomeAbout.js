@@ -10,11 +10,11 @@ export default function HomeAbout() {
         <div className="flex-1 w-full">
           <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-lg overflow-hidden shadow-lg">
             <Image
-              src="/images/about1.jpg" 
+              src="/images/abt1.jpeg" 
               alt="Rayob Engineering Team"
               fill
               sizes='100%'
-              className="object-contain"
+              className="object-cover"
             />
           </div>
         </div>
@@ -36,7 +36,7 @@ export default function HomeAbout() {
           </p>
 
           <a
-            href="/about"
+            href="/about-us"
             className="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-600 transition"
           >
             Learn More

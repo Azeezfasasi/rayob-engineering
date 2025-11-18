@@ -134,7 +134,7 @@ export default function AllProjectsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-6 px-0 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
@@ -142,7 +142,7 @@ export default function AllProjectsPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">All Projects</h1>
             <p className="mt-2 text-gray-600">Manage and view all construction projects.</p>
           </div>
-          <Link href="/dashboard/add-projects" className="inline-flex items-center gap-2 bg-indigo-600 text-white font-medium px-4 py-2 rounded-md hover:bg-indigo-700 whitespace-nowrap">
+          <Link href="/dashboard/add-projects" className="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white font-medium px-4 py-2 rounded-md hover:bg-indigo-700 whitespace-nowrap">
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
             </svg>

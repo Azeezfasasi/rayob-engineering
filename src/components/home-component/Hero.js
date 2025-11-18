@@ -11,21 +11,21 @@ export default function Hero() {
       subtitle: 'We design and build robust infrastructure and software solutions tailored to your needs.',
       cta: { label: 'Request a Quote', href: '/request-a-quote' },
       bg: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)',
-      image: { src: '/images/about1.jpg', alt: 'Engineering excellence' }
+      image: { src: '/images/construct1.jpeg', alt: 'Engineering excellence' }
     },
     {
       title: 'Reliable teams. On time.',
       subtitle: 'Scale with experienced engineers and project managers who get things done.',
       cta: { label: 'Our Services', href: '/services' },
       bg: 'linear-gradient(135deg,#e0f7fa 0%,#80deea 100%)',
-      image: { src: '/images/about1.jpg', alt: 'Engineering excellence' }
+      image: { src: '/images/pipe1.jpeg', alt: 'Engineering excellence' }
     },
     {
       title: 'From concept to delivery',
       subtitle: 'We partner with you through product discovery, engineering and deployment.',
       cta: { label: 'Contact Us', href: '/contact-us' },
       bg: 'linear-gradient(135deg,#e6e9ff 0%,#9fa8ff 100%)',
-      image: { src: '/images/about1.jpg', alt: 'Engineering excellence' }
+      image: { src: '/images/stairs.jpeg', alt: 'Engineering excellence' }
     }
   ]
 
@@ -119,8 +119,8 @@ export default function Hero() {
                         src={s.image?.src}
                         alt={s.image?.alt}
                         width={420}
-                        height={300}
-                        className="rounded-2xl object-cover w-full h-full"
+                        height={500}
+                        className="rounded-2xl object-cover w-full h-[500px]"
                       />
                     </div>
                   </div>

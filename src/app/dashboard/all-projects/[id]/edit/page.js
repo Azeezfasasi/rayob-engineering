@@ -141,7 +141,7 @@ export default function EditProjectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-6 px-0 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -171,11 +171,11 @@ export default function EditProjectPage() {
             <legend className="text-lg font-semibold text-gray-900 mb-4">Project Basics</legend>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
+                <label htmlFor="projectName" className="block text-sm font-medium text-gray-700 mb-2">Project Name <span className='text-red-500 font-bold'>*</span></label>
                 <input type="text" id="projectName" name="projectName" value={formData.projectName} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Commercial Complex" />
               </div>
               <div>
-                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category *</label>
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">Category <span className='text-red-500 font-bold'>*</span></label>
                 <select id="category" name="category" value={formData.category} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
                   <option value="">Select category</option>
                   <option value="residential">Residential</option>
@@ -190,16 +190,16 @@ export default function EditProjectPage() {
                 <input type="text" id="clientName" name="clientName" value={formData.clientName} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="Client name" />
               </div>
               <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location *</label>
-                <input type="text" id="location" name="location" value={formData.location} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Lagos, Nigeria" />
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input type="text" id="location" name="location" value={formData.location} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="e.g., Lagos, Nigeria" />
               </div>
             </div>
           </fieldset>
 
           {/* Description */}
           <div>
-            <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 mb-2">Project Description *</label>
-            <textarea id="projectDescription" name="projectDescription" value={formData.projectDescription} onChange={handleInputChange} required rows="4" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Describe the project in detail..." />
+            <label htmlFor="projectDescription" className="block text-sm font-medium text-gray-700 mb-2">Project Description</label>
+            <textarea id="projectDescription" name="projectDescription" value={formData.projectDescription} onChange={handleInputChange} rows="4" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none" placeholder="Describe the project in detail..." />
           </div>
 
           {/* Timeline & Budget */}
@@ -207,16 +207,16 @@ export default function EditProjectPage() {
             <legend className="text-lg font-semibold text-gray-900 mb-4">Timeline & Budget</legend>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
-                <input type="date" id="startDate" name="startDate" value={formData.startDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 mb-2">Start Date</label>
+                <input type="date" id="startDate" name="startDate" value={formData.startDate} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
               <div>
-                <label htmlFor="expectedEndDate" className="block text-sm font-medium text-gray-700 mb-2">Expected End Date *</label>
-                <input type="date" id="expectedEndDate" name="expectedEndDate" value={formData.expectedEndDate} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                <label htmlFor="expectedEndDate" className="block text-sm font-medium text-gray-700 mb-2">Expected End Date</label>
+                <input type="date" id="expectedEndDate" name="expectedEndDate" value={formData.expectedEndDate} onChange={handleInputChange} className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
               </div>
               <div>
-                <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">Budget (₦) *</label>
-                <input type="number" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} required step="1000" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="0" />
+                <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">Budget (₦)</label>
+                <input type="number" id="budget" name="budget" value={formData.budget} onChange={handleInputChange} step="1000" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" placeholder="0" />
               </div>
               <div>
                 <label htmlFor="completion" className="block text-sm font-medium text-gray-700 mb-2">Completion % (0-100)</label>
@@ -227,7 +227,7 @@ export default function EditProjectPage() {
 
           {/* Status */}
           <div>
-            <label htmlFor="projectStatus" className="block text-sm font-medium text-gray-700 mb-2">Project Status *</label>
+            <label htmlFor="projectStatus" className="block text-sm font-medium text-gray-700 mb-2">Project Status <span className='text-red-500 font-bold'>*</span></label>
             <select id="projectStatus" name="projectStatus" value={formData.projectStatus} onChange={handleInputChange} required className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none">
               <option value="planning">Planning</option>
               <option value="in-progress">In Progress</option>
@@ -291,10 +291,10 @@ export default function EditProjectPage() {
 
           {/* Actions */}
           <div className="flex gap-4 pt-6 border-t">
-            <button type="submit" disabled={saving} className="flex-1 bg-indigo-600 text-white font-medium py-2 px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            <button type="submit" disabled={saving} className="flex-1 bg-indigo-600 text-white font-medium py-2 px-1 md:px-4 rounded-md hover:bg-indigo-700 disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
               {saving ? 'Saving...' : 'Save Changes'}
             </button>
-            <Link href="/dashboard/all-projects" className="flex-1 bg-gray-100 text-gray-700 font-medium py-2 px-4 rounded-md hover:bg-gray-200 text-center focus:outline-none focus:ring-2 focus:ring-gray-500">
+            <Link href="/dashboard/all-projects" className="flex-1 bg-red-200 text-gray-700 font-medium py-2 px-1 md:px-4 rounded-md hover:bg-red-300 text-center focus:outline-none focus:ring-2 focus:ring-red-500">
               Cancel
             </Link>
           </div>

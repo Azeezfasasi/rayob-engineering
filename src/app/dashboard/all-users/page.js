@@ -76,23 +76,23 @@ export default function AllUsersPage() {
     }
 
   return (
-    <div className="p-6 bg-white rounded-xl shadow-lg" suppressHydrationWarning={true}>
-      <h1 className="text-2xl font-bold mb-4">All Users</h1>
+    <div className="w-[360px] md:w-full md:max-w-7xl p-2 md:p-6 bg-white rounded-xl shadow-lg" suppressHydrationWarning={true}>
+      <h1 className="text-[20px] md:text-2xl font-bold mb-4">All Users</h1>
       <div className="flex flex-wrap gap-4 mb-6">
         <input
           type="text"
           placeholder="Search by name or email"
           value={search}
           onChange={e => { setSearch(e.target.value); setPage(1); }}
-          className="border px-3 py-2 rounded-lg w-64"
+          className="border px-3 py-2 rounded-lg w-64 outline-none border-gray-400 focus:ring-2 focus:ring-blue-500 text-[14px] md:text-base"
         />
-        <select value={role} onChange={e => { setRole(e.target.value); setPage(1); }} className="border px-3 py-2 rounded-lg">
+        <select value={role} onChange={e => { setRole(e.target.value); setPage(1); }} className="border px-3 py-2 rounded-lg outline-none border-gray-400 focus:ring-2 focus:ring-blue-500 text-[14px] md:text-base">
           <option value="">All Roles</option>
           <option value="client">Client</option>
           <option value="admin">Admin</option>
           <option value="staff-member">Staff Member</option>
         </select>
-        <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }} className="border px-3 py-2 rounded-lg">
+        <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }} className="border px-3 py-2 rounded-lg outline-none border-gray-400 focus:ring-2 focus:ring-blue-500 text-[14px] md:text-base">
           <option value="">All Status</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
@@ -100,7 +100,7 @@ export default function AllUsersPage() {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full border rounded-lg">
+        <table className="min-w-full border border-gray-300 rounded-lg">
           <thead className="bg-gray-100">
             <tr>
               <th className="px-4 py-2 text-left">Name</th>
@@ -135,20 +135,20 @@ export default function AllUsersPage() {
               <tr><td colSpan={5} className="text-center py-6">No users found.</td></tr>
             ) : (
               users.map(user => (
-                <tr key={user._id} className="border-b">
-                  <td className="px-4 py-2">{user.firstName} {user.lastName}</td>
-                  <td className="px-4 py-2">{user.email}</td>
-                  <td className="px-4 py-2 capitalize">{user.role}</td>
-                  <td className="px-4 py-2">
+                <tr key={user._id} className="border-b border-gray-300 hover:bg-gray-50">
+                  <td className="px-4 py-2 text-[14px] md:text-base whitespace-nowrap">{user.firstName} {user.lastName}</td>
+                  <td className="px-4 py-2 text-[14px] md:text-base">{user.email}</td>
+                  <td className="px-4 py-2 capitalize text-[14px] md:text-base whitespace-nowrap">{user.role}</td>
+                  <td className="px-4 py-2 text-[14px] md:text-base">
                     <span className={`px-2 py-1 rounded text-xs font-semibold ${user.isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
                       {user.isActive ? "Active" : "Inactive"}
                     </span>
                   </td>
-                  <td className="px-4 py-2 flex gap-2">
-                    <button onClick={() => handleEdit(user)} className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs">Edit</button>
-                    <button onClick={() => handleDelete(user)} className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs">Delete</button>
-                    <button onClick={() => handleChangeRole(user)} className="px-2 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs">Change Role</button>
-                    <button onClick={() => handleChangeStatus(user)} className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs">Change Status</button>
+                  <td className="px-4 py-2 flex gap-2 text-[14px] md:text-base">
+                    <button onClick={() => handleEdit(user)} className="px-2 py-1 md:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs text-nowrap cursor-pointer">Edit</button>
+                    <button onClick={() => handleDelete(user)} className="px-2 py-1 md:py-2 bg-red-600 text-white rounded hover:bg-red-700 text-xs text-nowrap cursor-pointer">Delete</button>
+                    <button onClick={() => handleChangeRole(user)} className="px-2 py-1 md:py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs text-nowrap cursor-pointer">Change Role</button>
+                    <button onClick={() => handleChangeStatus(user)} className="px-2 py-1 md:py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs text-nowrap cursor-pointer">Change Status</button>
                   </td>
                 </tr>
               ))
@@ -158,7 +158,7 @@ export default function AllUsersPage() {
       </div>
 
       {/* Pagination */}
-      <div className="flex justify-end items-center gap-2 mt-6">
+      <div className="flex justify-center md:justify-end items-center gap-2 mt-6">
         <button
           onClick={() => setPage(p => Math.max(1, p - 1))}
           disabled={page === 1}

@@ -6,6 +6,7 @@ import FeaturedProjects from '@/components/home-component/FeaturedProjects'
 import TestimonialsSection from '@/components/home-component/TestimonialsSection'
 import CallToAction from '@/components/home-component/CallToAction'
 import RequestQuote from '@/components/home-component/RequestQuote'
+import ClientsLogoSlider from '@/components/home-component/ClientsLogoSlider'
 
 export default function HomePage() {
   return (
@@ -14,6 +15,7 @@ export default function HomePage() {
       <HomeAbout />
       <OurServices />
       <FeaturedProjects />
+      <ClientsLogoSlider />
       <TestimonialsSection />
       <CallToAction />
       <RequestQuote />

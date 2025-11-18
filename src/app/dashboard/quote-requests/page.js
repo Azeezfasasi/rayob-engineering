@@ -245,10 +245,10 @@ const ManageQuoteRequests = () => {
 	}
 
 	return (
-		<div className="bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
-			<div className="max-w-7xl mx-auto">
+		<div className="bg-gray-50 py-2 md:py-8 px-0 sm:px-6 lg:px-8 mx-auto">
+			<div className="w-[330px] md:w-full md:max-w-7xl mx-auto">
 				{/* Search and Filters */}
-				<div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+				<div className="bg-white rounded-lg shadow-sm p-2 md:p-6 mb-6">
 					<div className="flex flex-col gap-4">
 						{/* Search Bar */}
 						<div className="relative">

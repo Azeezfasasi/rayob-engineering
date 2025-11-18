@@ -71,8 +71,8 @@ export default function MainHeader() {
 
   return (
     <>
-    <header className="w-full bg-white/60 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-30 shadow-md">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <header className="w-full left-0 right-0 bg-white/60 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-md">
+      <div className="mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex items-center gap-3">
@@ -144,7 +144,7 @@ export default function MainHeader() {
           {/* Right actions */}
           <div className="hidden md:flex items-center space-x-3">
             <Link href="/login" className="px-4 py-2 text-sm font-semibold border border-blue-500 text-gray-700 hover:text-blue-600 rounded-md">Login</Link>
-            <Link href="/register" className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Get Started</Link>
+            <Link href="/request-a-quote" className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Request Quote</Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -226,7 +226,7 @@ export default function MainHeader() {
 
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">
               <Link href="/login" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">Login</Link>
-              <Link href="/register" onClick={() => setOpen(false)} className="block bg-blue-500 text-white px-4 py-2 rounded-md text-center">Get Started</Link>
+              <Link href="/request-a-quote" onClick={() => setOpen(false)} className="block bg-blue-500 text-white px-4 py-2 rounded-md text-center">Request Quote</Link>
             </div>
           </div>
         </div>

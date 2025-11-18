@@ -71,10 +71,10 @@ export default function FeaturedProjects() {
                     {project.category}
                   </span>
                   <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3">
-                    {project.projectName}
+                    {project.projectName.split(" ").slice(0, 8).join(" ") + "…"}
                   </h3>
                   <p className="text-gray-600 mb-4">
-                    {project.projectDescription}
+                    {project.projectDescription.split(" ").slice(0, 20).join(" ") + "…"}
                   </p>
                   <a
                     href={`/projects/${project._id}`}

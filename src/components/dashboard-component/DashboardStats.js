@@ -10,7 +10,7 @@ function LastUpdated() {
     }, 60000);
     return () => clearInterval(interval);
   }, []);
-  return <p className="text-sm text-gray-500">Last updated: <time>{now}</time></p>;
+  return <p className="text-sm text-gray-500 font-semibold">Last updated: <span className='font-normal'><time>{now}</time></span></p>;
 }
 
 function Icon({ name }) {
@@ -108,18 +108,18 @@ export default function DashboardStats({ data = {} }) {
 
   return (
     <section aria-labelledby="dashboard-stats" className="mt-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex flex-col md:flex-row items-start md:justify-between mb-4">
         <h2 id="dashboard-stats" className="text-lg font-semibold text-gray-800">Overview</h2>
         <LastUpdated />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.map(item => (
-          <div key={item.key} className="bg-white rounded-lg shadow-sm p-4 flex items-start gap-4">
+          <div key={item.key} className="bg-white rounded-lg shadow-sm p-3 md:p-4 flex items-start gap-4">
             <div className="shrink-0"> <Icon name={item.icon} /> </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <div className="truncate">
+                <div className="lg:truncate">
                   <div className="text-xs font-medium text-gray-500">{item.label}</div>
                   <div className="mt-1"><Count value={item.value} /></div>
                 </div>

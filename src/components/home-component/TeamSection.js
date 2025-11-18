@@ -2,7 +2,7 @@ import Image from "next/image";
 
 const teamMembers = [
   {
-    name: "Engr. Azeez Fasasi",
+    name: "Engr. Progress",
     position: "CEO & Founder",
     photo: "/images/projectplaceholder.png",
   },

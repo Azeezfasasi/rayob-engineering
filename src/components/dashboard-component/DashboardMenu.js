@@ -2,27 +2,47 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Image from 'next/image'
+import { LayoutDashboard, Briefcase, NotepadText, Contact, TableProperties, Users, Mails, Images  } from 'lucide-react';
 
 function Icon({ name }) {
   switch (name) {
     case 'dashboard':
       return (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 13h8V3H3v10zM3 21h8v-6H3v6zM13 21h8V11h-8v10zM13 3v6h8V3h-8z" />
-        </svg>
+        <LayoutDashboard className="w-5 h-5" />
       )
     case 'projects':
       return (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 7h18M3 12h18M3 17h18" />
-        </svg>
+        <Briefcase className="w-5 h-5" />
       )
     case 'blog':
       return (
-        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z" />
-        </svg>
+        <NotepadText className="w-5 h-5" />
       )
+    case 'Contact':
+      return (
+        <Contact  className="w-5 h-5" />
+      )
+    case 'Quote Requests':
+    return (
+      <TableProperties className="w-5 h-5" />
+    )
+    case 'Users':
+    return (
+      <Users className="w-5 h-5" />
+    )
+    case 'Newsletter':
+    return (
+      <Mails className="w-5 h-5" />
+    )
+    case 'Newsletter':
+    return (
+      <Mails className="w-5 h-5" />
+    )
+    case 'Gallery':
+    return (
+      <Images className="w-5 h-5" />
+    )
     case 'settings':
       return (
         <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -57,12 +77,12 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
         { href: '/dashboard/manage-blog', label: 'Manage Blogs' }
       ]
     },
-    { href: '/dashboard/contact-form-responses', label: 'Contact Form Responses', icon: 'dashboard' },
-    { href: '/dashboard/quote-requests', label: 'Quote Requests', icon: 'dashboard' },
+    { href: '/dashboard/contact-form-responses', label: 'Contact Form Responses', icon: 'Contact' },
+    { href: '/dashboard/quote-requests', label: 'Quote Requests', icon: 'Quote Requests' },
     {
       href: '/dashboard/all-users',
       label: 'Manage Users',
-      icon: 'blog',
+      icon: 'Users',
       children: [
         { href: '/dashboard/all-users', label: 'All Users' },
         { href: '/dashboard/add-user', label: 'Add User' },
@@ -72,7 +92,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
     {
       href: '/dashboard/all-newsletter',
       label: 'Newsletter Management',
-      icon: 'blog',
+      icon: 'Newsletter',
       children: [
         { href: '/dashboard/send-newsletter', label: 'Send Newsletter' },
         { href: '/dashboard/all-newsletters', label: 'All Newsletters' },
@@ -82,32 +102,10 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
     {
       href: '/dashboard/all-gallery',
       label: 'Gallery Management',
-      icon: 'blog',
+      icon: 'Gallery',
       children: [
         { href: '/dashboard/add-gallery', label: 'Add Gallery' },
         { href: '/dashboard/all-gallery', label: 'All Gallery' },
-      ]
-    },
-    {
-      href: '#',
-      label: 'Homepage Settings',
-      icon: 'blog',
-      children: [
-        { href: '/dashboard/homepage/hero', label: 'Hero Section' },
-        { href: '#', label: 'Call to Action' },
-        { href: '#', label: 'Our Services' },
-        { href: '#', label: 'Testimonial' },
-      ]
-    },
-    {
-      href: '#',
-      label: 'About Page Settings',
-      icon: 'blog',
-      children: [
-        { href: '#', label: 'Mission & Vision' },
-        { href: '#', label: 'History & Milestones' },
-        { href: '#', label: 'Team Members' },
-        { href: '#', label: 'Testimonial' },
       ]
     },
   ]
@@ -179,15 +177,14 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
     <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/40" onClick={onClose} />
 
-      <nav className="relative z-50 h-full w-64 bg-white border-r border-gray-100">
+      <nav className="relative z-50 h-full w-70 bg-white border-r border-gray-100">
         <div className="h-full overflow-y-auto py-6 px-4">
           <div className="flex items-center justify-between mb-6">
-            <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-linear-to-br from-orange-400 to-red-500 rounded-md flex items-center justify-center text-white font-bold">R</div>
-              <span className="text-lg font-semibold text-gray-800">Dashboard</span>
+            <Link href="/" className="flex flex-col items-center gap-3">
+              <Image src="/images/rayob.svg" alt="Rayob Logo" width={170} height={50} className="w-35 block rounded-md" />
             </Link>
-            <button aria-label="Close menu" onClick={onClose} className="p-2 rounded-md text-gray-600 hover:bg-gray-100">
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <button aria-label="Close menu" onClick={onClose} className="p-2 rounded-md text-red-600 hover:bg-gray-100">
+              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>

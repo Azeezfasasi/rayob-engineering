@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AuthProvider>
-          <div className="site-main-header">
+          <div className="site-main-header sticky top-0 z-50">
             <MainHeader />
           </div>
           <main>{children}</main>

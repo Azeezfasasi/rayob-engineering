@@ -33,8 +33,8 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
   };
 
   return (
-    <header className="w-full bg-white border-b border-gray-100 shadow-sm">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <header className="w-full bg-white border-b border-gray-100 shadow-sm sticky top-0 z-40">
+      <div className="mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             {/* Mobile hamburger: visible on small screens */}
@@ -59,8 +59,7 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
             </button>
 
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-linear-to-br from-orange-400 to-red-500 rounded-md flex items-center justify-center text-white font-bold">R</div>
-              <span className="text-lg font-semibold text-gray-800">Dashboard</span>
+              <Image src="/images/rayob.svg" alt="Rayob Logo" width={170} height={50} className="w-25 md:w-35 block rounded-md" />
             </Link>
           </div>
 

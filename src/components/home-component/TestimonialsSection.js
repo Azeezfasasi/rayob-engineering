@@ -72,7 +72,7 @@ export default function TestimonialsSection() {
         {/* CTA */}
         <div className="text-center mt-12">
           <a
-            href="/contact"
+            href="/contact-us"
             className="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition"
           >
             Work With Us
