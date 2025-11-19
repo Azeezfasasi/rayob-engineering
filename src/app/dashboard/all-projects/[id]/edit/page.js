@@ -22,7 +22,9 @@ export default function EditProjectPage() {
     teamLead: '',
     teamMembers: '',
     featuredImage: null,
+    featuredImagePreview: '',
     galleryImages: [],
+    galleryImagePreviews: [],
     technologies: '',
     materialsUsed: '',
     completion: 0,
@@ -32,6 +34,8 @@ export default function EditProjectPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState(null)
+  const [existingFeaturedImage, setExistingFeaturedImage] = useState(null)
+  const [existingGalleryImages, setExistingGalleryImages] = useState([])
 
   // Load project data from backend on mount
   useEffect(() => {
@@ -54,12 +58,16 @@ export default function EditProjectPage() {
             teamLead: data.project.teamLead || '',
             teamMembers: (data.project.teamMembers || []).join(', '),
             featuredImage: null,
+            featuredImagePreview: data.project.featuredImage || '',
             galleryImages: [],
+            galleryImagePreviews: data.project.galleryImages || [],
             technologies: (data.project.technologies || []).join(', '),
             materialsUsed: (data.project.materialsUsed || []).join(', '),
             completion: data.project.completion,
             projectHighlights: data.project.projectHighlights || ''
           });
+          setExistingFeaturedImage(data.project.featuredImage || null);
+          setExistingGalleryImages(data.project.galleryImages || []);
         }
       } catch (err) {
         setMessage({ type: 'error', text: 'Failed to load project' });
@@ -78,10 +86,66 @@ export default function EditProjectPage() {
   function handleImageChange(e) {
     const { name, files } = e.target
     if (name === 'featuredImage') {
-      setFormData(prev => ({ ...prev, [name]: files?.[0] || null }))
+      const file = files?.[0]
+      if (file) {
+        setFormData(prev => ({ ...prev, featuredImage: file }))
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          setFormData(prev => ({
+            ...prev,
+            featuredImagePreview: event.target?.result || ''
+          }))
+        }
+        reader.readAsDataURL(file)
+      }
     } else if (name === 'galleryImages') {
-      setFormData(prev => ({ ...prev, [name]: Array.from(files || []) }))
+      const fileList = Array.from(files || [])
+      setFormData(prev => ({ ...prev, galleryImages: fileList }))
+      
+      // Generate previews
+      const previews = []
+      let loadedCount = 0
+      
+      fileList.forEach((file) => {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          previews.push(event.target?.result || '')
+          loadedCount++
+          if (loadedCount === fileList.length) {
+            setFormData(prev => ({
+              ...prev,
+              galleryImagePreviews: previews
+            }))
+          }
+        }
+        reader.readAsDataURL(file)
+      })
     }
+  }
+
+  function removeGalleryImage(index) {
+    setFormData(prev => ({
+      ...prev,
+      galleryImages: prev.galleryImages.filter((_, i) => i !== index),
+      galleryImagePreviews: prev.galleryImagePreviews.filter((_, i) => i !== index)
+    }))
+  }
+
+  function removeExistingFeaturedImage() {
+    setExistingFeaturedImage(null);
+    setFormData(prev => ({
+      ...prev,
+      featuredImagePreview: ''
+    }));
+  }
+
+  function removeExistingGalleryImage(index) {
+    const updatedImages = existingGalleryImages.filter((_, i) => i !== index);
+    setExistingGalleryImages(updatedImages);
+    setFormData(prev => ({
+      ...prev,
+      galleryImagePreviews: updatedImages
+    }));
   }
 
   async function handleSubmit(e) {
@@ -104,9 +168,13 @@ export default function EditProjectPage() {
           : [],
         budget: formData.budget ? Number(formData.budget) : 0,
         completion: formData.completion ? Number(formData.completion) : 0,
+        // Send existing gallery images that weren't removed
+        existingGalleryImages: existingGalleryImages
       };
       delete fields.featuredImage;
       delete fields.galleryImages;
+      delete fields.featuredImagePreview;
+      delete fields.galleryImagePreviews;
       data.append('fields', JSON.stringify(fields));
       if (formData.featuredImage) {
         data.append('featuredImage', formData.featuredImage);
@@ -278,13 +346,58 @@ export default function EditProjectPage() {
             <div className="space-y-4">
               <div>
                 <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+                {formData.featuredImagePreview && (
+                  <div className="mb-4 relative max-w-xs">
+                    <img src={formData.featuredImagePreview} alt="Featured image preview" className="max-h-48 rounded-lg border border-gray-300" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (existingFeaturedImage) {
+                          removeExistingFeaturedImage();
+                        } else {
+                          setFormData(prev => ({ ...prev, featuredImage: null, featuredImagePreview: '' }));
+                        }
+                      }}
+                      className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
                 <input type="file" id="featuredImage" name="featuredImage" onChange={handleImageChange} accept="image/*" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
-                {formData.featuredImage && <p className="text-sm text-gray-600 mt-2">✓ {formData.featuredImage.name}</p>}
+                {formData.featuredImage && !formData.featuredImagePreview && <p className="text-sm text-green-600 mt-2">✓ {formData.featuredImage.name}</p>}
               </div>
               <div>
                 <label htmlFor="galleryImages" className="block text-sm font-medium text-gray-700 mb-2">Gallery Images (multiple)</label>
                 <input type="file" id="galleryImages" name="galleryImages" onChange={handleImageChange} accept="image/*" multiple className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
-                {formData.galleryImages.length > 0 && <p className="text-sm text-gray-600 mt-2">✓ {formData.galleryImages.length} image(s) selected</p>}
+                {formData.galleryImagePreviews && formData.galleryImagePreviews.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Gallery Images ({formData.galleryImagePreviews.length})</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {formData.galleryImagePreviews.map((preview, idx) => (
+                        <div key={idx} className="relative group">
+                          <img src={preview} alt={`Gallery image ${idx + 1}`} className="w-full h-24 object-cover rounded-lg border border-gray-300" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (preview.startsWith('http')) {
+                                removeExistingGalleryImage(idx);
+                              } else {
+                                removeGalleryImage(idx);
+                              }
+                            }}
+                            className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition rounded-lg"
+                          >
+                            <span className="text-white text-sm font-medium">Remove</span>
+                          </button>
+                          <p className="text-xs text-gray-600 mt-1 truncate">
+                            {formData.galleryImages[idx]?.name || 'Existing image'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </fieldset>

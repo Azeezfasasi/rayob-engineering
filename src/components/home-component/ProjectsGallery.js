@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Commet } from "react-loading-indicators";
 
 const categories = ["All", "Industrial", "Residential", "Commercial"];
 
@@ -53,7 +54,7 @@ export default function ProjectsGalleryModal() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
           {loading ? (
             <div className="col-span-full text-center py-10">
-              <p className="text-gray-500">Loading projects...</p>
+              <p className="text-gray-500"><Commet color="#155dfc" size="medium" text="Loading" textColor="#155dfc" /></p>
             </div>
           ) : filteredProjects.length === 0 ? (
             <div className="col-span-full text-center py-10">

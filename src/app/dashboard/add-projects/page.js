@@ -15,7 +15,9 @@ export default function AddProjectsPage() {
     teamLead: '',
     teamMembers: '', // comma separated string, will convert to array
     featuredImage: null,
+    featuredImagePreview: '',
     galleryImages: [],
+    galleryImagePreviews: [],
     technologies: '', // comma separated string, will convert to array
     materialsUsed: '', // comma separated string, will convert to array
     completion: 0,
@@ -33,10 +35,49 @@ export default function AddProjectsPage() {
   function handleImageChange(e) {
     const { name, files } = e.target
     if (name === 'featuredImage') {
-      setFormData(prev => ({ ...prev, [name]: files?.[0] || null }))
+      const file = files?.[0]
+      if (file) {
+        setFormData(prev => ({ ...prev, featuredImage: file }))
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          setFormData(prev => ({
+            ...prev,
+            featuredImagePreview: event.target?.result || ''
+          }))
+        }
+        reader.readAsDataURL(file)
+      }
     } else if (name === 'galleryImages') {
-      setFormData(prev => ({ ...prev, [name]: Array.from(files || []) }))
+      const fileList = Array.from(files || [])
+      setFormData(prev => ({ ...prev, galleryImages: fileList }))
+      
+      // Generate previews
+      const previews = []
+      let loadedCount = 0
+      
+      fileList.forEach((file) => {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+          previews.push(event.target?.result || '')
+          loadedCount++
+          if (loadedCount === fileList.length) {
+            setFormData(prev => ({
+              ...prev,
+              galleryImagePreviews: previews
+            }))
+          }
+        }
+        reader.readAsDataURL(file)
+      })
     }
+  }
+
+  function removeGalleryImage(index) {
+    setFormData(prev => ({
+      ...prev,
+      galleryImages: prev.galleryImages.filter((_, i) => i !== index),
+      galleryImagePreviews: prev.galleryImagePreviews.filter((_, i) => i !== index)
+    }))
   }
 
   async function handleSubmit(e) {
@@ -106,7 +147,7 @@ export default function AddProjectsPage() {
 
         {/* Message */}
         {message && (
-          <div className={`mb-6 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`}>
+          <div className={`mb-6 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`}>
             {message.text}
           </div>
         )}
@@ -225,16 +266,54 @@ export default function AddProjectsPage() {
             <div className="space-y-4">
               <div>
                 <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 mb-2">Featured Image</label>
+                {formData.featuredImagePreview && (
+                  <div className="mb-4 relative max-w-xs">
+                    <img src={formData.featuredImagePreview} alt="Featured image preview" className="max-h-48 rounded-lg border border-gray-300" />
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, featuredImage: null, featuredImagePreview: '' }))}
+                      className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                )}
                 <input type="file" id="featuredImage" name="featuredImage" onChange={handleImageChange} accept="image/*" className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
-                {formData.featuredImage && <p className="text-sm text-gray-600 mt-2">✓ {formData.featuredImage.name}</p>}
+                {formData.featuredImage && !formData.featuredImagePreview && <p className="text-sm text-green-600 mt-2">✓ {formData.featuredImage.name}</p>}
               </div>
               <div>
                 <label htmlFor="galleryImages" className="block text-sm font-medium text-gray-700 mb-2">Gallery Images (multiple)</label>
                 <input type="file" id="galleryImages" name="galleryImages" onChange={handleImageChange} accept="image/*" multiple className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
-                {formData.galleryImages.length > 0 && <p className="text-sm text-gray-600 mt-2">✓ {formData.galleryImages.length} image(s) selected</p>}
+                {formData.galleryImagePreviews && formData.galleryImagePreviews.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Gallery Images ({formData.galleryImagePreviews.length})</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {formData.galleryImagePreviews.map((preview, idx) => (
+                        <div key={idx} className="relative group">
+                          <img src={preview} alt={`Gallery image ${idx + 1}`} className="w-full h-24 object-cover rounded-lg border border-gray-300" />
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryImage(idx)}
+                            className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition rounded-lg"
+                          >
+                            <span className="text-white text-sm font-medium">Remove</span>
+                          </button>
+                          <p className="text-xs text-gray-600 mt-1 truncate">{formData.galleryImages[idx]?.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </fieldset>
+
+          {/* Message */}
+          {message && (
+            <div className={`mb-6 p-4 rounded-lg ${message.type === 'success' ? 'bg-green-100 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`}>
+              {message.text}
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex gap-4 pt-6 border-t">

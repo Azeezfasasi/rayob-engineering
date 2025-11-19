@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Upload } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import axios from 'axios'
 
 function EditBlogContent() {
 	const router = useRouter()
@@ -12,20 +13,18 @@ function EditBlogContent() {
 	const postId = params?.id
 
 	const [formData, setFormData] = useState({
-		title: '',
-		slug: '',
+		postTitle: '',
+		urlSlug: '',
 		content: '',
-		excerpt: '',
 		category: '',
-		tags: '',
+		tags: [],
 		author: '',
 		featuredImage: null,
 		featuredImagePreview: '',
-		metaTitle: '',
-		metaDescription: '',
-		metaKeywords: '',
+		blogImages: [],
+		blogImagePreviews: [],
 		status: 'draft',
-		publishedDate: '',
+		publishDate: '',
 	})
 
 	const [loading, setLoading] = useState(true)
@@ -34,35 +33,36 @@ function EditBlogContent() {
 	const [charCount, setCharCount] = useState(0)
 	const [hasChanges, setHasChanges] = useState(false)
 
-	// Load post data
+	// Load post data from backend
 	const loadPost = useCallback(async () => {
 		try {
 			setLoading(true)
-			// Mock data - Replace with actual API call
-			const mockPost = {
-				id: postId,
-				title: 'Getting Started with Next.js',
-				slug: 'getting-started-nextjs',
-				excerpt: 'Learn the basics of Next.js framework',
-				content:
-					'# Getting Started with Next.js\n\nNext.js is a powerful React framework that enables functionality such as server-side rendering and static site generation.\n\n## Why Next.js?\n\n- **Performance**: Optimized for speed with automatic code splitting\n- **SEO**: Built-in SEO features\n- **Developer Experience**: Great tooling and documentation',
-				category: 'project-updates',
-				tags: 'nextjs, react, framework',
-				author: 'John Doe',
-				featuredImage: null,
-				featuredImagePreview: '/images/about1.jpg',
-				metaTitle: 'Getting Started with Next.js - Guide',
-				metaDescription: 'A comprehensive guide to get started with Next.js framework',
-				metaKeywords: 'nextjs, react, framework, tutorial',
-				status: 'published',
-				publishedDate: '2025-01-10',
+			const response = await axios.get(`/api/blog`)
+			const blog = response.data.find(b => b._id === postId)
+			
+			if (!blog) {
+				setMessage({ type: 'error', text: 'Blog post not found' })
+				return
 			}
 
-			setFormData(mockPost)
-			setCharCount(mockPost.content.length)
+			setFormData({
+				postTitle: blog.postTitle || '',
+				urlSlug: blog.urlSlug || '',
+				content: blog.content || '',
+				category: blog.category || '',
+				tags: Array.isArray(blog.tags) ? blog.tags : [],
+				author: blog.author || '',
+				featuredImage: null,
+				featuredImagePreview: blog.featuredImage || '',
+				blogImages: [],
+				blogImagePreviews: Array.isArray(blog.blogImages) ? blog.blogImages : [],
+				status: blog.status || 'draft',
+				publishDate: blog.publishDate ? new Date(blog.publishDate).toISOString().split('T')[0] : '',
+			})
+			setCharCount(blog.content?.length || 0)
 		} catch (error) {
 			console.error('Failed to load post:', error)
-			setMessage({ type: 'error', text: 'Failed to load post' })
+			setMessage({ type: 'error', text: 'Failed to load blog post' })
 		} finally {
 			setLoading(false)
 		}
@@ -75,11 +75,20 @@ function EditBlogContent() {
 	function handleInputChange(e) {
 		const { name, value, type, checked } = e.target
 		setFormData((prev) => {
-			const updated = { ...prev, [name]: type === 'checkbox' ? checked : value }
+			const updated = { ...prev }
+			
+			if (name === 'tags') {
+				// Convert comma-separated string to array
+				updated[name] = value.split(',').map(tag => tag.trim()).filter(tag => tag)
+			} else if (type === 'checkbox') {
+				updated[name] = checked
+			} else {
+				updated[name] = value
+			}
 
 			// Auto-generate slug from title
-			if (name === 'title') {
-				updated.slug = value
+			if (name === 'postTitle') {
+				updated.urlSlug = value
 					.toLowerCase()
 					.replace(/[^\w\s-]/g, '')
 					.replace(/\s+/g, '-')
@@ -113,6 +122,47 @@ function EditBlogContent() {
 		}
 	}
 
+	function handleBlogImagesChange(e) {
+		const files = Array.from(e.target.files || [])
+		setFormData(prev => ({ ...prev, blogImages: files }))
+		
+		// Generate previews
+		const previews = []
+		let loadedCount = 0
+		
+		files.forEach((file) => {
+			const reader = new FileReader()
+			reader.onload = (event) => {
+				previews.push(event.target?.result || '')
+				loadedCount++
+				if (loadedCount === files.length) {
+					setFormData(prev => ({
+						...prev,
+						blogImagePreviews: [...prev.blogImagePreviews, ...previews]
+					}))
+				}
+			}
+			reader.readAsDataURL(file)
+		})
+		setHasChanges(true)
+	}
+
+	function removeBlogImage(index, isExisting = false) {
+		if (isExisting) {
+			setFormData(prev => ({
+				...prev,
+				blogImagePreviews: prev.blogImagePreviews.filter((_, i) => i !== index)
+			}))
+		} else {
+			setFormData(prev => ({
+				...prev,
+				blogImages: prev.blogImages.filter((_, i) => i !== index),
+				blogImagePreviews: prev.blogImagePreviews.filter((_, i) => i !== index)
+			}))
+		}
+		setHasChanges(true)
+	}
+
 	async function handleSubmit(e) {
 		e.preventDefault()
 		setSaving(true)
@@ -120,21 +170,39 @@ function EditBlogContent() {
 
 		try {
 			const data = new FormData()
-			Object.entries(formData).forEach(([key, value]) => {
-				if (key === 'featuredImagePreview') return
-				if (value instanceof File) {
-					data.append(key, value)
-				} else if (value !== null && value !== '') {
-					data.append(key, value)
-				}
+			
+			// Add blog fields
+			data.append('postTitle', formData.postTitle)
+			data.append('urlSlug', formData.urlSlug)
+			data.append('content', formData.content)
+			data.append('category', formData.category)
+			data.append('author', formData.author)
+			data.append('status', formData.status)
+			// Send tags as comma-separated string, not JSON
+			data.append('tags', formData.tags.join(', '))
+			
+			if (formData.publishDate) {
+				data.append('publishDate', formData.publishDate)
+			}
+			
+			// Add featured image if changed
+			if (formData.featuredImage instanceof File) {
+				data.append('featuredImage', formData.featuredImage)
+			}
+			
+			// Add new blog images
+			if (formData.blogImages && formData.blogImages.length > 0) {
+				formData.blogImages.forEach((img) => {
+					data.append('blogImages', img)
+				})
+			}
+
+			// Call backend API to update blog
+			await axios.put(`/api/blog/${postId}`, data, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
 			})
-
-			// Mock API call - Replace with actual endpoint
-			// const response = await fetch(`/api/blog/${postId}`, { method: 'PUT', body: data })
-			// const result = await response.json()
-
-			// Simulate successful update
-			await new Promise((resolve) => setTimeout(resolve, 1000))
 
 			setMessage({ type: 'success', text: 'Blog post updated successfully!' })
 			setHasChanges(false)
@@ -142,7 +210,8 @@ function EditBlogContent() {
 				router.push('/dashboard/manage-blog')
 			}, 1500)
 		} catch (err) {
-			setMessage({ type: 'error', text: `Error: ${err.message}` })
+			console.error('Update error:', err)
+			setMessage({ type: 'error', text: `Error: ${err.response?.data?.error || err.message}` })
 		} finally {
 			setSaving(false)
 		}
@@ -222,40 +291,38 @@ function EditBlogContent() {
 					<fieldset>
 						<legend className="text-lg font-semibold text-gray-900 mb-4">Post Information</legend>
 						<div className="space-y-4">
-							<div>
-								<label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-									Post Title *
-								</label>
-								<input
-									type="text"
-									id="title"
-									name="title"
-									value={formData.title}
-									onChange={handleInputChange}
-									required
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-									placeholder="e.g., Getting Started with Next.js"
-								/>
-								<p className="text-xs text-gray-500 mt-1">This will appear as the main headline</p>
-							</div>
+						<div>
+							<label htmlFor="postTitle" className="block text-sm font-medium text-gray-700 mb-2">
+								Post Title *
+							</label>
+							<input
+								type="text"
+								id="postTitle"
+								name="postTitle"
+								value={formData.postTitle}
+								onChange={handleInputChange}
+								required
+								className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+								placeholder="e.g., Getting Started with Next.js"
+							/>
+							<p className="text-xs text-gray-500 mt-1">This will appear as the main headline</p>
+						</div>
 
-							<div>
-								<label htmlFor="slug" className="block text-sm font-medium text-gray-700 mb-2">
-									URL Slug
-								</label>
-								<input
-									type="text"
-									id="slug"
-									name="slug"
-									value={formData.slug}
-									onChange={handleInputChange}
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none bg-gray-50"
-									placeholder="auto-generated from title"
-								/>
-								<p className="text-xs text-gray-500 mt-1">Auto-generated from title, edit if needed</p>
-							</div>
-
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div>
+							<label htmlFor="urlSlug" className="block text-sm font-medium text-gray-700 mb-2">
+								URL Slug
+							</label>
+							<input
+								type="text"
+								id="urlSlug"
+								name="urlSlug"
+								value={formData.urlSlug}
+								onChange={handleInputChange}
+								className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none bg-gray-50"
+								placeholder="auto-generated from title"
+							/>
+							<p className="text-xs text-gray-500 mt-1">Auto-generated from title, edit if needed</p>
+						</div>							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 								<div>
 									<label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-2">
 										Author *
@@ -271,41 +338,22 @@ function EditBlogContent() {
 										placeholder="Author name"
 									/>
 								</div>
-								<div>
-									<label htmlFor="publishedDate" className="block text-sm font-medium text-gray-700 mb-2">
-										Publish Date
-									</label>
-									<input
-										type="date"
-										id="publishedDate"
-										name="publishedDate"
-										value={formData.publishedDate}
-										onChange={handleInputChange}
-										className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-									/>
-								</div>
+							<div>
+								<label htmlFor="publishDate" className="block text-sm font-medium text-gray-700 mb-2">
+									Publish Date
+								</label>
+								<input
+									type="date"
+									id="publishDate"
+									name="publishDate"
+									value={formData.publishDate}
+									onChange={handleInputChange}
+									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+								/>
+							</div>
 							</div>
 						</div>
 					</fieldset>
-
-					{/* Excerpt */}
-					<div>
-						<label htmlFor="excerpt" className="block text-sm font-medium text-gray-700 mb-2">
-							Excerpt *
-						</label>
-						<textarea
-							id="excerpt"
-							name="excerpt"
-							value={formData.excerpt}
-							onChange={handleInputChange}
-							required
-							rows="3"
-							maxLength="160"
-							className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
-							placeholder="Brief summary of the post (displayed in listings)"
-						/>
-						<p className="text-xs text-gray-500 mt-1">{formData.excerpt.length}/160 characters</p>
-					</div>
 
 					{/* Content */}
 					<div>
@@ -411,21 +459,21 @@ function EditBlogContent() {
 									<option value="case-studies">Case Studies</option>
 								</select>
 							</div>
-							<div>
-								<label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
-									Tags
-								</label>
-								<input
-									type="text"
-									id="tags"
-									name="tags"
-									value={formData.tags}
-									onChange={handleInputChange}
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-									placeholder="Separate tags with commas"
-								/>
-								<p className="text-xs text-gray-500 mt-1">Separate multiple tags with commas</p>
-							</div>
+						<div>
+							<label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
+								Tags
+							</label>
+							<input
+								type="text"
+								id="tags"
+								name="tags"
+								value={formData.tags.join(', ')}
+								onChange={handleInputChange}
+								className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+								placeholder="Separate tags with commas"
+							/>
+							<p className="text-xs text-gray-500 mt-1">Separate multiple tags with commas</p>
+						</div>
 						</div>
 					</fieldset>
 
@@ -488,56 +536,44 @@ function EditBlogContent() {
 						</div>
 					</fieldset>
 
-					{/* SEO */}
+					{/* Blog Images */}
 					<fieldset>
-						<legend className="text-lg font-semibold text-gray-900 mb-4">SEO</legend>
-						<div className="space-y-4">
-							<div>
-								<label htmlFor="metaTitle" className="block text-sm font-medium text-gray-700 mb-2">
-									Meta Title
-								</label>
-								<input
-									type="text"
-									id="metaTitle"
-									name="metaTitle"
-									value={formData.metaTitle}
-									onChange={handleInputChange}
-									maxLength="60"
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-									placeholder="SEO title (60 chars max)"
-								/>
-								<p className="text-xs text-gray-500 mt-1">{formData.metaTitle.length}/60 characters</p>
-							</div>
-							<div>
-								<label htmlFor="metaDescription" className="block text-sm font-medium text-gray-700 mb-2">
-									Meta Description
-								</label>
-								<textarea
-									id="metaDescription"
-									name="metaDescription"
-									value={formData.metaDescription}
-									onChange={handleInputChange}
-									maxLength="160"
-									rows="2"
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-none"
-									placeholder="SEO description (160 chars max)"
-								/>
-								<p className="text-xs text-gray-500 mt-1">{formData.metaDescription.length}/160 characters</p>
-							</div>
-							<div>
-								<label htmlFor="metaKeywords" className="block text-sm font-medium text-gray-700 mb-2">
-									Meta Keywords
-								</label>
-								<input
-									type="text"
-									id="metaKeywords"
-									name="metaKeywords"
-									value={formData.metaKeywords}
-									onChange={handleInputChange}
-									className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-									placeholder="Separate keywords with commas"
-								/>
-							</div>
+						<legend className="text-lg font-semibold text-gray-900 mb-4">Blog Images</legend>
+						<div>
+							<label htmlFor="blogImages" className="block text-sm font-medium text-gray-700 mb-2">
+								Additional Images
+							</label>
+							<input
+								type="file"
+								id="blogImages"
+								name="blogImages"
+								multiple
+								onChange={handleBlogImagesChange}
+								accept="image/*"
+								className="w-full px-4 py-2 border border-gray-300 rounded-md"
+							/>
+							<p className="text-xs text-gray-500 mt-1">Upload multiple images to use in blog post</p>
+
+							{/* Existing Blog Images Preview */}
+							{formData.blogImagePreviews && formData.blogImagePreviews.length > 0 && (
+								<div className="mt-4">
+									<p className="text-sm font-medium text-gray-700 mb-2">Blog Images ({formData.blogImagePreviews.length})</p>
+									<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+										{formData.blogImagePreviews.map((preview, idx) => (
+											<div key={idx} className="relative group">
+												<img src={preview} alt={`Blog image ${idx + 1}`} className="w-full h-24 object-cover rounded-lg border border-gray-300" />
+												<button
+													type="button"
+													onClick={() => removeBlogImage(idx)}
+													className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition rounded-lg"
+												>
+													<span className="text-white text-sm font-medium">Remove</span>
+												</button>
+											</div>
+										))}
+									</div>
+								</div>
+							)}
 						</div>
 					</fieldset>
 

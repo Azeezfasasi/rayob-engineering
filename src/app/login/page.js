@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -7,7 +7,16 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
+  const [mounted, setMounted] = useState(false);
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    setMounted(true);
+    if (!loading && user) {
+      router.push("/dashboard");
+    }
+  }, [user, loading, router]);
 
   const [formData, setFormData] = useState({ email: "", password: "", remember: false });
   const [submitting, setSubmitting] = useState(false);
@@ -40,7 +49,13 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
+      {!mounted || (loading && !user) ? (
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      ) : (
+        <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-lg">
         <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">Welcome Back</h2>
         <p className="text-gray-600 mb-8 text-center">Please login to your account</p>
 
@@ -102,12 +117,13 @@ export default function Login() {
         </form>
 
         <p className="text-center text-gray-600 mt-6">
-          Don’t have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-blue-600 hover:text-blue-800 font-medium">
             Register
           </Link>
         </p>
       </div>
+      )}
     </div>
   );
 }

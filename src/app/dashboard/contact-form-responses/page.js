@@ -224,7 +224,7 @@ const ContactFormResponses = () => {
 	if (loading) {
 		return (
 			<div className="flex justify-center items-center py-12">
-				<p className="text-gray-600"><Commet color="#32cd32" size="medium" text="" textColor="" /></p>
+				<p className="text-gray-600"><Commet color="#155dfc" size="medium" text="Loading" textColor="#155dfc" /></p>
 			</div>
 		)
 	}
@@ -232,6 +232,7 @@ const ContactFormResponses = () => {
 	return (
 		<div className="bg-gray-50 py-4 md:py-8 px-0 sm:px-6 lg:px-8">
 			<div className="max-w-7xl mx-auto overflow-x-hidden">
+				<h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Contact Form Responses</h1>
 				{/* Search and Filters */}
 				<div className="w-full bg-white rounded-lg shadow-sm p-2 md:p-6 mb-6">
 					<div className="flex flex-col gap-4">

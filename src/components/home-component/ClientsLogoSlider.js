@@ -25,17 +25,17 @@ export default function ClientsLogoSlider() {
   }, []);
 
   const partners = [
-    { name: "Fieldbase Technical Services", logo: "/images/projectplaceholder.png" },
-    { name: "Huawei Technologies Limited", logo: "/images/projectplaceholder.png" },
-    { name: "MTN", logo: "/images/projectplaceholder.png" },
-    { name: "Airtel", logo: "/images/projectplaceholder.png" },
+    { name: "Fieldbase Technical Services", logo: "/images/fieldbase.jpg" },
+    { name: "Huawei Technologies Limited", logo: "/images/huawei.png" },
+    { name: "MTN", logo: "/images/mtn.jpg" },
+    { name: "Airtel", logo: "/images/airtel.png" },
     { name: "T2", logo: "/images/projectplaceholder.png" },
     { name: "ISPs", logo: "/images/projectplaceholder.png" },
-    { name: "CIF Telecommunications Limited", logo: "/images/projectplaceholder.png" },
-    { name: "Mainone", logo: "/images/projectplaceholder.png" },
-    { name: "IPNX", logo: "/images/projectplaceholder.png" },
-    { name: "WIOCC", logo: "/images/projectplaceholder.png" },
-    { name: "ntel", logo: "/images/projectplaceholder.png" },
+    { name: "CIF Telecommunications Limited", logo: "/images/cif.png" },
+    { name: "Mainone", logo: "/images/mainone.jpg" },
+    { name: "IPNX", logo: "/images/ipnx.png" },
+    { name: "WIOCC", logo: "/images/wiocc.jpg" },
+    { name: "ntel", logo: "/images/ntel.png" },
   ];
 
   return (

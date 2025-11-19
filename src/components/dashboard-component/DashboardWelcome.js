@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useAuth } from "@/context/AuthContext";
 import { Briefcase, NotepadText } from 'lucide-react';
+import Link from 'next/link';
 
 function getGreeting(date) {
   const hour = date.getHours();
@@ -66,15 +67,15 @@ export default function DashboardWelcome() {
         </div>
 
         <div className="flex flex-col lg:flex-row md:items-center gap-3">
-          <button className="inline-flex justify-center items-center gap-2 px-3 py-1 md:py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 cursor-pointer">
+          <Link href="/dashboard/add-projects" className="inline-flex justify-center items-center gap-2 px-3 py-1 md:py-2 bg-indigo-600 text-white rounded-md text-sm hover:bg-indigo-700 cursor-pointer">
             <Briefcase />
             Add Projects
-          </button>
+          </Link>
 
-          <button className="inline-flex justify-center items-center gap-2 px-3 py-1 md:py-2 border bg-gray-100 border-gray-200 rounded-md text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
+          <Link href="/dashboard/add-blog" className="inline-flex justify-center items-center gap-2 px-3 py-1 md:py-2 border bg-gray-100 border-gray-200 rounded-md text-sm text-gray-700 hover:bg-gray-50 cursor-pointer">
             <NotepadText />
             Publish Blog Posts
-          </button>
+          </Link>
         </div>
       </div>
     </section>

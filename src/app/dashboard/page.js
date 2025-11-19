@@ -19,7 +19,7 @@ export default function Dashboard() {
   }, [isAuthenticated, loading, router]);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen"><Commet color="#32cd32" size="medium" text="" textColor="" /></div>;
+    return <div className="flex items-center justify-center h-screen"><Commet color="#155dfc" size="medium" text="Loading" textColor="#155dfc" /></div>;
   }
   if (!isAuthenticated) {
     return null;

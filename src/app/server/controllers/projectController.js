@@ -52,14 +52,21 @@ export const editProject = async (req, projectId) => {
       const file = formData.get("featuredImage");
       update.featuredImage = await uploadToCloudinary(file, "projects/featured");
     }
-    if (formData.getAll("galleryImages").length > 0) {
-      const files = formData.getAll("galleryImages");
-      update.galleryImages = [];
-      for (const file of files) {
+    
+    // Handle gallery images - merge with existing if not completely replacing
+    const newGalleryFiles = formData.getAll("galleryImages");
+    const existingGalleryImages = fields.existingGalleryImages || [];
+    
+    if (newGalleryFiles.length > 0 || existingGalleryImages.length > 0) {
+      update.galleryImages = [...existingGalleryImages];
+      for (const file of newGalleryFiles) {
         const url = await uploadToCloudinary(file, "projects/gallery");
         update.galleryImages.push(url);
       }
     }
+    
+    // Remove existingGalleryImages from update as it's not a database field
+    delete update.existingGalleryImages;
 
     const project = await Project.findByIdAndUpdate(projectId, update, { new: true });
     if (!project) return NextResponse.json({ success: false, message: "Project not found" }, { status: 404 });

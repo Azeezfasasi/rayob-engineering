@@ -1,16 +1,22 @@
 "use client"
 import React, { useEffect, useState } from 'react'
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 // Client-only last updated time to prevent hydration mismatch
-function LastUpdated() {
-  const [now, setNow] = useState(() => new Date().toLocaleString());
+function LastUpdated({ timestamp }) {
+  const [now, setNow] = useState('');
+  
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(new Date().toLocaleString());
-    }, 60000);
+    // Update time on client side only
+    const updateTime = () => setNow(new Date().toLocaleString());
+    updateTime();
+    
+    const interval = setInterval(updateTime, 60000);
     return () => clearInterval(interval);
   }, []);
-  return <p className="text-sm text-gray-500 font-semibold">Last updated: <span className='font-normal'><time>{now}</time></span></p>;
+  
+  return now ? <p className="text-sm text-gray-500 font-semibold">Last updated: <span className='font-normal'><time>{now}</time></span></p> : null;
 }
 
 function Icon({ name }) {
@@ -85,45 +91,119 @@ function Count({ value = 0, duration = 800 }) {
 }
 
 export default function DashboardStats({ data = {} }) {
-  // default sample values if not provided
-  const defaults = {
-    users: 1248,
-    blogs: 86,
-    contacts: 321,
-    quotes: 54,
-    projects: 72,
-    requests: 12
-  }
+  const { token } = useAuth();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(new Date().toISOString());
 
-  const stats = { ...defaults, ...data }
+  // Fetch stats from backend
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const response = await axios.get('/api/dashboard/stats', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.success && response.data.stats) {
+          setStats(response.data.stats);
+          setLastUpdated(response.data.timestamp || new Date().toISOString());
+        }
+      } catch (err) {
+        console.error('Failed to fetch dashboard stats:', err);
+        setError('Failed to load statistics');
+
+        // Fallback to provided data or defaults
+        const defaults = {
+          users: 0,
+          blogs: 0,
+          contacts: 0,
+          quotes: 0,
+          projects: 0,
+          requests: 0,
+        };
+        setStats({ ...defaults, ...data });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (token) {
+      fetchStats();
+
+      // Refresh stats every 5 minutes
+      const interval = setInterval(fetchStats, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
+
+  // Use provided data if no token, otherwise use fetched stats
+  const displayStats = stats || data || {
+    users: 0,
+    blogs: 0,
+    contacts: 0,
+    quotes: 0,
+    projects: 0,
+    requests: 0,
+  };
 
   const items = [
-    { key: 'users', label: 'Users', value: stats.users, icon: 'users' },
-    { key: 'blogs', label: 'Blogs', value: stats.blogs, icon: 'blogs' },
-    { key: 'contacts', label: 'Contact Responses', value: stats.contacts, icon: 'contacts' },
-    { key: 'quotes', label: 'Submitted Quotes', value: stats.quotes, icon: 'quotes' },
-    { key: 'projects', label: 'Projects', value: stats.projects, icon: 'projects' },
-    { key: 'requests', label: 'Open Requests', value: stats.requests, icon: 'requests' }
-  ]
+    { key: 'users', label: 'Active Users', value: displayStats.users, icon: 'users' },
+    { key: 'blogs', label: 'Published Blogs', value: displayStats.blogs, icon: 'blogs' },
+    { key: 'contacts', label: 'Contact Forms', value: displayStats.contacts, icon: 'contacts' },
+    { key: 'quotes', label: 'Quote Requests', value: displayStats.quotes, icon: 'quotes' },
+    { key: 'projects', label: 'Projects', value: displayStats.projects, icon: 'projects' },
+    { key: 'requests', label: 'Pending Requests', value: displayStats.requests, icon: 'requests' },
+  ];
+
+  if (error && !stats) {
+    return (
+      <section aria-labelledby="dashboard-stats" className="mt-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800">
+          <p className="text-sm">{error}. Using fallback data.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section aria-labelledby="dashboard-stats" className="mt-6">
       <div className="flex flex-col md:flex-row items-start md:justify-between mb-4">
-        <h2 id="dashboard-stats" className="text-lg font-semibold text-gray-800">Overview</h2>
-        <LastUpdated />
+        <h2 id="dashboard-stats" className="text-lg font-semibold text-gray-800">
+          Overview {loading && <span className="text-xs text-gray-500">(updating...)</span>}
+        </h2>
+        <LastUpdated timestamp={lastUpdated} />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {items.map(item => (
-          <div key={item.key} className="bg-white rounded-lg shadow-sm p-3 md:p-4 flex items-start gap-4">
-            <div className="shrink-0"> <Icon name={item.icon} /> </div>
+        {items.map((item) => (
+          <div
+            key={item.key}
+            className={`bg-white rounded-lg shadow-sm p-3 md:p-4 flex items-start gap-4 ${
+              loading ? 'opacity-60' : ''
+            }`}
+          >
+            <div className="shrink-0">
+              <Icon name={item.icon} />
+            </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
                 <div className="lg:truncate">
                   <div className="text-xs font-medium text-gray-500">{item.label}</div>
-                  <div className="mt-1"><Count value={item.value} /></div>
+                  <div className="mt-1">
+                    {loading ? (
+                      <div className="h-6 bg-gray-200 rounded animate-pulse w-12"></div>
+                    ) : (
+                      <Count value={item.value} />
+                    )}
+                  </div>
                 </div>
-                {/* placeholder for small delta or sparkline */}
                 <div className="text-right text-xs text-gray-400">&nbsp;</div>
               </div>
             </div>
@@ -131,5 +211,5 @@ export default function DashboardStats({ data = {} }) {
         ))}
       </div>
     </section>
-  )
+  );
 }

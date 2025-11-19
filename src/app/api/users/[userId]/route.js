@@ -7,27 +7,30 @@ import {
 
 // GET /api/users/[userId]
 export async function GET(req, { params }) {
+  const { userId } = await params;
   return authenticate(req, async () => {
     return isAdmin(req, async () => {
-      return getUserById(req, params.userId);
+      return getUserById(req, userId);
     });
   });
 }
 
 // PUT /api/users/[userId]
 export async function PUT(req, { params }) {
+  const { userId } = await params;
   return authenticate(req, async () => {
     return isAdmin(req, async () => {
-      return updateUserById(req, params.userId);
+      return updateUserById(req, userId);
     });
   });
 }
 
 // DELETE /api/users/[userId]
 export async function DELETE(req, { params }) {
+  const { userId } = await params;
   return authenticate(req, async () => {
     return isAdmin(req, async () => {
-      return deleteUser(req, params.userId);
+      return deleteUser(req, userId);
     });
   });
 }

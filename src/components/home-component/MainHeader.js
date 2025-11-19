@@ -1,14 +1,19 @@
 "use client"
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Menu } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function MainHeader() {
   const [open, setOpen] = useState(false)
   const btnRef = useRef(null)
   const panelRef = useRef(null)
+  const router = useRouter()
+  const { user, logout } = useAuth()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   // Close on Escape or click outside
   useEffect(() => {
@@ -62,6 +67,21 @@ export default function MainHeader() {
       document.removeEventListener('keydown', onDocKey)
     }
   }, [])
+
+  // Close user dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    if (dropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [dropdownOpen])
 
   const isActive = (href) => {
     if (!pathname) return false
@@ -143,8 +163,58 @@ export default function MainHeader() {
 
           {/* Right actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <Link href="/login" className="px-4 py-2 text-sm font-semibold border border-blue-500 text-gray-700 hover:text-blue-600 rounded-md">Login</Link>
-            <Link href="/request-a-quote" className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Request Quote</Link>
+            {user ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition cursor-pointer"
+                  aria-haspopup="true"
+                  aria-expanded={dropdownOpen}
+                >
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border border-gray-300">
+                    {user.avatar ? (
+                      <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="flex flex-col text-sm font-semibold text-gray-700">
+                        {user.firstName?.charAt(0)?.toUpperCase() || 'U'}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">{user.firstName}</span>
+                  <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    <Link href="/dashboard" className="block px-4 py-2 font-medium text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-300">
+                      Dashboard
+                    </Link>
+                    <Link href="/dashboard" className="block px-4 py-2 font-medium text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-300">
+                     Manage Projects
+                    </Link>
+                    <Link href="/dashboard/my-profile" className="block px-4 py-2 font-medium text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-300">
+                      My Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        logout()
+                        setDropdownOpen(false)
+                      }}
+                      className="block w-full text-left px-4 py-2 font-medium text-sm text-red-600 hover:bg-red-50 cursor-pointer"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link href="/login" className="px-4 py-2 text-sm font-semibold border border-blue-500 text-gray-700 hover:text-blue-600 rounded-md">Login</Link>
+                <Link href="/request-a-quote" className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Request Quote</Link>
+              </>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -224,8 +294,36 @@ export default function MainHeader() {
               })}
             </nav>
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">
-              <Link href="/login" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">Login</Link>
-              <Link href="/request-a-quote" onClick={() => setOpen(false)} className="block bg-blue-500 text-white px-4 py-2 rounded-md text-center">Request Quote</Link>
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 px-3 py-3 bg-gray-50 rounded-lg mb-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center border border-gray-300">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-sm font-semibold text-gray-700">
+                          {user.firstName?.charAt(0)?.toUpperCase() || 'U'}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">{user.firstName} {user.lastName}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link href="/dashboard/my-profile" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">My Profile</Link>
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">Dashboard</Link>
+                  <button onClick={() => {
+                    logout()
+                    setOpen(false)
+                  }} className="block w-full bg-red-500 text-white px-4 py-2 rounded-md text-center hover:bg-red-600">Logout</button>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">Login</Link>
+                  <Link href="/request-a-quote" onClick={() => setOpen(false)} className="block bg-blue-500 text-white px-4 py-2 rounded-md text-center">Request Quote</Link>
+                </>
+              )}
             </div>
           </div>
         </div>

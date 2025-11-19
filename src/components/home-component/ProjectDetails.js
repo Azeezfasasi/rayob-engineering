@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
+import { Commet } from "react-loading-indicators";
 
 export default function ProjectDetails({ projectId }) {
   const [project, setProject] = useState(null);
@@ -43,7 +44,7 @@ export default function ProjectDetails({ projectId }) {
     isDraggingRef.current = false;
   }
 
-  if (loading) return <div className="py-20 text-center text-gray-500">Loading project...</div>;
+  if (loading) return <div className="py-20 text-center text-gray-500"><Commet color="#155dfc" size="medium" text="Loading" textColor="#155dfc" /></div>;
   if (!project) return <div className="py-20 text-center text-gray-500">Project not found.</div>;
 
   return (

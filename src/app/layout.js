@@ -17,7 +17,9 @@ export default function RootLayout({ children }) {
             <MainHeader />
           </div>
           <main>{children}</main>
-          <Footer />
+          <div className="site-main-header">
+            <Footer />
+          </div>
         </AuthProvider>
       </body>
     </html>

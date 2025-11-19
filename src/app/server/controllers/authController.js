@@ -780,9 +780,9 @@ export const changeUserRole = async (req, userId) => {
     const body = await req.json();
     const { role, permissions } = body;
 
-    if (!role || !["user", "admin", "manager"].includes(role)) {
+    if (!role || !["client", "admin", "staff-member"].includes(role)) {
       return NextResponse.json(
-        { success: false, message: "Invalid role" },
+        { success: false, message: "Invalid role. Must be one of: client, admin, staff-member" },
         { status: 400 }
       );
     }
@@ -830,17 +830,14 @@ export const toggleUserStatus = async (req, userId) => {
     await connectDB();
 
     const adminId = req.user?.id;
-    const body = await req.json();
-    const { isActive } = body;
+    let isActive;
 
-    if (typeof isActive !== "boolean") {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "isActive must be boolean",
-        },
-        { status: 400 }
-      );
+    // Try to parse body for explicit isActive, otherwise toggle
+    try {
+      const body = await req.json();
+      isActive = body.isActive;
+    } catch {
+      isActive = undefined;
     }
 
     const user = await User.findById(userId);
@@ -852,15 +849,21 @@ export const toggleUserStatus = async (req, userId) => {
       );
     }
 
-    user.isActive = isActive;
-    user.accountStatus = isActive ? "active" : "suspended";
+    // If isActive is provided and is boolean, use it; otherwise toggle
+    if (typeof isActive === "boolean") {
+      user.isActive = isActive;
+    } else {
+      user.isActive = !user.isActive;
+    }
+
+    user.accountStatus = user.isActive ? "active" : "suspended";
     user.updatedBy = adminId;
     await user.save();
 
     return NextResponse.json(
       {
         success: true,
-        message: `User ${isActive ? "enabled" : "disabled"} successfully`,
+        message: `User ${user.isActive ? "enabled" : "disabled"} successfully`,
         user: user.getPublicProfile(),
       },
       { status: 200 }

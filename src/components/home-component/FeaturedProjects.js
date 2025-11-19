@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Commet } from "react-loading-indicators";
 
 export default function FeaturedProjects() {
   const [projects, setProjects] = useState([]);
@@ -45,7 +46,7 @@ export default function FeaturedProjects() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
           {loading ? (
             <div className="col-span-full text-center py-10">
-              <p className="text-gray-500">Loading projects...</p>
+              <p className="text-gray-500"><Commet color="#155dfc" size="medium" text="Loading" textColor="#155dfc" /></p>
             </div>
           ) : projects.length === 0 ? (
             <div className="col-span-full text-center py-10">
@@ -62,6 +63,8 @@ export default function FeaturedProjects() {
                     src={project.featuredImage}
                     alt={project.projectName}
                     fill
+                    sizes="20"
+                    loading="eager"
                     className="object-cover"
                   />
                 </div>

@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu }) {
   const { user, logout } = useAuth();
   const fullName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '';
-  const avatar = user && user.image ? user.image : '/images/about1.jpg';
+  const avatar = user && user.avatar ? user.avatar : '/images/profile1.jpg';
   const role = user?.role ? user.role.replace('-', ' ') : 'User';
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
