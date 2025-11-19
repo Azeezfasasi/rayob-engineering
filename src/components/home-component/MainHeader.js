@@ -223,7 +223,6 @@ export default function MainHeader() {
                 )
               })}
             </nav>
-
             <div className="mt-6 border-t pt-6 flex flex-col gap-3">
               <Link href="/login" onClick={() => setOpen(false)} className="block text-center text-gray-700 border border-blue-500 rounded-md px-4 py-2 hover:text-blue-600">Login</Link>
               <Link href="/request-a-quote" onClick={() => setOpen(false)} className="block bg-blue-500 text-white px-4 py-2 rounded-md text-center">Request Quote</Link>
