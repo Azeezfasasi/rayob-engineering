@@ -1,5 +1,5 @@
-import { addLike, removeLike } from '../../../../server/controllers/blogController';
-import { connectDB } from '../../../../server/db';
+import { addLike, removeLike } from '@/app/server/controllers/blogController';
+import { connectDB } from '@/app/server/db';
 
 // POST /api/blog/[id]/like
 export async function POST(req, { params }) {
