@@ -97,7 +97,7 @@ export default function MainHeader() {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/images/rayob.svg" alt="Rayob Logo" width={170} height={50} className="w-45 block rounded-md" />
+              <Image src="/images/rayobnew.svg" alt="Rayob Logo" width={170} height={50} className="w-18 block rounded-md" />
             </Link>
           </div>
 

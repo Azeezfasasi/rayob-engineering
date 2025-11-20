@@ -7,7 +7,7 @@ import { ArrowBigRightDash, ArrowBigLeftDash } from 'lucide-react';
 export default function Hero() {
   const slides = [
     {
-      title: 'Engineering excellence, delivered',
+      title: 'Innovative Engineering, Strategic Management!',
       subtitle: 'We design and build robust infrastructure and software solutions tailored to your needs.',
       cta: { label: 'Request a Quote', href: '/request-a-quote' },
       bg: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)',
