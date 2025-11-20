@@ -100,11 +100,12 @@ export default function BlogNews() {
                   <span className="text-sm text-blue-500 font-semibold uppercase">
                     {post.category}
                   </span>
-                  <h3 className="text-xl font-bold text-gray-800 mt-2 mb-2">{post.postTitle}</h3>
-                  <p className="text-gray-600 mb-3 text-sm line-clamp-2">{post.content.substring(0, 100)}...</p>
+                  <h3 className="text-xl font-bold text-gray-800 mt-2 mb-2">{post.postTitle.split(" ").slice(0, 8).join(" ") + "…"}</h3>
+                  {/* <p className="text-gray-600 mb-3 text-sm line-clamp-2">{post.content.substring(0, 100)}...</p> */}
+                  <p className="text-gray-600 mb-3 text-sm line-clamp-2">{post.content.split(" ").slice(0, 20).join(" ") + "…"}</p>
                   <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
-                    <span>{new Date(post.publishDate).toLocaleDateString()}</span>
-                    <span className="flex items-center gap-1">❤️ {post.likes || 0}</span>
+                    <span className="font-semibold">{new Date(post.publishDate).toLocaleDateString()}</span>
+                    {/* <span className="flex items-center gap-1">❤️ {post.likes || 0}</span> */}
                   </div>
                   <Link
                     href={`/blog/${post.urlSlug}`}

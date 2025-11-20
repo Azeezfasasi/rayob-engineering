@@ -22,10 +22,10 @@ export default function HomeAbout() {
         {/* Text Content */}
         <div className="flex-1">
           <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-4">
-            About Rayob Engineering
+            About Rayob Engineering & Mgt. Co. Ltd.
           </h2>
           <p className="text-gray-600 mb-6">
-            Rayob Engineering is committed to delivering innovative and sustainable engineering solutions. 
+            Rayob Engineering & Mgt. Co. Ltd is committed to delivering innovative and sustainable engineering solutions. 
             With years of expertise in industrial, residential, and commercial projects, we ensure quality, 
             efficiency, and client satisfaction in every project we undertake.
           </p>

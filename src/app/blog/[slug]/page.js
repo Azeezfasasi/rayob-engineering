@@ -175,8 +175,8 @@ export default function BlogDetailPage() {
           <h1 className="text-[26px] md:text-5xl font-bold text-gray-900 mb-4">{blog.postTitle}</h1>
           
           <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
-            <span className="text-sm font-semibold text-blue-500 uppercase">{blog.category}</span>
-            <span>By {blog.author}</span>
+            <span className="text-sm font-semibold text-blue-500 uppercase">{blog.category}</span>-
+            <span>By {blog.author}</span>-
             <span>{new Date(blog.publishDate).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'long',
@@ -213,7 +213,7 @@ export default function BlogDetailPage() {
         </div>
 
         {/* Like Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        {/* <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <button
             onClick={handleLike}
             className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition ${
@@ -225,15 +225,15 @@ export default function BlogDetailPage() {
             <span className="text-xl">❤️</span>
             <span>{isLiked ? 'Liked' : 'Like'} ({blog.likes || 0})</span>
           </button>
-        </div>
+        </div> */}
 
         {/* Comments Section */}
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white rounded-lg shadow-md p-8 border border-gray-200">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Comments ({blog.comments?.length || 0})</h2>
 
           {/* Comment Form */}
           {user ? (
-            <form onSubmit={handleAddComment} className="mb-8 pb-8 border-b">
+            <form onSubmit={handleAddComment} className="mb-8 pb-8 border-b border-gray-400">
               <div className="flex gap-4 mb-4">
                 <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 shrink-0">
                   {user.avatar ? (
@@ -257,7 +257,7 @@ export default function BlogDetailPage() {
                   <button
                     type="submit"
                     disabled={submittingComment || !commentText.trim()}
-                    className="mt-3 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium"
+                    className="mt-3 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium cursor-pointer"
                   >
                     {submittingComment ? 'Posting...' : 'Post Comment'}
                   </button>
@@ -301,7 +301,7 @@ export default function BlogDetailPage() {
                       {user && user._id === comment.userId && (
                         <button
                           onClick={() => handleDeleteComment(comment._id)}
-                          className="text-red-500 hover:text-red-700 text-sm font-medium"
+                          className="text-red-500 hover:text-red-700 text-sm font-medium cursor-pointer"
                         >
                           Delete
                         </button>

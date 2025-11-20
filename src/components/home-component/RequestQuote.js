@@ -138,6 +138,9 @@ export default function RequestQuote() {
                 <option value="Mechanical Works">Mechanical Works</option>
                 <option value="Project Management">Project Management</option>
                 <option value="Consultancy">Consultancy</option>
+                <option value="Fibre Deployment">Fibre Deployment</option>
+                <option value="Fibre Operations">Fibre operations</option>
+                <option value="Maintenance">Maintenance</option>
               </select>
             </div>
 
