@@ -94,8 +94,8 @@ export default function ProjectDetails({ projectId }) {
                   {project.projectStatus}
                 </div>
               </div>
-              <h1 className="text-[24px] md:text-6xl font-black text-gray-900 mb-4 leading-tight">{project.projectName}</h1>
-              <p className="text-gray-600 text-lg flex items-center gap-3 font-medium">
+              <h1 className="text-[22px] md:text-[32px] font-bold text-gray-900 mb-4 leading-tight">{project.projectName}</h1>
+              <p className="text-gray-600 text-[16px] md:text-[17px] flex items-center gap-3 font-medium">
                 <svg className="w-6 h-6 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
                 </svg>
@@ -108,7 +108,7 @@ export default function ProjectDetails({ projectId }) {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80">
             <div className="flex justify-between items-center mb-3">
               <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">Project Progress</span>
-              <span className="text-2xl font-black text-blue-600">{project.completion}%</span>
+              <span className="text-[17px] md:text-[22px] font-bold text-blue-600">{project.completion}%</span>
             </div>
             <div className="w-full bg-gray-300 rounded-full h-4 overflow-hidden shadow-inner">
               <div 
@@ -134,7 +134,7 @@ export default function ProjectDetails({ projectId }) {
             <div className="flex items-end justify-between">
               <div>
                 <p className="text-sm font-semibold text-gray-200 mb-2 uppercase tracking-widest">Featured Image</p>
-                <h3 className="text-2xl md:text-3xl font-black">{project.projectName}</h3>
+                <h3 className="text-[20px] md:text-[26px] font-black">{project.projectName}</h3>
               </div>
             </div>
           </div>
@@ -150,9 +150,9 @@ export default function ProjectDetails({ projectId }) {
                     <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
                   </svg>
                 </div>
-                <h2 className="text-[20px] md:text-3xl font-black text-gray-900">Project Gallery</h2>
+                <h2 className="text-[17px] md:text-[24px] font-bold text-gray-900">Project Gallery</h2>
               </div>
-              <span className="text-sm bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-black">
+              <span className="text-sm bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-bold">
                 {project.galleryImages.length} Images
               </span>
             </div>
@@ -276,7 +276,7 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Client Name</p>
               </div>
-              <p className="text-xl font-bold text-gray-900 ml-9">{project.clientName || 'N/A'}</p>
+              <p className="text-xl font-semibold text-gray-900 ml-9">{project.clientName || 'N/A'}</p>
             </div>
 
             <div className="group bg-white rounded-xl p-5 shadow-sm border border-gray-200 hover:shadow-lg hover:border-green-300 transition-all duration-300 transform hover:-translate-y-1">
@@ -289,7 +289,7 @@ export default function ProjectDetails({ projectId }) {
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Project Status</p>
               </div>
               <div className="ml-9">
-                <div className={`inline-block px-4 py-2 rounded-full font-bold capitalize text-sm ${getStatusColor(project.projectStatus)}`}>
+                <div className={`inline-block px-4 py-2 rounded-full font-semibold capitalize text-sm ${getStatusColor(project.projectStatus)}`}>
                   {project.projectStatus}
                 </div>
               </div>
@@ -304,7 +304,7 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Category</p>
               </div>
-              <p className={`text-lg font-bold capitalize ml-9 ${getCategoryColor(project.category)}`}>{project.category}</p>
+              <p className={`text-lg font-semibold capitalize ml-9 ${getCategoryColor(project.category)}`}>{project.category}</p>
             </div>
 
             <div className="group bg-white rounded-xl p-5 shadow-sm border border-gray-200 hover:shadow-lg hover:border-red-300 transition-all duration-300 transform hover:-translate-y-1">
@@ -316,7 +316,7 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Location</p>
               </div>
-              <p className="text-lg font-bold text-gray-900 ml-9">{project.location || 'N/A'}</p>
+              <p className="text-lg font-semibold text-gray-900 ml-9">{project.location || 'N/A'}</p>
             </div>
           </div>
 
@@ -331,7 +331,7 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Start Date</p>
               </div>
-              <p className="text-lg font-bold text-gray-900 ml-9">{formatDate(project.startDate)}</p>
+              <p className="text-lg font-semibold text-gray-900 ml-9">{formatDate(project.startDate)}</p>
             </div>
 
             <div className="group bg-white rounded-xl p-5 shadow-sm border border-gray-200 hover:shadow-lg hover:border-indigo-300 transition-all duration-300 transform hover:-translate-y-1">
@@ -343,7 +343,7 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Expected End Date</p>
               </div>
-              <p className="text-lg font-bold text-gray-900 ml-9">{formatDate(project.expectedEndDate)}</p>
+              <p className="text-lg font-semibold text-gray-900 ml-9">{formatDate(project.expectedEndDate)}</p>
             </div>
 
             <div className="group bg-white rounded-xl p-5 shadow-sm border border-gray-200 hover:shadow-lg hover:border-pink-300 transition-all duration-300 transform hover:-translate-y-1">
@@ -355,7 +355,7 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-gray-600 font-bold uppercase tracking-widest">Budget</p>
               </div>
-              <p className="text-xl font-bold text-gray-900 ml-9">₦{project.budget ? project.budget.toLocaleString() : 'N/A'}</p>
+              <p className="text-xl font-semibold text-gray-900 ml-9">₦{project.budget ? project.budget.toLocaleString() : 'N/A'}</p>
             </div>
 
             <div className="group bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-5 shadow-sm border border-blue-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
@@ -367,14 +367,14 @@ export default function ProjectDetails({ projectId }) {
                 </div>
                 <p className="text-xs text-blue-700 font-bold uppercase tracking-widest">Completion</p>
               </div>
-              <p className="text-3xl font-black text-blue-600 ml-9">{project.completion}%</p>
+              <p className="text-xl font-semibold text-blue-600 ml-9">{project.completion}%</p>
             </div>
           </div>
         </div>
 
         {/* Team Section */}
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 mb-8">
-          <h2 className="text-[24px] md:text-3xl font-black text-gray-900 mb-6 flex items-center gap-3">
+          <h2 className="text-[20px] md:text-[24px] font-black text-gray-900 mb-6 flex items-center gap-3">
             <div className="p-3 bg-blue-100 rounded-lg">
               <svg className="w-7 h-7 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM9 12a6 6 0 11-12 0 6 6 0 0112 0zM16.35 5.65a2 2 0 11-2.83-2.83 2 2 0 012.83 2.83zM16.5 10a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM20 15v-5h-4v5h4z" />
