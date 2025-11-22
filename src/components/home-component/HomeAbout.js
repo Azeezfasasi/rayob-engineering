@@ -25,14 +25,10 @@ export default function HomeAbout() {
             About Rayob Engineering & Mgt. Co. Ltd.
           </h2>
           <p className="text-gray-600 mb-6">
-            Rayob Engineering & Mgt. Co. Ltd is committed to delivering innovative and sustainable engineering solutions. 
-            With years of expertise in industrial, residential, and commercial projects, we ensure quality, 
-            efficiency, and client satisfaction in every project we undertake.
+            Rayob Engineering & Mgt. Co. Ltd is a dynamic, solutions-driven Engineering and Management Company committed to delivering world-class services across multiple sectors. Established in 2020 and legally incorporated in Nigeria in 2025 with a passion for innovation, engineering excellence, and sustainable project delivery.
           </p>
           <p className="text-gray-600 mb-6">
-            Our team of skilled engineers and project managers combine technical excellence with practical experience, 
-            turning complex challenges into actionable solutions. At Rayob Engineering, we build more than structures — 
-            we build lasting relationships with our clients.
+            We bring together nearly two decades of multidisciplinary experience spanning construction, telecommunications, optical fibre implementation, operations and maintenance, project management, corporate governance, and corporate social responsibility.
           </p>
 
           <a

@@ -8,7 +8,7 @@ export default function Hero() {
   const slides = [
     {
       title: 'Innovative Engineering, Strategic Management!',
-      subtitle: 'We design and build robust infrastructure and software solutions tailored to your needs.',
+      subtitle: 'We build robust infrastructure and engineering solutions tailored to your needs.',
       cta: { label: 'Request a Quote', href: '/request-a-quote' },
       bg: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)',
       image: { src: '/images/construct1.jpeg', alt: 'Engineering excellence' }
@@ -22,7 +22,7 @@ export default function Hero() {
     },
     {
       title: 'From concept to delivery',
-      subtitle: 'We partner with you through product discovery, engineering and deployment.',
+      subtitle: 'We partner with you through project discovery, engineering and deployment.',
       cta: { label: 'Contact Us', href: '/contact-us' },
       bg: 'linear-gradient(135deg,#e6e9ff 0%,#9fa8ff 100%)',
       image: { src: '/images/stairs.jpeg', alt: 'Engineering excellence' }
