@@ -1,4 +1,14 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000';
+// Use relative paths for API calls - works on any domain
+const getApiBase = () => {
+  if (typeof window !== 'undefined') {
+    // Client-side: use current origin
+    return '';
+  }
+  // Server-side fallback
+  return process.env.NEXT_PUBLIC_APP_URL || '';
+};
+
+const API_BASE = getApiBase();
 
 /**
  * Upload image to Cloudinary via API
