@@ -33,6 +33,13 @@ export const sendEmailViaBrevo = async (emailData) => {
       attachment = null,
     } = emailData;
 
+    console.log('📧 Sending email via Brevo:', {
+      to,
+      subject,
+      senderEmail,
+      senderName,
+    });
+
     // If using a template
     if (templateId) {
       const response = await fetch(`${brevoApiUrl}/smtp/email`, {
@@ -64,7 +71,7 @@ export const sendEmailViaBrevo = async (emailData) => {
       },
       subject,
       htmlContent: htmlContent || '',
-      textContent: textContent || '',
+      textContent: textContent || subject, // ← Fallback to subject if textContent is empty (required by Brevo)
       tags: tags || [],
     };
 
@@ -91,6 +98,8 @@ export const sendEmailViaBrevo = async (emailData) => {
       ];
     }
 
+    console.log('📤 Brevo API Payload:', JSON.stringify(emailPayload, null, 2));
+
     const response = await fetch(`${brevoApiUrl}/smtp/email`, {
       method: 'POST',
       headers: {
@@ -102,7 +111,7 @@ export const sendEmailViaBrevo = async (emailData) => {
 
     return handleBrevoResponse(response);
   } catch (error) {
-    console.error('Brevo email send error:', error);
+    console.error('❌ Brevo email send error:', error);
     throw new Error(`Failed to send email via Brevo: ${error.message}`);
   }
 };
@@ -410,6 +419,11 @@ async function handleBrevoResponse(response) {
     const data = await response.json();
 
     if (!response.ok) {
+      console.error('❌ Brevo API Error:', {
+        status: response.status,
+        message: data.message || data.error,
+        details: data,
+      });
       return {
         success: false,
         status: response.status,
@@ -418,6 +432,11 @@ async function handleBrevoResponse(response) {
       };
     }
 
+    console.log('✓ Brevo API Success:', {
+      status: response.status,
+      messageId: data.messageId,
+    });
+
     return {
       success: true,
       status: response.status,
@@ -425,6 +444,7 @@ async function handleBrevoResponse(response) {
       data,
     };
   } catch (error) {
+    console.error('❌ Brevo Response Parse Error:', error);
     return {
       success: false,
       status: response.status,

@@ -26,7 +26,7 @@ const getUserId = (req) => {
 
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const url = new URL(request.url);
     const type = url.searchParams.get('type') || 'campaign';
     const action = url.searchParams.get('action');
@@ -79,7 +79,7 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const url = new URL(request.url);
     const type = url.searchParams.get('type') || 'campaign';
     const action = url.searchParams.get('action');
@@ -135,7 +135,7 @@ export async function PUT(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const url = new URL(request.url);
     const type = url.searchParams.get('type') || 'campaign';
 

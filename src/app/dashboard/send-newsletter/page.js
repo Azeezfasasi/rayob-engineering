@@ -35,6 +35,7 @@ export default function SendNewsletter() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log(`📝 Form field changed: ${name} = "${value}" (length: ${value.length})`);
     setFormData(prev => ({
       ...prev,
       [name]: value,
@@ -69,23 +70,33 @@ export default function SendNewsletter() {
   const handleSendNow = async () => {
     if (!validateForm()) return;
 
+    console.log('📝 FormData before sending:', {
+      subject: formData.subject,
+      contentLength: formData.content.length,
+      content: formData.content,
+    });
+
     setIsLoading(true);
     try {
       // First create the campaign
-      const createResponse = await campaignAPI.create(
-        {
-          title: formData.subject,
-          subject: formData.subject,
-          content: formData.content,
-          htmlContent: formData.content,
-          campaignType: formData.type,
-          recipients: {
-            type: formData.recipientType,
-            selectedTags: formData.recipientType === 'tags' ? formData.tags : [],
-            selectedSegments: formData.recipientType === 'segment' ? [formData.segment] : [],
-            selectedSubscribers: [],
-          },
+      const campaignPayload = {
+        title: formData.subject,
+        subject: formData.subject,
+        content: formData.content,
+        htmlContent: formData.content,
+        campaignType: formData.type,
+        recipients: {
+          type: formData.recipientType,
+          selectedTags: formData.recipientType === 'tags' ? formData.tags : [],
+          selectedSegments: formData.recipientType === 'segment' ? [formData.segment] : [],
+          selectedSubscribers: [],
         },
+      };
+
+      console.log('📤 Campaign payload being sent:', campaignPayload);
+
+      const createResponse = await campaignAPI.create(
+        campaignPayload,
         localStorage.getItem('authToken')
       );
 
@@ -131,23 +142,33 @@ export default function SendNewsletter() {
       return;
     }
 
+    console.log('📝 FormData before scheduling:', {
+      subject: formData.subject,
+      contentLength: formData.content.length,
+      content: formData.content,
+    });
+
     setIsLoading(true);
     try {
       // First create the campaign
-      const createResponse = await campaignAPI.create(
-        {
-          title: formData.subject,
-          subject: formData.subject,
-          content: formData.content,
-          htmlContent: formData.content,
-          campaignType: formData.type,
-          recipients: {
-            type: formData.recipientType,
-            selectedTags: formData.recipientType === 'tags' ? formData.tags : [],
-            selectedSegments: formData.recipientType === 'segment' ? [formData.segment] : [],
-            selectedSubscribers: [],
-          },
+      const campaignPayload = {
+        title: formData.subject,
+        subject: formData.subject,
+        content: formData.content,
+        htmlContent: formData.content,
+        campaignType: formData.type,
+        recipients: {
+          type: formData.recipientType,
+          selectedTags: formData.recipientType === 'tags' ? formData.tags : [],
+          selectedSegments: formData.recipientType === 'segment' ? [formData.segment] : [],
+          selectedSubscribers: [],
         },
+      };
+
+      console.log('📤 Campaign payload being sent:', campaignPayload);
+
+      const createResponse = await campaignAPI.create(
+        campaignPayload,
         localStorage.getItem('authToken')
       );
 

@@ -69,7 +69,7 @@ export const subscribeToNewsletter = async (subscriberData) => {
 
     // Send welcome email
     try {
-      await sendEmailViaBrevo({
+      const emailResult = await sendEmailViaBrevo({
         to: email,
         subject: 'Welcome to Rayob Engineering Newsletter',
         htmlContent: `
@@ -105,18 +105,44 @@ export const subscribeToNewsletter = async (subscriberData) => {
                 </div>
                 <div class="footer">
                   <p>© 2025 Rayob Engineering. All rights reserved.</p>
-                  <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/api/newsletter/unsubscribe?email=${email}">Unsubscribe</a></p>
+                  <p><a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/newsletter/unsubscribe?email=${email}">Unsubscribe</a></p>
                 </div>
               </div>
             </body>
           </html>
         `,
+        textContent: `Welcome to Rayob Engineering Newsletter!
+
+Hi ${firstName || 'there'},
+
+Thank you for subscribing to our newsletter! We're excited to share the latest updates, insights, and innovations from Rayob Engineering.
+
+You'll receive:
+- Latest industry news and trends
+- Product updates and announcements
+- Exclusive insights from our team
+- Special offers and promotions
+
+If you have any questions or feedback, feel free to reach out to us.
+
+Best regards,
+The Rayob Engineering Team
+
+---
+To unsubscribe: ${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/newsletter/unsubscribe?email=${email}
+        `,
         senderEmail: process.env.BREVO_SENDER_EMAIL || 'noreply@rayobengineering.com',
         senderName: process.env.BREVO_SENDER_NAME || 'Rayob Engineering',
         tags: ['welcome', 'subscription'],
       });
+      
+      if (!emailResult.success) {
+        console.error('❌ Welcome email send failed:', emailResult);
+      } else {
+        console.log('✓ Welcome email sent to:', email, 'Message ID:', emailResult.messageId);
+      }
     } catch (emailError) {
-      console.warn('Warning: Could not send welcome email:', emailError.message);
+      console.error('❌ Error sending welcome email:', emailError.message, emailError);
       // Don't fail the subscription if email sending fails
     }
 
@@ -341,6 +367,15 @@ export const createCampaign = async (campaignData, userId) => {
   try {
     await connectDB();
 
+    console.log('📝 Creating campaign with data:', {
+      title: campaignData.title,
+      subject: campaignData.subject,
+      contentLength: campaignData.content?.length,
+      htmlContentLength: campaignData.htmlContent?.length,
+      contentPreview: campaignData.content?.substring(0, 100),
+      htmlContentPreview: campaignData.htmlContent?.substring(0, 100),
+    });
+
     // Only set sender if userId is a valid value (not 'anonymous')
     const campaignPayload = {
       ...campaignData,
@@ -354,12 +389,20 @@ export const createCampaign = async (campaignData, userId) => {
 
     await campaign.save();
 
+    console.log('✓ Campaign saved:', {
+      id: campaign._id,
+      title: campaign.title,
+      contentLength: campaign.content?.length,
+      htmlContentLength: campaign.htmlContent?.length,
+    });
+
     return {
       success: true,
       message: 'Campaign created successfully',
       campaign,
     };
   } catch (error) {
+    console.error('❌ Error creating campaign:', error.message);
     throw new Error(`Error creating campaign: ${error.message}`);
   }
 };
@@ -373,6 +416,16 @@ export const sendNewsletter = async (campaignId, userId) => {
     if (!campaign) {
       throw new Error('Campaign not found');
     }
+
+    console.log('📤 Sending campaign:', {
+      id: campaign._id,
+      title: campaign.title,
+      subject: campaign.subject,
+      contentLength: campaign.content?.length,
+      htmlContentLength: campaign.htmlContent?.length,
+      contentPreview: campaign.content?.substring(0, 100),
+      htmlContentPreview: campaign.htmlContent?.substring(0, 100),
+    });
 
     if (campaign.status === 'sent') {
       throw new Error('Campaign has already been sent');
@@ -408,18 +461,30 @@ export const sendNewsletter = async (campaignId, userId) => {
     // Prepare emails for Brevo
     const emailList = subscribers.map(subscriber => {
       const unsubscribeLink = `${process.env.NEXT_PUBLIC_APP_URL}/api/newsletter/unsubscribe?email=${subscriber.email}`;
+      const htmlContent = `
+        ${campaign.htmlContent || campaign.content}
+        <footer style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 12px; color: #666;">
+          <p><a href="${unsubscribeLink}">Unsubscribe from this newsletter</a></p>
+        </footer>
+      `;
+
+      // Create plain text version from campaign subject and a generic message
+      const textContent = `
+${campaign.subject}
+
+---
+
+To unsubscribe from this newsletter, click the link below:
+${unsubscribeLink}
+      `.trim();
 
       return {
         to: subscriber.email,
         subject: campaign.subject,
-        htmlContent: `
-          ${campaign.htmlContent || campaign.content}
-          <footer style="margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; font-size: 12px; color: #666;">
-            <p><a href="${unsubscribeLink}">Unsubscribe from this newsletter</a></p>
-          </footer>
-        `,
-        senderEmail: campaign.senderEmail,
-        senderName: campaign.senderName,
+        htmlContent,
+        textContent, // ← THIS WAS MISSING!
+        senderEmail: process.env.BREVO_SENDER_EMAIL || campaign.senderEmail,
+        senderName: process.env.BREVO_SENDER_NAME || campaign.senderName,
         tags: ['newsletter', campaign.campaignType],
       };
     });
