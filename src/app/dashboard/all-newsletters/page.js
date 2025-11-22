@@ -117,11 +117,11 @@ export default function AllNewsletter() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-fit lg:w-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900 flex items-center space-x-2">
             <BarChart3 className="w-8 h-8 text-blue-600" />
             <span>All Newsletters</span>
           </h1>
@@ -129,7 +129,7 @@ export default function AllNewsletter() {
         </div>
         <Link
           href="/dashboard/send-newsletter"
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center space-x-2"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center space-x-2 mt-4 lg:mt-0"
         >
           <Plus className="w-4 h-4" />
           <span>New Campaign</span>

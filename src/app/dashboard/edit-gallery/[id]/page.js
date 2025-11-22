@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
-import { uploadImageToCloudinary } from '@/app/utils/galleryApi';
-import { createGallery } from '@/app/utils/galleryApi';
-import { Upload, X, Loader } from 'lucide-react';
+import { fetchGallery, updateGallery, uploadImageToCloudinary, deleteImageFromCloudinary } from '@/app/utils/galleryApi';
+import { Upload, X, Loader, ArrowLeft } from 'lucide-react';
 
 const CATEGORIES = ['project', 'engineering', 'fibre', 'maintenance', 'other'];
 const TAGS = ['vip', 'active', 'engaged', 'new', 'featured', 'recommended'];
 
-export default function AddGalleryPage() {
+export default function EditGalleryPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -20,7 +21,7 @@ export default function AddGalleryPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: 'accommodation',
+    category: 'project',
     featured: false,
     status: 'active',
     businessName: '',
@@ -28,6 +29,23 @@ export default function AddGalleryPage() {
     tags: [],
     images: [],
   });
+
+  useEffect(() => {
+    const loadGallery = async () => {
+      try {
+        const data = await fetchGallery(params.id);
+        setFormData(data);
+      } catch (err) {
+        setError(err.message || 'Failed to load gallery');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (params.id) {
+      loadGallery();
+    }
+  }, [params.id]);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -38,12 +56,15 @@ export default function AddGalleryPage() {
   };
 
   const handleTagToggle = (tag) => {
-    setFormData(prev => ({
-      ...prev,
-      tags: prev.tags.includes(tag)
+    setFormData(prev => {
+      const newTags = prev.tags.includes(tag)
         ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag],
-    }));
+        : [...prev.tags, tag];
+      return {
+        ...prev,
+        tags: newTags,
+      };
+    });
   };
 
   const handleImageUpload = async (e) => {
@@ -55,7 +76,6 @@ export default function AddGalleryPage() {
 
     try {
       for (const file of files) {
-        // Convert file to base64
         const reader = new FileReader();
         reader.onloadend = async () => {
           const base64 = reader.result;
@@ -88,7 +108,18 @@ export default function AddGalleryPage() {
     }
   };
 
-  const removeImage = (index) => {
+  const removeImage = async (index) => {
+    const imageToRemove = formData.images[index];
+    
+    // Delete from Cloudinary if it has a publicId
+    if (imageToRemove.publicId) {
+      try {
+        await deleteImageFromCloudinary(imageToRemove.publicId);
+      } catch (err) {
+        console.error('Failed to delete from Cloudinary:', err);
+      }
+    }
+
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
@@ -100,7 +131,6 @@ export default function AddGalleryPage() {
     setError('');
     setSuccess('');
 
-    // Validate
     if (!formData.title.trim()) {
       setError('Title is required');
       return;
@@ -111,27 +141,44 @@ export default function AddGalleryPage() {
       return;
     }
 
-    setLoading(true);
+    setSaving(true);
 
     try {
-      const response = await createGallery(formData);
-      setSuccess('Gallery created successfully');
+      await updateGallery(params.id, formData);
+      setSuccess('Gallery updated successfully');
 
       setTimeout(() => {
-        router.push('/dashboard/all-gallery');
+        router.push(`/dashboard/view-gallery/${params.id}`);
       }, 1500);
     } catch (err) {
-      setError(err.message || 'Failed to create gallery');
+      setError(err.message || 'Failed to update gallery');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Loader className="h-8 w-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 py-6 sm:py-8 mx-auto">
+    <div className="min-h-screen bg-gray-50 py-6 sm:py-8">
       <div className="max-w-2xl mx-auto px-3 sm:px-4">
+        {/* Back Button */}
+        <button
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 sm:mb-8"
+        >
+          <ArrowLeft className="h-5 w-5" />
+          Back
+        </button>
+
         <div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Add New Gallery</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Edit Gallery</h1>
 
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
@@ -278,42 +325,11 @@ export default function AddGalleryPage() {
               </div>
             </div>
 
-            {/* Image Upload */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Images * (At least 1 required)
-              </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6">
-                <div className="text-center">
-                  <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
-                  <p className="text-sm text-gray-600 mb-2">
-                    Drag and drop your images here, or click to select
-                  </p>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploading}
-                    className="block mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Upload Progress */}
-            {uploading && (
-              <div className="flex items-center gap-2 text-blue-600">
-                <Loader className="h-4 w-4 animate-spin" />
-                <span>Uploading images...</span>
-              </div>
-            )}
-
-            {/* Uploaded Images Preview */}
+            {/* Existing Images */}
             {formData.images.length > 0 && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Uploaded Images ({formData.images.length})
+                  Current Images ({formData.images.length})
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
                   {formData.images.map((img, index) => (
@@ -333,7 +349,7 @@ export default function AddGalleryPage() {
                         <X className="h-3 w-3 sm:h-4 sm:w-4" />
                       </button>
                       <p className="text-xs text-gray-600 mt-1">
-                        {img.displayOrder + 1}/{formData.images.length}
+                        {index + 1}/{formData.images.length}
                       </p>
                     </div>
                   ))}
@@ -341,20 +357,50 @@ export default function AddGalleryPage() {
               </div>
             )}
 
+            {/* Add More Images */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Add More Images
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6">
+                <div className="text-center">
+                  <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600 mb-2">
+                    Drag and drop your images here, or click to select
+                  </p>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploading}
+                    className="block mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {uploading && (
+              <div className="flex items-center gap-2 text-blue-600">
+                <Loader className="h-4 w-4 animate-spin" />
+                <span>Uploading images...</span>
+              </div>
+            )}
+
             {/* Submit Button */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-4 sm:pt-6">
               <button
                 type="submit"
-                disabled={loading || uploading || formData.images.length === 0}
+                disabled={saving || uploading || formData.images.length === 0}
                 className="flex-1 bg-blue-600 text-white py-2.5 px-4 text-sm sm:text-base rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
               >
-                {loading ? (
+                {saving ? (
                   <span className="flex items-center justify-center gap-2">
                     <Loader className="h-4 w-4 animate-spin" />
-                    <span>Creating...</span>
+                    <span>Saving...</span>
                   </span>
                 ) : (
-                  'Create Gallery'
+                  'Save Changes'
                 )}
               </button>
               <button

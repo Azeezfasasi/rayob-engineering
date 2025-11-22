@@ -116,6 +116,28 @@ export default function Subscribers() {
     }
   };
 
+  const handleEdit = async (updatedData) => {
+    setIsLoading(true);
+    try {
+      const response = await subscriberAPI.updateSubscriber(
+        editModal.subscriber.email,
+        updatedData,
+        localStorage.getItem('authToken')
+      );
+      if (response.success) {
+        addToast('Subscriber updated successfully', 'success');
+        setEditModal({ isOpen: false, subscriber: null });
+        fetchSubscribers();
+      } else {
+        addToast('Failed to update subscriber', 'error');
+      }
+    } catch (error) {
+      addToast('Error updating subscriber: ' + error.message, 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleImport = async () => {
     if (!importFile) {
       addToast('Please select a file', 'error');
@@ -177,27 +199,27 @@ export default function Subscribers() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-fit lg:w-full">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
-            <Users className="w-8 h-8 text-blue-600" />
+          <h1 className="text-[20px] md:text-2xl font-bold text-gray-900 flex items-center space-x-2">
+            <Users className="w-5 md:w-8 h-5 md:h-8 text-blue-600" />
             <span>Subscribers</span>
           </h1>
           <p className="text-gray-600 mt-2">Manage your newsletter subscriber list</p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 mt-4 lg:mt-0">
           <button
             onClick={() => setImportModal({ isOpen: true })}
-            className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2"
+            className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2 border border-gray-300"
           >
             <Upload className="w-4 h-4" />
             <span>Import</span>
           </button>
           <button
             onClick={handleExport}
-            className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2"
+            className="px-4 py-2 bg-gray-100 text-gray-900 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center space-x-2 border border-gray-300"
           >
             <Download className="w-4 h-4" />
             <span>Export</span>
@@ -206,7 +228,7 @@ export default function Subscribers() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
+      <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-4 w-fit lg:w-full">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Search */}
           <div className="relative">
@@ -260,7 +282,7 @@ export default function Subscribers() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-12 overflow-auto">
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading subscribers...</p>
@@ -280,8 +302,8 @@ export default function Subscribers() {
         </div>
       ) : (
         <>
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <table className="w-full">
+          <div className="bg-white rounded-lg border border-gray-300 max-w-[350px] lg:max-w-full lg:w-full overflow-auto mx-auto">
+            <table className="w-full overflow-x-auto">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-3 text-left w-12">
@@ -434,6 +456,134 @@ export default function Subscribers() {
                   <p className="text-xs text-gray-600">Bounces</p>
                   <p className="font-semibold">{viewModal.subscriber.bounceCount || 0}</p>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal
+        isOpen={editModal.isOpen}
+        title="Edit Subscriber"
+        onClose={() => setEditModal({ isOpen: false, subscriber: null })}
+        onConfirm={() => {
+          if (editModal.subscriber) {
+            handleEdit({
+              firstName: editModal.subscriber.firstName,
+              lastName: editModal.subscriber.lastName,
+              subscriptionStatus: editModal.subscriber.subscriptionStatus,
+              tags: editModal.subscriber.tags,
+            });
+          }
+        }}
+        confirmText="Save Changes"
+        isLoading={isLoading}
+      >
+        {editModal.subscriber && (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Email (Read-only)
+              </label>
+              <input
+                type="email"
+                disabled
+                value={editModal.subscriber.email}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  value={editModal.subscriber.firstName}
+                  onChange={(e) =>
+                    setEditModal({
+                      ...editModal,
+                      subscriber: {
+                        ...editModal.subscriber,
+                        firstName: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  value={editModal.subscriber.lastName}
+                  onChange={(e) =>
+                    setEditModal({
+                      ...editModal,
+                      subscriber: {
+                        ...editModal.subscriber,
+                        lastName: e.target.value,
+                      },
+                    })
+                  }
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                value={editModal.subscriber.subscriptionStatus}
+                onChange={(e) =>
+                  setEditModal({
+                    ...editModal,
+                    subscriber: {
+                      ...editModal.subscriber,
+                      subscriptionStatus: e.target.value,
+                    },
+                  })
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {STATUS_OPTIONS.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-gray-700 mb-2">
+                Tags
+              </label>
+              <div className="space-y-2">
+                {['vip', 'active', 'engaged', 'new'].map(tag => (
+                  <label key={tag} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={editModal.subscriber.tags?.includes(tag) || false}
+                      onChange={(e) => {
+                        const tags = editModal.subscriber.tags || [];
+                        setEditModal({
+                          ...editModal,
+                          subscriber: {
+                            ...editModal.subscriber,
+                            tags: e.target.checked
+                              ? [...tags, tag]
+                              : tags.filter(t => t !== tag),
+                          },
+                        });
+                      }}
+                      className="w-4 h-4 text-blue-600 rounded"
+                    />
+                    <span className="text-sm text-gray-700 capitalize">{tag}</span>
+                  </label>
+                ))}
               </div>
             </div>
           </div>

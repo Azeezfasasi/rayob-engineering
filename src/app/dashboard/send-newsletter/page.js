@@ -213,8 +213,8 @@ export default function SendNewsletter() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center space-x-2">
-          <Send className="w-8 h-8 text-blue-600" />
+        <h1 className="text-[20px] md:text-2xl font-bold text-gray-900 flex items-center space-x-2">
+          <Send className="w-5 md:w-8 h-5 md:h-8 text-blue-600" />
           <span>Send Newsletter</span>
         </h1>
         <p className="text-gray-600 mt-2">Create and send newsletters to your subscribers</p>
@@ -240,7 +240,7 @@ export default function SendNewsletter() {
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
-                  <span className="text-lg">{type.label}</span>
+                  <span className="text-[16px] md:text-lg">{type.label}</span>
                 </button>
               ))}
             </div>
