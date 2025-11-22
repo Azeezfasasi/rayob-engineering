@@ -59,7 +59,7 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
             </button>
 
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/images/rayobnew.svg" alt="Rayob Logo" width={170} height={50} className="w-18 md:w-15 block rounded-md" />
+              <Image src="/images/rayobnew.svg" alt="Rayob Logo" width={160} height={40} className="w-13 md:w-15 block rounded-md" />
             </Link>
           </div>
 
