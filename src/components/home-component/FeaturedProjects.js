@@ -70,7 +70,7 @@ export default function FeaturedProjects() {
                 </div>
 
                 <div className="p-6">
-                  <span className="text-sm text-blue-500 font-semibold uppercase">
+                  <span className="text-sm text-blue-900 font-semibold uppercase">
                     {project.category}
                   </span>
                   <h3 className="text-xl font-bold text-gray-800 mt-2 mb-3">
@@ -81,7 +81,7 @@ export default function FeaturedProjects() {
                   </p>
                   <a
                     href={`/projects/${project._id}`}
-                    className="text-blue-500 font-semibold hover:text-blue-600 transition"
+                    className="text-blue-900 font-semibold hover:text-blue-800 transition"
                   >
                     View Details →
                   </a>
@@ -95,7 +95,7 @@ export default function FeaturedProjects() {
         <div className="text-center mt-12">
           <Link
             href="/projects"
-            className="inline-block bg-blue-500 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-600 transition"
+            className="inline-block bg-blue-900 text-white px-8 py-3 rounded-lg shadow hover:bg-blue-800 transition"
           >
             View All Projects
           </Link>

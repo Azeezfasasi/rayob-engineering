@@ -39,7 +39,7 @@ export default function Careers() {
   return (
     <div className="w-full bg-white">
       {/* Hero Section */}
-      <section className="bg-linear-to-r from-indigo-600 to-blue-600 text-white py-16 md:py-24">
+      <section className="bg-linear-to-r from-blue-800 to-blue-900 text-white py-16 md:py-24">
         <div className="container mx-auto px-6 lg:px-20 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Careers at Rayob Engineering</h1>
           <p className="text-lg md:text-xl text-indigo-100 max-w-3xl mx-auto">
@@ -77,7 +77,7 @@ export default function Careers() {
                 <p>
                   We provide an enabling environment where professionals can grow, contribute meaningfully, and excel in their chosen careers. Our culture values integrity, excellence, creativity, teamwork, and a relentless commitment to delivering outstanding results across all our project engagements.
                 </p>
-                <p className="text-indigo-600 font-semibold">
+                <p className="text-blue-900 font-semibold">
                   At Rayob, your career is not just a job — it&apos;s a partnership for growth, innovation, and excellence.
                 </p>
               </div>
@@ -108,7 +108,7 @@ export default function Careers() {
         <div className="container mx-auto px-6 lg:px-20">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">Who We Look For</h2>
-            <div className="bg-linear-to-r from-indigo-50 to-blue-50 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-indigo-600">
+            <div className="bg-linear-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
               <p className="text-lg text-gray-700 leading-relaxed">
                 We seek passionate, disciplined, and forward-thinking individuals who share our vision of engineering the future with excellence. Whether you are an experienced professional or an aspiring young talent, Rayob offers the platform to turn your potential into impact.
               </p>
@@ -133,7 +133,7 @@ export default function Careers() {
                   key={idx}
                   className="bg-white rounded-lg shadow-md p-6 flex items-center gap-4 hover:shadow-lg transition-shadow"
                 >
-                  <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center shrink-0">
                     <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
@@ -143,16 +143,16 @@ export default function Careers() {
               ))}
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-8 md:p-12 border-t-4 border-indigo-600">
+            <div className="bg-white rounded-lg shadow-md p-8 md:p-12 border-t-4 border-blue-900">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Apply Now</h3>
               <p className="text-gray-700 mb-6">
                 Interested applicants may submit their CV and cover letter to:
               </p>
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-                <span className="text-lg font-semibold text-indigo-600">info@rayobengineering.com</span>
+                <span className="text-lg font-semibold text-blue-900">info@rayobengineering.com</span>
                 <a
                   href="mailto:info@rayobengineering.com"
-                  className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
+                  className="inline-flex items-center gap-2 bg-blue-900 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-800 transition"
                 >
                   Send Application
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -166,7 +166,7 @@ export default function Careers() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-linear-to-r from-indigo-600 to-blue-600">
+      <section className="py-16 md:py-24 bg-linear-to-r from-blue-800 to-blue-900">
         <div className="container mx-auto px-6 lg:px-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Start Your Journey?</h2>
           <p className="text-lg text-indigo-100 mb-8 max-w-2xl mx-auto">
@@ -174,7 +174,7 @@ export default function Careers() {
           </p>
           <a
             href="mailto:info@rayobengineering.com"
-            className="inline-block bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-50 transition"
+            className="inline-block bg-white text-blue-900 px-8 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-50 transition"
           >
             Submit Your Application
           </a>
@@ -188,7 +188,7 @@ export default function Careers() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {['Integrity', 'Excellence', 'Creativity', 'Teamwork', 'Results'].map((value, idx) => (
-              <div key={idx} className="bg-linear-to-br from-indigo-50 to-blue-50 rounded-lg p-6 text-center border-l-4 border-indigo-600">
+              <div key={idx} className="bg-linear-to-br from-blue-50 to-blue-100 rounded-lg p-6 text-center border-l-4 border-blue-900">
                 <h3 className="text-lg font-bold text-gray-900">{value}</h3>
                 <p className="text-sm text-gray-600 mt-2">
                   {value === 'Integrity' && 'Acting with honesty and strong principles'}

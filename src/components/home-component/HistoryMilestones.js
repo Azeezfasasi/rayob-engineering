@@ -19,11 +19,11 @@ export default function HistoryMilestones() {
         </div>
 
         {/* Timeline */}
-        <div className="relative border-l-2 border-blue-500 ml-4 md:ml-12">
+        <div className="relative border-l-2 border-blue-900 ml-4 md:ml-12">
           {milestones.map((milestone, index) => (
             <div key={index} className="mb-10 ml-6 md:ml-12 relative">
               {/* Dot */}
-              <span className="absolute -left-4 md:-left-6 w-4 h-4 bg-blue-500 rounded-full top-1.5 md:top-2"></span>
+              <span className="absolute -left-4 md:-left-6 w-4 h-4 bg-blue-900 rounded-full top-1.5 md:top-2"></span>
               
               {/* Content */}
               <div>

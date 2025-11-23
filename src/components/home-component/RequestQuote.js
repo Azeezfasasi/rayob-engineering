@@ -78,7 +78,7 @@ export default function RequestQuote() {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="John Doe"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-900"
               />
             </div>
 
@@ -92,7 +92,7 @@ export default function RequestQuote() {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="example@email.com"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-900"
               />
             </div>
 
@@ -105,7 +105,7 @@ export default function RequestQuote() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="+234 800 000 0000"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-900"
               />
             </div>
 
@@ -118,7 +118,7 @@ export default function RequestQuote() {
                 value={formData.company}
                 onChange={handleChange}
                 placeholder="Rayob Client Ltd."
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-900"
               />
             </div>
 
@@ -130,7 +130,7 @@ export default function RequestQuote() {
                 value={formData.service}
                 onChange={handleChange}
                 required
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 bg-white focus:outline-none focus:ring-2 focus:ring-blue-900"
               >
                 <option value="">-- Choose a Service --</option>
                 <option value="Civil Engineering">Civil Engineering</option>
@@ -153,7 +153,7 @@ export default function RequestQuote() {
                 onChange={handleChange}
                 rows="5"
                 placeholder="Tell us briefly about your project..."
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-900"
               ></textarea>
             </div>
 
@@ -168,7 +168,7 @@ export default function RequestQuote() {
             <div className="md:col-span-2 text-center mt-4">
               <button
                 type="submit"
-                className="bg-blue-500 text-white px-10 py-3 rounded-lg font-semibold shadow hover:bg-blue-600 transition cursor-pointer disabled:opacity-50"
+                className="bg-blue-900 text-white px-10 py-3 rounded-lg font-semibold shadow hover:bg-blue-800 transition cursor-pointer disabled:opacity-50"
                 disabled={loading}
               >
                 {loading ? "Submitting..." : "Submit Request"}

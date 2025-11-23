@@ -108,11 +108,11 @@ export default function ProjectDetails({ projectId }) {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 backdrop-blur-sm bg-opacity-80">
             <div className="flex justify-between items-center mb-3">
               <span className="text-sm font-bold text-gray-700 uppercase tracking-wide">Project Progress</span>
-              <span className="text-[17px] md:text-[22px] font-bold text-blue-600">{project.completion}%</span>
+              <span className="text-[17px] md:text-[22px] font-bold text-blue-900">{project.completion}%</span>
             </div>
             <div className="w-full bg-gray-300 rounded-full h-4 overflow-hidden shadow-inner">
               <div 
-                className="bg-linear-to-r from-blue-500 via-blue-600 to-blue-700 h-full rounded-full transition-all duration-700 ease-out shadow-lg"
+                className="bg-linear-to-r from-blue-800 via-blue-900 to-blue-900 h-full rounded-full transition-all duration-700 ease-out shadow-lg"
                 style={{ width: `${project.completion}%` }}
               />
             </div>
@@ -146,13 +146,13 @@ export default function ProjectDetails({ projectId }) {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-3 bg-blue-100 rounded-lg">
-                  <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" />
                   </svg>
                 </div>
                 <h2 className="text-[17px] md:text-[24px] font-bold text-gray-900">Project Gallery</h2>
               </div>
-              <span className="text-sm bg-blue-100 text-blue-700 px-4 py-2 rounded-full font-bold">
+              <span className="text-sm bg-blue-100 text-blue-900 px-4 py-2 rounded-full font-bold">
                 {project.galleryImages.length} Images
               </span>
             </div>
@@ -270,7 +270,7 @@ export default function ProjectDetails({ projectId }) {
             <div className="group bg-white rounded-xl p-5 shadow-sm border border-gray-200 hover:shadow-lg hover:border-blue-300 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
-                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
                   </svg>
                 </div>
@@ -361,13 +361,13 @@ export default function ProjectDetails({ projectId }) {
             <div className="group bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-5 shadow-sm border border-blue-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-blue-200 rounded-lg group-hover:bg-blue-300 transition-colors">
-                  <svg className="w-5 h-5 text-blue-700" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-5 h-5 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <p className="text-xs text-blue-700 font-bold uppercase tracking-widest">Completion</p>
+                <p className="text-xs text-blue-900 font-bold uppercase tracking-widest">Completion</p>
               </div>
-              <p className="text-xl font-semibold text-blue-600 ml-9">{project.completion}%</p>
+              <p className="text-xl font-semibold text-blue-900 ml-9">{project.completion}%</p>
             </div>
           </div>
         </div>
@@ -376,7 +376,7 @@ export default function ProjectDetails({ projectId }) {
         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 mb-8">
           <h2 className="text-[20px] md:text-[20px] font-bold text-gray-900 mb-6 flex items-center gap-3">
             <div className="p-3 bg-blue-100 rounded-lg">
-              <svg className="w-7 h-7 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-7 h-7 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM9 12a6 6 0 11-12 0 6 6 0 0112 0zM16.35 5.65a2 2 0 11-2.83-2.83 2 2 0 012.83 2.83zM16.5 10a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM20 15v-5h-4v5h4z" />
               </svg>
             </div>
@@ -384,8 +384,8 @@ export default function ProjectDetails({ projectId }) {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200 hover:shadow-lg transition-all duration-300 group">
-              <p className="text-xs text-blue-700 font-bold uppercase tracking-widest mb-3">Team Lead</p>
-              <p className="text-[17px] font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">{project.teamLead || 'Not Assigned'}</p>
+              <p className="text-xs text-blue-900 font-bold uppercase tracking-widest mb-3">Team Lead</p>
+              <p className="text-[17px] font-semibold text-gray-900 group-hover:text-blue-900 transition-colors">{project.teamLead || 'Not Assigned'}</p>
             </div>
             <div className="bg-linear-to-br from-green-50 to-green-100 rounded-xl p-5 border border-green-200 hover:shadow-lg transition-all duration-300 group">
               <p className="text-xs text-green-700 font-bold uppercase tracking-widest mb-3">Team Members</p>
@@ -406,7 +406,7 @@ export default function ProjectDetails({ projectId }) {
           <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-200 hover:shadow-lg hover:border-blue-300 transition-all duration-300 group">
             <h3 className="text-[18px] md:text-xl font-bold text-gray-900 mb-4 flex items-center gap-3">
               <div className="p-2 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
-                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
                 </svg>
               </div>
@@ -430,7 +430,7 @@ export default function ProjectDetails({ projectId }) {
         </div>
 
         {/* Technical Details */}
-        <div className="bg-linear-to-r from-blue-600 via-blue-700 to-blue-800 rounded-2xl p-8 shadow-xl text-white mb-8 border border-blue-500/30">
+        <div className="bg-linear-to-r from-blue-800 via-blue-800 to-blue-900 rounded-2xl p-8 shadow-xl text-white mb-8 border border-blue-500/30">
           <h2 className="text-[20px] md:text-[26px] font-bold mb-8 flex items-center gap-3">
             <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">

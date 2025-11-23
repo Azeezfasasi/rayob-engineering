@@ -98,7 +98,7 @@ export default function Gallery() {
       <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></div>
           </div>
           <p className="mt-4 text-gray-600">Loading galleries...</p>
         </div>
@@ -129,7 +129,7 @@ export default function Gallery() {
               placeholder="Search galleries by name, location, or tags..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
             />
           </div>
 
@@ -139,7 +139,7 @@ export default function Gallery() {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none pr-10"
+                className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent appearance-none pr-10"
               >
                 {CATEGORIES.map(cat => (
                   <option key={cat.value} value={cat.value}>
@@ -156,7 +156,7 @@ export default function Gallery() {
                 onClick={() => setViewMode('grid')}
                 className={`p-2 sm:p-2.5 rounded transition-colors ${
                   viewMode === 'grid'
-                    ? 'bg-blue-100 text-blue-600'
+                    ? 'bg-blue-100 text-blue-900'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -166,7 +166,7 @@ export default function Gallery() {
                 onClick={() => setViewMode('list')}
                 className={`p-2 sm:p-2.5 rounded transition-colors ${
                   viewMode === 'list'
-                    ? 'bg-blue-100 text-blue-600'
+                    ? 'bg-blue-100 text-blue-900'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
@@ -242,13 +242,13 @@ export default function Gallery() {
 
                       {/* Content */}
                       <div className="p-3 sm:p-4 flex flex-col grow">
-                        <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-600">
+                        <h3 className="font-bold text-sm sm:text-base text-gray-900 mb-1 line-clamp-2 group-hover:text-blue-900">
                           {gallery.title}
                         </h3>
 
                         {/* Category Badge */}
                         <div className="mb-2 sm:mb-3">
-                          <span className="inline-block bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded-full">
+                          <span className="inline-block bg-blue-50 text-blue-900 text-xs px-2 py-0.5 rounded-full">
                             {gallery.category}
                           </span>
                         </div>
@@ -264,7 +264,7 @@ export default function Gallery() {
                         <div className="space-y-1.5 sm:space-y-2 mt-auto text-xs sm:text-sm">
                           {gallery.businessName && (
                             <div className="flex items-center gap-2 text-gray-700">
-                              <Building2 className="h-4 w-4 shrink-0 text-blue-600" />
+                              <Building2 className="h-4 w-4 shrink-0 text-blue-900" />
                               <span className="truncate">{gallery.businessName}</span>
                             </div>
                           )}
@@ -337,11 +337,11 @@ export default function Gallery() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-2">
                           <div>
-                            <h3 className="font-bold text-sm sm:text-base text-gray-900 group-hover:text-blue-600 truncate">
+                            <h3 className="font-bold text-sm sm:text-base text-gray-900 group-hover:text-blue-900 truncate">
                               {gallery.title}
                             </h3>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="inline-block bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded capitalize">
+                              <span className="inline-block bg-blue-50 text-blue-900 text-xs px-2 py-0.5 rounded capitalize">
                                 {gallery.category}
                               </span>
                               {gallery.featured && (
@@ -378,7 +378,7 @@ export default function Gallery() {
                         <div className="flex flex-wrap gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600 mb-2">
                           {gallery.businessName && (
                             <div className="flex items-center gap-1">
-                              <Building2 className="h-4 w-4 text-blue-600" />
+                              <Building2 className="h-4 w-4 text-blue-900" />
                               <span>{gallery.businessName}</span>
                             </div>
                           )}
@@ -432,7 +432,7 @@ export default function Gallery() {
                 setSearchQuery('');
                 setSelectedCategory('all');
               }}
-              className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              className="inline-block bg-blue-900 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition-colors text-sm font-medium"
             >
               Reset Filters
             </button>

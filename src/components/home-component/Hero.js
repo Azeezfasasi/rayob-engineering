@@ -109,8 +109,8 @@ export default function Hero() {
                       <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">{s.title}</h2>
                       <p className="text-gray-700 mb-6">{s.subtitle}</p>
                       <div className="flex gap-3">
-                        <Link href={s.cta.href} className="inline-block px-2 md:px-5 py-3 bg-blue-500 text-white rounded-md font-medium">{s.cta.label}</Link>
-                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-blue-500 rounded-md text-gray-700">Learn more</Link>
+                        <Link href={s.cta.href} className="inline-block px-2 md:px-5 py-3 bg-blue-900 text-white rounded-md font-medium">{s.cta.label}</Link>
+                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-blue-900 rounded-md text-gray-700">Learn more</Link>
                       </div>
                     </div>
                     {/* Right Image - visible on lg (laptop) and up only */}
@@ -133,14 +133,14 @@ export default function Hero() {
           <button
             aria-label="Previous"
             onClick={() => setIndex(i => Math.max(0, i - 1))}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-500 cursor-pointer"
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-900 cursor-pointer"
           >
             <ArrowBigLeftDash />
           </button>
           <button
             aria-label="Next"
             onClick={() => setIndex(i => Math.min(slides.length - 1, i + 1))}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-500 cursor-pointer"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-900 cursor-pointer"
           >
             <ArrowBigRightDash />
           </button>          
@@ -152,7 +152,7 @@ export default function Hero() {
                 key={i}
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => setIndex(i)}
-                className={`w-3 h-3 rounded-full ${i === index ? 'bg-blue-500' : 'bg-white/70 border border-gray-200'}`}
+                className={`w-3 h-3 rounded-full ${i === index ? 'bg-blue-900' : 'bg-white/70 border border-gray-200'}`}
               />
             ))}
           </div>

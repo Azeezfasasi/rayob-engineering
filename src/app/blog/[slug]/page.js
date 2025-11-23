@@ -169,13 +169,13 @@ export default function BlogDetailPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/blog" className="text-blue-500 hover:text-blue-700 mb-4 inline-block">
+          <Link href="/blog" className="text-blue-900 hover:text-blue-800 mb-4 inline-block">
             ← Back to blogs
           </Link>
           <h1 className="text-[26px] md:text-5xl font-bold text-gray-900 mb-4">{blog.postTitle}</h1>
           
           <div className="flex flex-wrap items-center gap-4 text-gray-600 mb-6">
-            <span className="text-sm font-semibold text-blue-500 uppercase">{blog.category}</span>-
+            <span className="text-sm font-semibold text-blue-900 uppercase">{blog.category}</span>-
             <span>By {blog.author}</span>-
             <span>{new Date(blog.publishDate).toLocaleDateString('en-US', {
               year: 'numeric',
@@ -239,7 +239,7 @@ export default function BlogDetailPage() {
                   {user.avatar ? (
                     <img src={user.avatar} alt={user.firstName} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white font-bold">
+                    <div className="w-full h-full flex items-center justify-center bg-blue-900 text-white font-bold">
                       {user.firstName?.charAt(0)}
                     </div>
                   )}
@@ -250,14 +250,14 @@ export default function BlogDetailPage() {
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
                     placeholder="Share your thoughts..."
-                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-900 resize-none"
                     rows="4"
                     disabled={submittingComment}
                   />
                   <button
                     type="submit"
                     disabled={submittingComment || !commentText.trim()}
-                    className="mt-3 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium cursor-pointer"
+                    className="mt-3 px-6 py-2 bg-blue-900 text-white rounded-lg hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium cursor-pointer"
                   >
                     {submittingComment ? 'Posting...' : 'Post Comment'}
                   </button>
@@ -267,7 +267,7 @@ export default function BlogDetailPage() {
           ) : (
             <div className="mb-8 pb-8 border-b bg-gray-50 p-4 rounded-lg">
               <p className="text-gray-600">
-                <Link href="/login" className="text-blue-500 hover:text-blue-700 font-medium">
+                <Link href="/login" className="text-blue-900 hover:text-blue-800 font-medium">
                   Login
                 </Link>
                 {' '}to post a comment
@@ -284,7 +284,7 @@ export default function BlogDetailPage() {
                     {comment.userAvatar ? (
                       <img src={comment.userAvatar} alt={comment.userName} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white font-bold text-sm">
+                      <div className="w-full h-full flex items-center justify-center bg-blue-900 text-white font-bold text-sm">
                         {comment.userName?.charAt(0)}
                       </div>
                     )}

@@ -313,7 +313,7 @@ const ContactFormResponses = () => {
 								placeholder="Search by name, email, subject, or message..."
 								value={searchQuery}
 								onChange={handleSearch}
-								className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent outline-none"
+								className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-900 focus:border-transparent outline-none"
 							/>
 						</div>
 
@@ -334,7 +334,7 @@ const ContactFormResponses = () => {
 									onClick={() => handleStatusFilter('new')}
 									className={`px-4 py-2 rounded-lg font-medium transition ${
 										statusFilter === 'new'
-											? 'bg-blue-600 text-white'
+											? 'bg-blue-900 text-white'
 											: 'bg-gray-100 text-gray-700 hover:bg-gray-200'
 									}`}
 								>
@@ -435,7 +435,7 @@ const ContactFormResponses = () => {
 												<div className="flex items-center justify-center gap-2">
 													<button
 														onClick={() => handleView(response)}
-														className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+														className="p-2 text-blue-900 hover:bg-blue-50 rounded-lg transition"
 														title="View"
 													>
 														<Eye className="w-4 h-4" />

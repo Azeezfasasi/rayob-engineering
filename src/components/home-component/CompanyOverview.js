@@ -37,7 +37,7 @@ export default function CompanyOverview() {
                 <p>
                   The Chairman/CEO is strongly supported by highly experienced professionals in engineering, accounting and finance, law, management, and more. Together, we deliver value, promote excellence, and exceed the expectations of our clients and customers.
                 </p>
-                <p className="text-indigo-600 font-semibold text-lg pt-2">
+                <p className="text-blue-900 font-semibold text-lg pt-2">
                   Our goal: to become a trusted African leader in engineering excellence, telecommunications infrastructure development, and strategic project delivery.
                 </p>
               </div>
@@ -51,7 +51,7 @@ export default function CompanyOverview() {
         <div className="container mx-auto px-6 lg:px-20">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Vision</h2>
-            <div className="bg-white rounded-lg shadow-md p-8 md:p-12 border-l-4 border-indigo-600">
+            <div className="bg-white rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
               <p className="text-xl text-gray-700 leading-relaxed">
                 To be a Globally Recognized Engineering and Management Brand known for Excellence, Innovation, and Reliable Project Delivery.
               </p>
@@ -65,7 +65,7 @@ export default function CompanyOverview() {
         <div className="container mx-auto px-6 lg:px-20">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Mission</h2>
-            <div className="bg-linear-to-r from-indigo-50 to-blue-50 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-600">
+            <div className="bg-linear-to-r from-indigo-50 to-blue-50 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
               <p className="text-xl text-gray-700 leading-relaxed">
                 To Provide Superior Engineering and Management Services Using Modern Technology, Professional Expertise, and a Commitment to Quality, Safety, and Customer Satisfaction.
               </p>

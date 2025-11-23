@@ -123,7 +123,7 @@ export default function MainHeader() {
                       aria-haspopup="menu"
                       aria-expanded={aboutOpen}
                       onClick={() => setAboutOpen(s => !s)}
-                      className={`transition inline-flex items-center gap-2 ${isActive(l.href) ? 'text-blue-600 font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
+                      className={`transition inline-flex items-center gap-2 ${isActive(l.href) ? 'text-blue-900 font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
                     >
                       {l.label}
                       <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
@@ -138,7 +138,7 @@ export default function MainHeader() {
                           <Link
                             key={si.href}
                             href={si.href}
-                            className={`block px-4 py-2 text-sm ${isActive(si.href) ? 'text-blue-600 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
+                            className={`block px-4 py-2 text-sm ${isActive(si.href) ? 'text-blue-900 font-medium' : 'text-gray-700 hover:bg-gray-50'}`}
                           >
                             {si.label}
                           </Link>
@@ -153,7 +153,7 @@ export default function MainHeader() {
                 <Link
                   key={l.href}
                   href={l.href}
-                  className={`transition ${isActive(l.href) ? 'text-blue-500 font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
+                  className={`transition ${isActive(l.href) ? 'text-blue-900 font-semibold' : 'text-gray-700 hover:text-gray-900'}`}
                 >
                   {l.label}
                 </Link>
@@ -211,8 +211,8 @@ export default function MainHeader() {
               </div>
             ) : (
               <>
-                <Link href="/login" className="px-4 py-2 text-sm font-semibold border border-blue-500 text-gray-700 hover:text-blue-600 rounded-md">Login</Link>
-                <Link href="/request-a-quote" className="px-4 py-2 bg-blue-500 text-white rounded-md text-sm font-medium hover:bg-blue-600">Request Quote</Link>
+                <Link href="/login" className="px-4 py-2 text-sm font-semibold border border-blue-900 hover:border-blue-800 text-gray-900 hover:text-blue-950 rounded-md">Login</Link>
+                <Link href="/request-a-quote" className="px-4 py-2 bg-blue-900 text-white rounded-md text-sm font-medium hover:bg-blue-800">Request Quote</Link>
               </>
             )}
           </div>
