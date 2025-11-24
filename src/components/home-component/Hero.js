@@ -10,21 +10,21 @@ export default function Hero() {
       title: 'Innovative Engineering, Strategic Management!',
       subtitle: 'We build robust infrastructure and engineering solutions tailored to your needs.',
       cta: { label: 'Request a Quote', href: '/request-a-quote' },
-      bg: 'linear-gradient(135deg,#ffecd2 0%,#fcb69f 100%)',
+      bg: 'linear-gradient(135deg,#87CEEB 100%,#87CEEB 100%)',
       image: { src: '/images/construct1.jpeg', alt: 'Engineering excellence' }
     },
     {
       title: 'Reliable teams. On time.',
       subtitle: 'Scale with experienced engineers and project managers who get things done.',
       cta: { label: 'Our Services', href: '/services' },
-      bg: 'linear-gradient(135deg,#e0f7fa 0%,#80deea 100%)',
+      bg: 'linear-gradient(135deg,#87CEEB 100%,#87CEEB 100%)',
       image: { src: '/images/pipe1.jpeg', alt: 'Engineering excellence' }
     },
     {
       title: 'From concept to delivery',
       subtitle: 'We partner with you through project discovery, engineering and deployment.',
       cta: { label: 'Contact Us', href: '/contact-us' },
-      bg: 'linear-gradient(135deg,#e6e9ff 0%,#9fa8ff 100%)',
+      bg: 'linear-gradient(135deg,#87CEEB 100%,#87CEEB 100%)',
       image: { src: '/images/stairs.jpeg', alt: 'Engineering excellence' }
     }
   ]
