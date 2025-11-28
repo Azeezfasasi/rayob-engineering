@@ -4,7 +4,7 @@ import Footer from '@/components/home-component/Footer'
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata = {
-  title: 'Rayob Engineering',
+  title: 'Rayob Engineering & Mgt. Co. Ltd',
   description: 'Innovative Engineering Solutions for Modern Projects.',
 }
 

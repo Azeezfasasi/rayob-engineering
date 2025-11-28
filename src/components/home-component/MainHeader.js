@@ -93,11 +93,11 @@ export default function MainHeader() {
     <>
     <header className="w-full left-0 right-0 bg-white/60 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50 shadow-md">
       <div className="mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="flex items-center justify-between h-20">
+        <div className="flex items-center justify-between h-23 md:h-27">
           {/* Logo */}
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/images/rayobnew.svg" alt="Rayob Logo" width={170} height={50} className="w-18 block rounded-md" />
+              <Image src="/images/rayob3.svg" alt="Rayob Logo" width={170} height={50} className="w-22 md:w-26 block rounded-md" />
             </Link>
           </div>
 
