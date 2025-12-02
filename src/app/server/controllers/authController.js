@@ -652,7 +652,7 @@ export const getAllUsers = async (req) => {
     const page = parseInt(searchParams.get("page")) || 1;
     const limit = parseInt(searchParams.get("limit")) || 10;
 
-    let filter = {};
+    let filter = { accountStatus: { $ne: "deleted" } }; // Exclude deleted users
     if (role) filter.role = role;
     if (isActive !== null) filter.isActive = isActive === "true";
 

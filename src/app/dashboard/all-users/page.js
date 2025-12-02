@@ -149,20 +149,22 @@ export default function AllUsersPage() {
 
       if (res.ok) {
         setMessage({ type: "success", text: "User deleted successfully" });
+        // Remove user from local state immediately
+        setUsers(prevUsers => prevUsers.filter(user => user._id !== userId));
+        // Update total count
+        setTotal(prevTotal => Math.max(0, prevTotal - 1));
         setDeleteModal({ open: false, user: null, loading: false });
         setTimeout(() => setMessage(null), 3000);
-        // Refresh users list
-        await fetchUsers();
       } else {
         const data = await res.json();
         const errorMsg = data.message || `Failed to delete user (${res.status})`;
         setMessage({ type: "error", text: errorMsg });
         console.error("API Error:", errorMsg);
+        setDeleteModal(prev => ({ ...prev, loading: false }));
       }
     } catch (err) {
       console.error("Error:", err);
       setMessage({ type: "error", text: `Error: ${err.message}` });
-    } finally {
       setDeleteModal(prev => ({ ...prev, loading: false }));
     }
   }
