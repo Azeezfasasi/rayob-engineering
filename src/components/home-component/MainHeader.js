@@ -191,9 +191,11 @@ export default function MainHeader() {
                     <Link href="/dashboard" className="block px-4 py-2 font-medium text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-300">
                       Dashboard
                     </Link>
+                    {user?.role === 'admin' || user?.role === 'staff-member' ? (
                     <Link href="/dashboard/all-projects" className="block px-4 py-2 font-medium text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-300">
                      Manage Projects
                     </Link>
+                    ) : null}
                     <Link href="/dashboard/my-profile" className="block px-4 py-2 font-medium text-sm text-gray-700 hover:bg-gray-50 border-b border-gray-300">
                       My Profile
                     </Link>

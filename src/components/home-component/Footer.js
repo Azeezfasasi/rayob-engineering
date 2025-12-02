@@ -125,7 +125,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-gray-700 mt-12 pt-6 text-center text-sm text-gray-500">
         © {new Date().getFullYear()} <span className="text-gray-300 font-medium">Rayob Engineering</span>. 
-        All rights reserved. | Developed by <a href="http://wa.me/08117256648" target="_blank" className="text-blue-500">Sense Solutions</a>
+        All rights reserved. | Developed by <a href="https://wa.me/2348117256648" target="_blank" className="text-blue-500">Sense Solutions</a>
       </div>
     </footer>
   );

@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { ProtectedRoute } from '@/components/ProtectedRoute'
 
 
 export default function EditProjectPage() {
@@ -209,6 +210,7 @@ export default function EditProjectPage() {
   }
 
   return (
+    <ProtectedRoute allowedRoles={['admin', 'staff-member']}>
     <div className="min-h-screen bg-gray-50 py-6 px-0 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
@@ -414,5 +416,6 @@ export default function EditProjectPage() {
         </form>
       </div>
     </div>
+    </ProtectedRoute>
   )
 }

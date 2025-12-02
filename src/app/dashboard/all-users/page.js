@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Commet } from "react-loading-indicators";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 const PAGE_SIZE = 10;
 
@@ -255,6 +256,7 @@ export default function AllUsersPage() {
   }
 
   return (
+    <ProtectedRoute allowedRoles={['admin']}>
     <div className="w-[360px] md:w-full md:max-w-7xl p-2 md:p-6 bg-white rounded-xl shadow-lg">
       <h1 className="text-[20px] md:text-2xl font-bold mb-4">All Users</h1>
       <div className="flex flex-wrap gap-4 mb-6">
@@ -548,5 +550,6 @@ export default function AllUsersPage() {
         </div>
       )}
     </div>
+    </ProtectedRoute>
   );
 }

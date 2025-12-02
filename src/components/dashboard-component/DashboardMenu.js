@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
-import { LayoutDashboard, Briefcase, NotepadText, Contact, TableProperties, Users, Mails, Images  } from 'lucide-react';
+import { LayoutDashboard, Briefcase, NotepadText, Contact, TableProperties, Users, Mails, Images } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext'
 
 function Icon({ name }) {
   switch (name) {
@@ -48,61 +49,77 @@ function Icon({ name }) {
   }
 }
 
-export default function DashboardMenu({ collapsed, mobileOpen = false, onClose = () => {} }) {
+export default function DashboardMenu({ collapsed, mobileOpen = false, onClose = () => { } }) {
+  const { user } = useAuth()
   const pathname = usePathname() || ''
   const items = [
-    { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
+    { href: '/dashboard', label: 'Dashboard', icon: 'dashboard', roles: ['admin', 'client', 'staff-member'] },
     {
       href: '/dashboard/projects',
       label: 'Projects',
       icon: 'projects',
+      roles: ['admin', 'staff-member'],
       children: [
-        { href: '/dashboard/add-projects', label: 'Add Project' },
-        { href: '/dashboard/all-projects', label: 'All Projects' }
+        { href: '/dashboard/add-projects', label: 'Add Project', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/all-projects', label: 'All Projects', roles: ['admin', 'staff-member'] }
       ]
     },
+    { href: '/projects', label: 'Completed Projects', icon: 'projects', roles: ['client'] },
     {
       href: '/dashboard/blog',
       label: 'Blog',
       icon: 'blog',
+      roles: ['admin', 'staff-member'],
       children: [
-        { href: '/dashboard/add-blog', label: 'Add Blog' },
-        { href: '/dashboard/manage-blog', label: 'Manage Blogs' }
+        { href: '/dashboard/add-blog', label: 'Add Blog', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/manage-blog', label: 'Manage Blogs', roles: ['admin', 'staff-member'] }
       ]
     },
-    { href: '/dashboard/contact-form-responses', label: 'Contact Form Responses', icon: 'Contact' },
-    { href: '/dashboard/quote-requests', label: 'Quote Requests', icon: 'Quote Requests' },
+    { href: '/blog', label: 'View Blogs', icon: 'dashboard', roles: ['client'] },
+    { href: '/dashboard/contact-form-responses', label: 'Contact Form Responses', icon: 'Contact', roles: ['admin', 'staff-member'] },
+    { href: '/request-a-quote', label: 'Request Quote', icon: 'dashboard', roles: ['client'] },
+    { href: '/dashboard/quote-requests', label: 'Quote Requests', icon: 'Quote Requests', roles: ['admin', 'staff-member'] },
     {
       href: '/dashboard/users',
       label: 'Manage Users',
       icon: 'Users',
+      roles: ['admin'],
       children: [
-        { href: '/dashboard/all-users', label: 'All Users' },
-        { href: '/dashboard/add-user', label: 'Add User' },
-        { href: '/dashboard/change-user-password', label: 'Change User Password' }
+        { href: '/dashboard/all-users', label: 'All Users', roles: ['admin'] },
+        { href: '/dashboard/add-user', label: 'Add User', roles: ['admin'] },
+        { href: '/dashboard/change-user-password', label: 'Change User Password', roles: ['admin'] }
       ]
     },
     {
       href: '/dashboard/all-newsletter',
       label: 'Newsletter Management',
       icon: 'Newsletter',
+      roles: ['admin', 'staff-member'],
       children: [
-        { href: '/dashboard/send-newsletter', label: 'Send Newsletter' },
-        { href: '/dashboard/all-newsletters', label: 'All Newsletters' },
-        { href: '/dashboard/subscribers', label: 'Subscribers' },
+        { href: '/dashboard/send-newsletter', label: 'Send Newsletter', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/all-newsletters', label: 'All Newsletters', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/subscribers', label: 'Subscribers', roles: ['admin', 'staff-member'] },
       ]
     },
     {
       href: '/dashboard/gallery',
       label: 'Gallery Management',
       icon: 'Gallery',
+      roles: ['admin', 'staff-member'],
       children: [
-        { href: '/dashboard/add-gallery', label: 'Add Gallery' },
-        { href: '/dashboard/all-gallery', label: 'All Gallery' },
+        { href: '/dashboard/add-gallery', label: 'Add Gallery', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/all-gallery', label: 'All Gallery', roles: ['admin', 'staff-member'] },
       ]
     },
-    { href: '/dashboard/my-profile', label: 'Profile', icon: 'dashboard' },
+    { href: '/gallery', label: 'Our Gallery', icon: 'projects', roles: ['client'] },
+    { href: '/dashboard/my-profile', label: 'Profile', icon: 'dashboard', roles: ['admin', 'client', 'staff-member'] },
   ]
+
+   // Helper function to check if user has access to item
+  const hasAccess = (itemRoles) => {
+    if (!itemRoles) return true; // No role restriction
+    return itemRoles.includes(user?.role);
+  }
 
   const [openKey, setOpenKey] = useState(null)
 
@@ -116,9 +133,14 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
       <div className="h-full overflow-y-auto py-6 px-2">
         <ul className="space-y-1">
           {items.map(i => {
+            // Check if user has access to this item
+            if (!hasAccess(i.roles)) return null;
+
             const active = pathname === i.href || pathname.startsWith(i.href + '/')
             const hasChildren = Array.isArray(i.children) && i.children.length > 0
             const isOpen = openKey === i.href
+            // Filter children based on access
+            const visibleChildren = hasChildren ? i.children.filter(c => hasAccess(c.roles)) : [];
 
             return (
               <li key={i.href}>
@@ -186,9 +208,14 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
 
           <ul className="space-y-1">
               {items.map(i => {
+                // Check if user has access to this item
+                if (!hasAccess(i.roles)) return null;
+
                 const active = pathname === i.href || pathname.startsWith(i.href + '/')
                 const hasChildren = Array.isArray(i.children) && i.children.length > 0
                 const isOpen = openKey === i.href
+                // Filter children based on access
+                const visibleChildren = hasChildren ? i.children.filter(c => hasAccess(c.roles)) : [];
 
                 return (
                   <li key={i.href}>

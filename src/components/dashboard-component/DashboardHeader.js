@@ -92,9 +92,16 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
                     <li>
                       <Link href="/" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Back to Home</Link>
                     </li>
+                    {user?.role === 'admin' || user?.role === 'staff-member' ? (
                     <li>
-                      <Link href="/dashboard" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Settings</Link>
+                      <Link href="/dashboard/all-projects" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Manage Projects</Link>
                     </li>
+                    ) : null}
+                    {user?.role === 'admin' || user?.role === 'staff-member' ? (
+                    <li>
+                      <Link href="/dashboard/my-profile" className="block px-4 py-2 text-gray-700 hover:bg-gray-100 transition w-full text-left">Profile</Link>
+                    </li>
+                    ) : null}
                     <li>
                       <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition">Logout</button>
                     </li>

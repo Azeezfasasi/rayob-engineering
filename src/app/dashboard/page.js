@@ -2,7 +2,6 @@
 import React from "react";
 import DashboardStats from "@/components/dashboard-component/DashboardStats";
 import DashboardWelcome from "@/components/dashboard-component/DashboardWelcome";
-
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Commet } from "react-loading-indicators";
@@ -10,6 +9,7 @@ import { Commet } from "react-loading-indicators";
 export default function Dashboard() {
   const { isAuthenticated, loading } = useAuth();
   const router = useRouter();
+  const { user } = useAuth();
 
   // Redirect to login if not authenticated
   React.useEffect(() => {
@@ -28,7 +28,10 @@ export default function Dashboard() {
   return (
     <>
       <DashboardWelcome />
-      <DashboardStats />
+
+      {user?.role === 'admin' ? (
+        <DashboardStats />
+      ) : null}
     </>
   );
 }
