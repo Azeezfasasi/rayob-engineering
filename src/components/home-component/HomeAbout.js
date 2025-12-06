@@ -10,7 +10,7 @@ export default function HomeAbout() {
         <div className="flex-1 w-full">
           <div className="relative w-full h-64 md:h-80 lg:h-96 rounded-lg overflow-hidden shadow-lg">
             <Image
-              src="/images/about1.jpg" 
+              src="/images/telecom2.jpeg" 
               alt="Rayob Engineering Team"
               fill
               sizes='100%'
