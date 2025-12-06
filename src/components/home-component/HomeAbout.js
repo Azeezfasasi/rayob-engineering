@@ -1,4 +1,3 @@
-// components/AboutSection.jsx
 import Image from 'next/image';
 
 export default function HomeAbout() {
