@@ -24,9 +24,10 @@
     "react-loading-indicators": "^1.0.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "autoprefixer": "^10",
     "eslint": "^9",
     "eslint-config-next": "^15.2.0",
-    "tailwindcss": "^4"
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.14"
   }
 }
