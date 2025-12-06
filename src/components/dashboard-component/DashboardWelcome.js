@@ -55,7 +55,7 @@ export default function DashboardWelcome() {
     <section className="bg-white rounded-lg shadow-sm p-5 md:p-6 lg:p-8">
       <div className="flex flex-col lg:flex-row md:items-center md:justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="flex items-center justify-center w-14 h-14 rounded-lg bg-linear-to-br from-blue-800 to-blue-900 text-white text-xl font-bold">
+          <div className="flex items-center justify-center w-14 h-14 rounded-lg bg-gradient-to-br from-blue-800 to-blue-900 text-white text-xl font-bold">
             {firstName.charAt(0).toUpperCase()}
           </div>
 

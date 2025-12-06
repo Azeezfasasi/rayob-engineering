@@ -95,9 +95,9 @@ export default function MainHeader() {
       <div className="mx-auto px-4 sm:px-6 lg:px-12">
         <div className="flex items-center justify-between h-23 md:h-27">
           {/* Logo */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 p-1">
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/images/rayob3.svg" alt="Rayob Logo" width={170} height={50} className="w-22 md:w-26 block rounded-md" />
+              <Image src="/images/rayob3.svg" alt="Rayob Logo" width={170} height={50} className="w-[70px] md:w-24 block rounded-md" />
             </Link>
           </div>
 

@@ -13,7 +13,7 @@ export default function CompanyOverview() {
             <div className="order-2 lg:order-1">
               <div className="relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-lg">
                 <Image
-                  src="/images/about1.jpg"
+                  src="/images/fibre1.jpeg"
                   alt="Rayob Engineering Overview"
                   fill
                   sizes="100%"
@@ -65,7 +65,7 @@ export default function CompanyOverview() {
         <div className="container mx-auto px-6 lg:px-20">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Our Mission</h2>
-            <div className="bg-linear-to-r from-indigo-50 to-blue-50 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
+            <div className="bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
               <p className="text-xl text-gray-700 leading-relaxed">
                 To Provide Superior Engineering and Management Services Using Modern Technology, Professional Expertise, and a Commitment to Quality, Safety, and Customer Satisfaction.
               </p>

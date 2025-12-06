@@ -77,7 +77,7 @@ export default function SubscribeToNewsletter() {
   };
 
   return (
-    <div className="w-full py-16 bg-linear-to-r from-blue-50 via-white to-blue-50">
+    <div className="w-full py-16 bg-gradient-to-r from-blue-50 via-white to-blue-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Container */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -205,7 +205,7 @@ export default function SubscribeToNewsletter() {
               <button
                 type="submit"
                 disabled={isLoading || status === 'success'}
-                className="w-full px-6 py-3 bg-linear-to-r from-blue-600 to-blue-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 group"
+                className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-900 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2 group"
               >
                 {isLoading ? (
                   <>

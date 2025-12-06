@@ -56,7 +56,7 @@ export default function GalleryDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></div>
@@ -69,7 +69,7 @@ export default function GalleryDetailPage() {
 
   if (error || !gallery) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8 sm:py-12">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 sm:py-12">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <button
             onClick={() => router.back()}
@@ -96,7 +96,7 @@ export default function GalleryDetailPage() {
   const categoryLabel = gallery.category?.charAt(0).toUpperCase() + gallery.category?.slice(1);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8 sm:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 sm:py-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <button
@@ -122,7 +122,7 @@ export default function GalleryDetailPage() {
                     priority
                   />
                 ) : (
-                  <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
                     <Building2 className="h-16 w-16 text-gray-600" />
                   </div>
                 )}

@@ -39,7 +39,7 @@ export default function Careers() {
   return (
     <div className="w-full bg-white">
       {/* Hero Section */}
-      <section className="bg-linear-to-r from-blue-800 to-blue-900 text-white py-16 md:py-24">
+      <section className="bg-gradient-to-r from-blue-700 to-blue-900 text-white py-16 md:py-24">
         <div className="container mx-auto px-6 lg:px-20 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Careers at Rayob Engineering</h1>
           <p className="text-lg md:text-xl text-indigo-100 max-w-3xl mx-auto">
@@ -108,7 +108,7 @@ export default function Careers() {
         <div className="container mx-auto px-6 lg:px-20">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">Who We Look For</h2>
-            <div className="bg-linear-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg shadow-md p-8 md:p-12 border-l-4 border-blue-900">
               <p className="text-lg text-gray-700 leading-relaxed">
                 We seek passionate, disciplined, and forward-thinking individuals who share our vision of engineering the future with excellence. Whether you are an experienced professional or an aspiring young talent, Rayob offers the platform to turn your potential into impact.
               </p>
@@ -166,7 +166,7 @@ export default function Careers() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 bg-linear-to-r from-blue-800 to-blue-900">
+      <section className="py-16 md:py-24 bg-gradient-to-r from-blue-800 to-blue-900">
         <div className="container mx-auto px-6 lg:px-20 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Start Your Journey?</h2>
           <p className="text-lg text-indigo-100 mb-8 max-w-2xl mx-auto">
@@ -188,7 +188,7 @@ export default function Careers() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
             {['Integrity', 'Excellence', 'Creativity', 'Teamwork', 'Results'].map((value, idx) => (
-              <div key={idx} className="bg-linear-to-br from-blue-50 to-blue-100 rounded-lg p-6 text-center border-l-4 border-blue-900">
+              <div key={idx} className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 text-center border-l-4 border-blue-900">
                 <h3 className="text-lg font-bold text-gray-900">{value}</h3>
                 <p className="text-sm text-gray-600 mt-2">
                   {value === 'Integrity' && 'Acting with honesty and strong principles'}

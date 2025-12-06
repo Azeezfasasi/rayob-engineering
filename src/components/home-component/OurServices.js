@@ -21,6 +21,7 @@ function ServiceIcon({ name }) {
         </svg>
       )
     case 'building & construction services':
+    case 'building & construction':
       return (
         <svg {...common} stroke="currentColor" className="text-white">
           <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M3 21h18M5 21V10l7-4 7 4v11" />
@@ -64,6 +65,19 @@ function ServiceIcon({ name }) {
           <circle cx="12" cy="7" r="4" strokeWidth="1.5" />
         </svg>
       )
+    case 'general contracts':
+      return (
+        <svg {...common} stroke="currentColor" className="text-white">
+          <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      )
+    case 'optical fibre implementation & maintenance':
+    case 'optical fibre implementation & maintenance.':
+      return (
+        <svg {...common} stroke="currentColor" className="text-white">
+          <path strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        </svg>
+      )
     case 'corporate social responsibility':
       return (
         <svg {...common} stroke="currentColor" className="text-white">
@@ -86,10 +100,10 @@ function ServiceModal({ service, isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-linear-to-r from-indigo-600 to-blue-600 text-white p-6 flex items-start justify-between">
+        <div className="sticky top-0 bg-blue-900 text-white p-6 flex items-start justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gray-400 bg-opacity-20 rounded-lg flex items-center justify-center">
-              <ServiceIcon name={service.title}/>
+            <div className="w-14 h-14 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+              <ServiceIcon name={service.title} />
             </div>
             <h2 className="text-2xl font-bold">{service.title}</h2>
           </div>
@@ -166,7 +180,7 @@ const services = [
   {
     title: 'Optical fibre implementation & maintenance.',
     shortDesc: 'Optical fibre network implementation and maintenance services for telecoms infrastructure.',
-    icon: 'optical fibre implementation & maintenance',
+    icon: 'optical fibre implementation & maintenance.',
     color: 'from-orange-600 to-orange-700',
     details: [
       { text: 'At Rayob Engineering & Mgt. Co. Ltd, we provide expert optical fibre network implementation and maintenance services. Our team ensures high-quality installation, testing, and ongoing support to maintain optimal network performance and reliability.' },
@@ -273,7 +287,7 @@ export default function OurServices() {
                 className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:-translate-y-1 p-6 flex flex-col h-full`}
               >
                 <div className="flex flex-col items-start gap-4 h-full">
-                  <div className={`bg-linear-to-br ${service.color} p-4 rounded-lg text-white w-12 h-12 flex items-center justify-center shrink-0`}>
+                  <div className={`bg-gradient-to-br ${service.color} p-4 rounded-lg bg-blue-900 text-white w-12 h-12 flex items-center justify-center shrink-0`}>
                     <ServiceIcon name={service.title} />
                   </div>
                   <div className="grow">

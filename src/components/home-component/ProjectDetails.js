@@ -77,7 +77,7 @@ export default function ProjectDetails({ projectId }) {
   if (!project) return <div className="py-20 text-center text-gray-500 text-lg">Project not found.</div>;
 
   return (
-    <section className="py-16 bg-linear-to-br from-slate-50 via-blue-50 to-white">
+    <section className="py-16 bg-gradient-to-br from-slate-50 via-blue-50 to-white">
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header Section */}
         <div className="mb-12">
@@ -112,7 +112,7 @@ export default function ProjectDetails({ projectId }) {
             </div>
             <div className="w-full bg-gray-300 rounded-full h-4 overflow-hidden shadow-inner">
               <div 
-                className="bg-linear-to-r from-blue-800 via-blue-900 to-blue-900 h-full rounded-full transition-all duration-700 ease-out shadow-lg"
+                className="bg-gradient-to-r from-blue-800 via-blue-900 to-blue-900 h-full rounded-full transition-all duration-700 ease-out shadow-lg"
                 style={{ width: `${project.completion}%` }}
               />
             </div>
@@ -129,7 +129,7 @@ export default function ProjectDetails({ projectId }) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1000px"
             className="object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
           />
-          <div className="absolute inset-0 bg-linear-to-t from-black/40 via-black/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
             <div className="flex items-end justify-between">
               <div>
@@ -358,7 +358,7 @@ export default function ProjectDetails({ projectId }) {
               <p className="text-xl font-semibold text-gray-900 ml-9">₦{project.budget ? project.budget.toLocaleString() : 'N/A'}</p>
             </div>
 
-            <div className="group bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-5 shadow-sm border border-blue-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
+            <div className="group bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 shadow-sm border border-blue-200 hover:shadow-lg hover:border-blue-400 transition-all duration-300 transform hover:-translate-y-1">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-blue-200 rounded-lg group-hover:bg-blue-300 transition-colors">
                   <svg className="w-5 h-5 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
@@ -383,15 +383,15 @@ export default function ProjectDetails({ projectId }) {
             Project Team
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-5 border border-blue-200 hover:shadow-lg transition-all duration-300 group">
               <p className="text-xs text-blue-900 font-bold uppercase tracking-widest mb-3">Team Lead</p>
               <p className="text-[17px] font-semibold text-gray-900 group-hover:text-blue-900 transition-colors">{project.teamLead || 'Not Assigned'}</p>
             </div>
-            <div className="bg-linear-to-br from-green-50 to-green-100 rounded-xl p-5 border border-green-200 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-5 border border-green-200 hover:shadow-lg transition-all duration-300 group">
               <p className="text-xs text-green-700 font-bold uppercase tracking-widest mb-3">Team Members</p>
               <p className="text-[17px] text-gray-900 group-hover:text-green-600 transition-colors">{Array.isArray(project.teamMembers) ? project.teamMembers.join(', ') : project.teamMembers || 'None'}</p>
             </div>
-            <div className="bg-linear-to-br from-purple-50 to-purple-100 rounded-xl p-5 border border-purple-200 hover:shadow-lg transition-all duration-300 group">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-5 border border-purple-200 hover:shadow-lg transition-all duration-300 group">
               <p className="text-xs text-purple-700 font-bold uppercase tracking-widest mb-3">Total Team Size</p>
               <p className="text-[17px] font-semibold text-purple-600 group-hover:scale-110 transition-transform">
                 {Array.isArray(project.teamMembers) ? project.teamMembers.length + 1 : 1}
@@ -430,7 +430,7 @@ export default function ProjectDetails({ projectId }) {
         </div>
 
         {/* Technical Details */}
-        <div className="bg-linear-to-r from-blue-800 via-blue-800 to-blue-900 rounded-2xl p-8 shadow-xl text-white mb-8 border border-blue-500/30">
+        <div className="bg-gradient-to-r from-blue-800 via-blue-800 to-blue-900 rounded-2xl p-8 shadow-xl text-white mb-8 border border-blue-500/30">
           <h2 className="text-[20px] md:text-[26px] font-bold mb-8 flex items-center gap-3">
             <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
               <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 20 20">

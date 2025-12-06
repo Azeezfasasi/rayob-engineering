@@ -275,7 +275,7 @@ export default function ProfileManagement() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-gray-300 to-gray-400">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-300 to-gray-400">
                         <span className="text-4xl text-white font-semibold">
                           {profileForm.firstName?.charAt(0)?.toUpperCase() || 'U'}
                         </span>

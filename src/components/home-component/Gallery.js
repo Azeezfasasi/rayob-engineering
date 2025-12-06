@@ -95,7 +95,7 @@ export default function Gallery() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-900"></div>
@@ -107,7 +107,7 @@ export default function Gallery() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 py-8 sm:py-12 lg:py-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 sm:py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 sm:mb-12">
@@ -205,7 +205,7 @@ export default function Gallery() {
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
-                          <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
                             <Building2 className="h-12 w-12 text-gray-600" />
                           </div>
                         )}
@@ -322,7 +322,7 @@ export default function Gallery() {
                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         ) : (
-                          <div className="w-full h-full bg-linear-to-br from-gray-300 to-gray-400 flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center">
                             <Building2 className="h-8 w-8 text-gray-600" />
                           </div>
                         )}
