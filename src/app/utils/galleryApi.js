@@ -11,32 +11,55 @@ const getApiBase = () => {
 const API_BASE = getApiBase();
 
 /**
- * Upload image to Cloudinary via API
+ * Upload image to Cloudinary via API with retry logic
  */
-export const uploadImageToCloudinary = async (fileData, folderName = 'rayob/gallery') => {
-  try {
-    if (!fileData) {
-      throw new Error('File data is required');
+export const uploadImageToCloudinary = async (fileData, folderName = 'rayob/gallery', maxRetries = 2) => {
+  let lastError;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      if (!fileData) {
+        throw new Error('File data is required');
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second client timeout
+
+      const response = await fetch(`${API_BASE}/api/cloudinary`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fileData, folderName }),
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to upload image');
+      }
+
+      return await response.json();
+    } catch (error) {
+      lastError = error;
+      
+      // Only retry on timeout errors
+      if (error.name === 'AbortError' && attempt < maxRetries) {
+        const delay = Math.pow(2, attempt - 1) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      
+      if (attempt === maxRetries) {
+        console.error('Error uploading to Cloudinary:', error);
+        throw error;
+      }
     }
-
-    const response = await fetch(`${API_BASE}/api/cloudinary`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ fileData, folderName }),
-    });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Failed to upload image');
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error uploading to Cloudinary:', error);
-    throw error;
   }
+  
+  throw lastError;
 };
 
 /**

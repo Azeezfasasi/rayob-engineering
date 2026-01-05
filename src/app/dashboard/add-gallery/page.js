@@ -55,35 +55,45 @@ export default function AddGalleryPage() {
     setError('');
 
     try {
+      // Process files sequentially to avoid timeout issues
       for (const file of files) {
-        // Convert file to base64
         const reader = new FileReader();
-        reader.onloadend = async () => {
-          const base64 = reader.result;
+        
+        await new Promise((resolve, reject) => {
+          reader.onloadend = async () => {
+            try {
+              const base64 = reader.result;
 
-          try {
-            const result = await uploadImageToCloudinary(base64, 'rayob/gallery');
+              const result = await uploadImageToCloudinary(base64, 'rayob/gallery');
 
-            setFormData(prev => ({
-              ...prev,
-              images: [...prev.images, {
-                url: result.url,
-                publicId: result.publicId,
-                alt: '',
-                displayOrder: prev.images.length,
-              }],
-            }));
-          } catch (err) {
-            setError(`Failed to upload ${file.name}: ${err.message}`);
-          }
-        };
-        reader.readAsDataURL(file);
+              setFormData(prev => ({
+                ...prev,
+                images: [...prev.images, {
+                  url: result.url,
+                  publicId: result.publicId,
+                  alt: '',
+                  displayOrder: prev.images.length,
+                }],
+              }));
+
+              resolve();
+            } catch (err) {
+              reject(new Error(`Failed to upload ${file.name}: ${err.message}`));
+            }
+          };
+
+          reader.onerror = () => {
+            reject(new Error(`Failed to read ${file.name}`));
+          };
+
+          reader.readAsDataURL(file);
+        });
       }
 
       setSuccess(`${files.length} image(s) uploaded successfully`);
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError(`Upload failed: ${err.message}`);
+      setError(err.message || `Upload failed: ${err.message}`);
     } finally {
       setUploading(false);
     }

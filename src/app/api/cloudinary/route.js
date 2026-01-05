@@ -4,7 +4,44 @@ cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
+  timeout: 60000, // 60 second timeout
 });
+
+/**
+ * Retry upload with exponential backoff
+ */
+async function uploadWithRetry(fileData, folderName, maxRetries = 3) {
+  let lastError;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await cloudinary.uploader.upload(fileData, {
+        folder: folderName,
+        resource_type: 'auto',
+        quality: 'auto',
+        fetch_format: 'auto',
+        timeout: 60000,
+      });
+      
+      return result;
+    } catch (error) {
+      lastError = error;
+      
+      // Only retry on timeout or connection errors
+      if (!error.message.includes('Timeout') && !error.message.includes('ECONNREFUSED') && attempt === maxRetries) {
+        throw error;
+      }
+      
+      if (attempt < maxRetries) {
+        // Exponential backoff: 1s, 2s, 4s
+        const delay = Math.pow(2, attempt - 1) * 1000;
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  throw lastError;
+}
 
 /**
  * Upload image to Cloudinary
@@ -27,12 +64,7 @@ export async function POST(req) {
       );
     }
 
-    const result = await cloudinary.uploader.upload(fileData, {
-      folder: folderName,
-      resource_type: 'auto',
-      quality: 'auto',
-      fetch_format: 'auto',
-    });
+    const result = await uploadWithRetry(fileData, folderName);
 
     return Response.json({
       success: true,
