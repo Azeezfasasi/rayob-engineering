@@ -1,5 +1,6 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { Loader } from 'lucide-react'
 
 // SVG Icons
 function ServiceIcon({ name }) {
@@ -95,7 +96,7 @@ function ServiceIcon({ name }) {
 
 // Modal Component
 function ServiceModal({ service, isOpen, onClose }) {
-  if (!isOpen) return null
+  if (!isOpen || !service) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -119,26 +120,30 @@ function ServiceModal({ service, isOpen, onClose }) {
         </div>
 
         <div className="p-6 space-y-4 text-gray-700">
-          {service.details.map((detail, idx) => (
-            <div key={idx}>
-              {detail.section && (
-                <h3 className="text-lg font-semibold text-indigo-600 mb-3">{detail.section}</h3>
-              )}
-              {detail.text && (
-                <p className="leading-relaxed">{detail.text}</p>
-              )}
-              {detail.items && (
-                <ul className="space-y-2 ml-4">
-                  {detail.items.map((item, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="text-indigo-600 font-bold">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          ))}
+          {service.details && service.details.length > 0 ? (
+            service.details.map((detail, idx) => (
+              <div key={idx}>
+                {detail.section && (
+                  <h3 className="text-lg font-semibold text-indigo-600 mb-3">{detail.section}</h3>
+                )}
+                {detail.text && (
+                  <p className="leading-relaxed">{detail.text}</p>
+                )}
+                {detail.items && detail.items.length > 0 && (
+                  <ul className="space-y-2 ml-4">
+                    {detail.items.map((item, i) => (
+                      <li key={i} className="flex gap-2">
+                        <span className="text-indigo-600 font-bold">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))
+          ) : (
+            <p className="leading-relaxed">{service.shortDesc}</p>
+          )}
         </div>
 
         <div className="bg-gray-50 p-6 border-t text-center">
@@ -154,121 +159,50 @@ function ServiceModal({ service, isOpen, onClose }) {
   )
 }
 
-const services = [
-  {
-    title: 'Engineering Services',
-    shortDesc: 'Design, planning and technical delivery across civil and infrastructure projects.',
-    icon: 'general engineering services',
-    color: 'from-indigo-600 to-indigo-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, we provide comprehensive engineering services that combine technical excellence, practical experience, and innovative solutions. Our Team of experts in the engineering and management sectors is ably led by our MD/CEO, a distinguished registered Engineer with many years of experience in Engineering and management across construction and telecom sectors. Rayob Engineering & Mgt. Co. Ltd delivers solutions that meet the highest standards of safety, efficiency, and performance.' },
-      { section: 'Our Scope of Engineering Services', items: ['Civil and Structural Engineering - Design, analysis, and construction supervision for buildings, bridges, and infrastructure', 'Mechanical and Electrical Engineering - Design and installation of mechanical and electrical systems', 'Telecommunications and Network Engineering - Design and implementation of fibre optic networks', 'Project and Construction Management - End-to-end project planning and execution', 'Consultancy and Advisory Services - Feasibility studies, technical audits, and improvement recommendations'] },
-      { section: 'Our Approach', items: ['Technical Expertise - Leveraging years of multidisciplinary experience', 'Integrated Solutions - Combining civil, electrical, mechanical, and telecom expertise', 'Quality, Safety, and Compliance - Adherence to ISO, IEC, and ITU standards', 'Client-Centered Execution - Customized solutions with ongoing support'] }
-    ]
-  },
-  {
-    title: 'Telecoms Services',
-    shortDesc: 'End-to-end telecommunications services including network rollout and optimization.',
-    icon: 'telecoms services',
-    color: 'from-blue-600 to-blue-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, we provide comprehensive telecommunications services that enable operators, enterprises, and government agencies to deploy, upgrade, and maintain high-performance networks. Leveraging years of industry experience and a team of skilled engineers, we deliver solutions that meet the evolving demands of the digital age.' },
-      { section: 'Our Scope of Telecommunications Services', items: ['Fibre Optic Network Design and Deployment - Planning, design, and execution of aerial and underground networks', 'Network Infrastructure Installation and Maintenance - Installation of passive and active components', 'Project Management for Telecom Networks - End-to-end management of telecom rollout projects', 'Transmission and Core Network Solutions - Deployment of transmission equipment and modern networking technologies', 'Consultancy and Technical Advisory Services - Feasibility studies and network audits'] },
-      { section: 'Our Value Proposition', items: ['Comprehensive Services - From consultancy to deployment and maintenance', 'Experienced Leadership - Extensive project management and engineering expertise', 'Reliable Partnerships - Strong relationships with global suppliers', 'Future-Ready Solutions - 5G-ready and scalable network infrastructure'] }
-    ]
-  },
-  {
-    title: 'Optical fibre implementation & maintenance.',
-    shortDesc: 'Optical fibre network implementation and maintenance services for telecoms infrastructure.',
-    icon: 'optical fibre implementation & maintenance.',
-    color: 'from-orange-600 to-orange-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, we provide expert optical fibre network implementation and maintenance services. Our team ensures high-quality installation, testing, and ongoing support to maintain optimal network performance and reliability.' },
-      { section: 'Our Scope of Optical Fibre Services', items: ['Optical Fibre Network Design and Planning', 'Fibre Optic Cable Installation (Aerial and Underground)', 'Splicing and Termination Services', 'Network Testing and Troubleshooting', 'Preventive and Corrective Maintenance', 'FTTH (Fiber to the Home) Deployment'] },
-      { section: 'Why Choose At Rayob Engineering & Mgt. Co. Ltd', items: ['At Rayob Engineering & Mgt. Co. Ltd, we deliver end-to-end fibre optic solutions designed to support mission-critical communication networks with unmatched reliability and performance. Our experience, technical expertise, and commitment to quality make us the trusted partner for telecom operators, ISPs, enterprises, and infrastructure providers across the region.'] }
-    ]
-  },
-  {
-    title: 'Building & Construction Services',
-    shortDesc: 'Civil and building works delivered to specification, on time and on budget.',
-    icon: 'building & construction services',
-    color: 'from-green-600 to-green-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt Co. Ltd., we bring almost twenty years of hands-on experience in the building/construction and Telecoms industries to provide cutting-edge engineering and management services. Our combination of technical excellence and practical expertise enable us to deliver construction solutions that are structurally sound, cost-effective, and sustainable.' },
-      { section: 'Our Scope of Services', items: ['Civil Engineering Works - Design and execution of structural and infrastructural projects', 'Building Construction - Turnkey construction services from planning to delivery', 'Renovation & Refurbishment - Modernization of existing structures', 'Project Management - End-to-end oversight ensuring adherence to timelines and budgets', 'Specialized Civil Works - Earthworks, road construction, foundation engineering'] },
-      { section: 'Why Choose Rayob', items: ['Decades of Expertise - Our engineering leadership and practical experience', 'Integrated Services - From design to completion, seamless experience', 'Cost-Effective Solutions - Smart engineering with efficient project management', 'Sustainable Practices - Environmentally responsible building techniques'] }
-    ]
-  },
-  {
-    title: 'Procurement Services',
-    shortDesc: 'End-to-end procurement solutions ensuring quality, efficiency, and transparency.',
-    icon: 'procurement services',
-    color: 'from-pink-600 to-pink-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, we provide end-to-end procurement solutions that ensure seamless project delivery, cost efficiency, and uncompromised quality. With a strong network of reputable manufacturers and distributors, Rayob Engineering & Mgt. Co. Ltd delivers procurement excellence.' },
-      { section: 'Our Procurement Expertise Includes', items: ['Vendor Sourcing & Prequalification - Identifying reliable suppliers', 'Material & Equipment Procurement - High-grade engineering materials', 'Contract & Purchase Order Management - Ensuring accuracy and compliance', 'Logistics Coordination & Delivery Management - Efficient handling and delivery', 'Quality Assurance & Inspection - Thorough verification of materials', 'Cost Control & Market Price Analysis - Competitive pricing optimization', 'Procurement Risk Management - Structured risk assessment'] },
-      { section: 'Our Commitment', text: 'At Rayob, procurement is more than sourcing — it is a strategic service designed to guarantee project success.' }
-    ]
-  },
-  {
-    title: 'Sales and Distribution of Telecoms Equipment and Materials',
-    shortDesc: 'Telecoms equipment and building materials distribution across regions.',
-    icon: 'sales and distribution of telecoms equipment and materials',
-    color: 'from-yellow-600 to-yellow-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, we understand that the efficiency, reliability, and expansion of modern telecommunications networks depend on the availability of high-quality materials and equipment. Our Sales and Distribution division is strategically positioned to supply operators, contractors, and infrastructure providers with world-class telecoms products.' },
-      { section: 'Our Scope of Telecoms Materials and Equipment', items: ['Fibre Optic Cables (Aerial & Underground)', 'HDPE Ducts, Sub-ducts, and Conduits', 'Optical Distribution Frames, Joint Closures, and Splicing Accessories', 'Transmission and IP Core Network Hardware', 'Power Systems including rectifiers, inverters, and UPS units', 'FTTH Installation Tools & Last-Mile Accessories'] },
-      { section: 'Our Value to the Telecoms Industry', items: ['Guaranteed product quality and global-standard certifications', 'Consistent product availability for projects', 'Competitive pricing and flexible procurement options', 'Quick response times and dependable support'] }
-    ]
-  },
-  {
-    title: 'Project Management Services',
-    shortDesc: 'End-to-end project management delivering projects on time, within budget, and to world-class standards.',
-    icon: 'project management services',
-    color: 'from-teal-600 to-teal-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd., we provide end-to-end project management solutions that transform ideas into outstanding results. With disciplined execution and strategic foresight, we ensure every project is delivered to world-class standards.' },
-      { section: 'Rayob&apos;s project management services cover', items: ['Project initiating, Planning & Feasibility Analysis', 'Design Coordination & Engineering Management', 'Schedule, Cost & Quality Management', 'Procurement & Contract Administration', 'Risk Assessment & Mitigation', 'Site Supervision & Construction Oversight', 'Handover, Documentation & Post-Project Support'] },
-      { section: 'Our Strength', text: 'At Rayob, our strength lies in our ability to lead projects with integrity, insight, and innovation. We don&apos;t just manage projects — we elevate them.' }
-    ]
-  },
-  {
-    title: 'Risk Management Services',
-    shortDesc: 'Proactive risk identification, evaluation, and mitigation for project success.',
-    icon: 'risk management services',
-    color: 'from-red-600 to-red-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, risk management is a strategic foundation that shapes how we plan, execute, and deliver every project. Backed by the expertise of our MD/CEO, a distinguished MBA graduate in Risk Management, Rayob offers a refined, analytical, and proactive approach.' },
-      { section: 'Our Risk Management Solutions Include', items: ['Enterprise & Project Risk Assessment - Comprehensive evaluation of threats', 'Risk Identification & Diagnostics - Uncovering hidden vulnerabilities', 'Quantitative & Qualitative Risk Analysis - Measuring impact and probability', 'Risk Mitigation Planning - Developing actionable strategies', 'Regulatory & Compliance Management - Alignment with standards and laws', 'Crisis Management & Contingency Planning - Response frameworks', 'Monitoring, Reporting & Continuous Control - Proactive tracking'] },
-      { section: 'Our Commitment', text: 'At Rayob, we view risk management as a competitive advantage that strengthens project delivery and ensures consistent excellence.' }
-    ]
-  },
-  {
-    title: 'Training and Manpower Development',
-    shortDesc: 'Skills development and continuous professional growth for teams.',
-    icon: 'training and manpower development',
-    color: 'from-purple-600 to-purple-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, we believe that the true strength of any great institution is measured by the people it develops. Training and manpower development is more than a corporate function, it is a visionary investment into the future, raising champions and building a lasting legacy.' },
-      { section: 'Our training philosophy revolves around three pillars', items: ['Continuous Professional Development - Pathways for growth through certifications and advanced workshops', 'Mentorship & Talent Grooming - Experienced professionals intentionally mentoring younger talents', 'Innovation-Driven Learning - Integrating emerging technologies and modern leadership techniques'] },
-      { section: 'Our Commitment', text: 'At Rayob Engineering & Mgt. Co. Ltd, we are not merely building a company, we are building people. We train to transform. We mentor to multiply. We develop to dominate. This is the Rayob way. This is how we raise champions!' }
-    ]
-  },
-  {
-    title: 'General Contracts',
-    shortDesc: 'Uplifting communities, protecting the environment, and creating opportunities for the next generation.',
-    icon: 'general contracts',
-    color: 'from-cyan-600 to-cyan-700',
-    details: [
-      { text: 'At Rayob Engineering & Mgt. Co. Ltd, our General Contracts service is built on a foundation of professionalism, technical expertise, and efficient project management. We take pride in delivering high-quality construction, engineering, and infrastructure projects that meet global standards and exceed client expectations.' },
-      { section: "Rayob's General Contracts Commitment", items: ['Rayob Engineering & Mgt. Co. Ltd is dedicated to delivering every project with integrity, precision, and excellence. Our commitment extends beyond execution, we ensure that every contract is handled with complete transparency, accountability, and a results-driven mindset. We continuously invest in innovation, training, and modern technologies to guarantee that our clients receive the highest level of service and project performance.'] },
-      { section: 'Our Legacy', text: 'At Rayob Engineering & Mgt. Co. Ltd, We handle the full cycle of project delivery—from concept and design to procurement, construction, installation, and commissioning. Our multidisciplinary team ensures seamless coordination, efficient workflows, and successful outcomes for projects of varying scale and complexity.' }
-    ]
-  }
-]
-
 export default function OurServices() {
+  const [services, setServices] = useState([])
+  const [loading, setLoading] = useState(true)
   const [selectedService, setSelectedService] = useState(null)
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await fetch('/api/services')
+        const data = await response.json()
+        
+        if (data.success && data.services) {
+          const sortedServices = [...data.services].sort((a, b) => (a.order || 0) - (b.order || 0))
+          setServices(sortedServices)
+        }
+      } catch (error) {
+        console.error('Failed to fetch services:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchServices()
+  }, [])
+
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-96">
+          <Loader className="w-8 h-8 animate-spin text-blue-900" />
+        </div>
+      </section>
+    )
+  }
+
+  if (!services || services.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-gray-50">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-gray-600">No services configured</p>
+        </div>
+      </section>
+    )
+  }
 
   return (
     <>
@@ -282,12 +216,12 @@ export default function OurServices() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map((service) => (
               <article
-                key={service.title}
+                key={service._id}
                 onClick={() => setSelectedService(service)}
                 className={`bg-white rounded-lg shadow-md hover:shadow-xl transition-all cursor-pointer transform hover:-translate-y-1 p-6 flex flex-col h-full`}
               >
                 <div className="flex flex-col items-start gap-4 h-full">
-                  <div className={`bg-gradient-to-br ${service.color} p-4 rounded-lg bg-blue-900 text-white w-12 h-12 flex items-center justify-center shrink-0`}>
+                  <div className={`bg-gradient-to-br ${service.color || 'from-blue-600 to-blue-700'} p-4 rounded-lg text-white w-12 h-12 flex items-center justify-center shrink-0`}>
                     <ServiceIcon name={service.title} />
                   </div>
                   <div className="grow">

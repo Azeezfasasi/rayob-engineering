@@ -2,39 +2,70 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react'
-import { ArrowBigRightDash, ArrowBigLeftDash } from 'lucide-react';
+import { ArrowBigRightDash, ArrowBigLeftDash, Loader } from 'lucide-react';
+
+const DEFAULT_SLIDES = [
+  {
+    _id: '1',
+    title: 'Innovative Engineering, Strategic Management!',
+    subtitle: 'We build robust infrastructure and engineering solutions tailored to your needs.',
+    ctaLabel: 'Request a Quote',
+    ctaHref: '/request-a-quote',
+    image: '/images/telecom2.jpeg',
+    alt: 'Engineering excellence'
+  },
+  {
+    _id: '2',
+    title: 'Reliable teams. On time.',
+    subtitle: 'Scale with experienced engineers and project managers who get things done.',
+    ctaLabel: 'Our Services',
+    ctaHref: '/services',
+    image: '/images/telecom1.jpeg',
+    alt: 'Engineering excellence'
+  },
+  {
+    _id: '3',
+    title: 'From concept to delivery',
+    subtitle: 'We partner with you through project discovery, engineering and deployment.',
+    ctaLabel: 'Contact Us',
+    ctaHref: '/contact-us',
+    image: '/images/fibre1.jpeg',
+    alt: 'Engineering excellence'
+  }
+]
 
 export default function Hero() {
-  const slides = [
-    {
-      title: 'Innovative Engineering, Strategic Management!',
-      subtitle: 'We build robust infrastructure and engineering solutions tailored to your needs.',
-      cta: { label: 'Request a Quote', href: '/request-a-quote' },
-      bg: 'linear-gradient(135deg,#87CEEB 100%,#87CEEB 100%)',
-      image: { src: '/images/telecom2.jpeg', alt: 'Engineering excellence' }
-    },
-    {
-      title: 'Reliable teams. On time.',
-      subtitle: 'Scale with experienced engineers and project managers who get things done.',
-      cta: { label: 'Our Services', href: '/services' },
-      bg: 'linear-gradient(135deg,#87CEEB 100%,#87CEEB 100%)',
-      image: { src: '/images/telecom1.jpeg', alt: 'Engineering excellence' }
-    },
-    {
-      title: 'From concept to delivery',
-      subtitle: 'We partner with you through project discovery, engineering and deployment.',
-      cta: { label: 'Contact Us', href: '/contact-us' },
-      bg: 'linear-gradient(135deg,#87CEEB 100%,#87CEEB 100%)',
-      image: { src: '/images/fibre1.jpeg', alt: 'Engineering excellence' }
-    }
-  ]
-
+  const [slides, setSlides] = useState([])
+  const [loading, setLoading] = useState(true)
   const [index, setIndex] = useState(0)
   const [drag, setDrag] = useState({ active: false, startX: 0, dx: 0 })
   const containerRef = useRef(null)
   const [slideWidth, setSlideWidth] = useState(0)
 
-  // Note: index is controlled by setters below (clamped on update); no effect needed here.
+  // Fetch slides from API
+  useEffect(() => {
+    const fetchSlides = async () => {
+      try {
+        const response = await fetch('/api/hero')
+        const data = await response.json()
+        
+        if (data.success && data.slides && data.slides.length > 0) {
+          // Sort by order
+          const sortedSlides = [...data.slides].sort((a, b) => (a.order || 0) - (b.order || 0))
+          setSlides(sortedSlides)
+        } else {
+          setSlides(DEFAULT_SLIDES)
+        }
+      } catch (error) {
+        console.error('Failed to fetch hero slides:', error)
+        setSlides(DEFAULT_SLIDES)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchSlides()
+  }, [])
 
   // pointer handlers (works for mouse & touch)
   function handlePointerDown(e) {
@@ -78,6 +109,26 @@ export default function Hero() {
     return () => window.removeEventListener('resize', update)
   }, [])
 
+  if (loading) {
+    return (
+      <section className="w-full">
+        <div className="h-[420px] md:h-[540px] flex items-center justify-center bg-blue-50">
+          <Loader className="w-8 h-8 animate-spin text-blue-900" />
+        </div>
+      </section>
+    )
+  }
+
+  if (!slides || slides.length === 0) {
+    return (
+      <section className="w-full">
+        <div className="h-[420px] md:h-[540px] flex items-center justify-center bg-blue-50">
+          <p className="text-gray-600">No hero slides configured</p>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="w-full">
       <div className="mx-auto ">
@@ -102,27 +153,30 @@ export default function Hero() {
             }}
           >
             {slides.map((s, i) => (
-              <div key={i} className="min-w-full flex-none" style={{ flex: '0 0 100%' }}>
+              <div key={s._id} className="min-w-full flex-none" style={{ flex: '0 0 100%' }}>
                 <div className="h-[420px] md:h-[540px] flex items-center">
-                  <div className="w-full h-full p-8 md:p-12 flex items-center justify-between gap-6" style={{ background: s.bg }}>
+                  <div className="w-full h-full p-8 md:p-12 flex items-center justify-between gap-6 bg-gradient-to-br from-sky-400 to-sky-300">
                     <div className="flex-1 max-w-full md:max-w-2xl">
                       <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight mb-4">{s.title}</h2>
-                      <p className="text-gray-700 mb-6">{s.subtitle}</p>
-                      <div className="flex gap-3">
-                        <Link href={s.cta.href} className="inline-block px-2 md:px-5 py-3 bg-blue-900 text-white rounded-md font-medium">{s.cta.label}</Link>
-                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-blue-900 rounded-md text-gray-700">Learn more</Link>
+                      <p className="text-gray-700 mb-6 text-base md:text-lg">{s.subtitle}</p>
+                      <div className="flex gap-3 flex-wrap">
+                        <Link href={s.ctaHref} className="inline-block px-2 md:px-5 py-3 bg-blue-900 text-white rounded-md font-medium hover:bg-blue-800 transition-colors">{s.ctaLabel}</Link>
+                        <Link href="/about-us" className="inline-block px-2 md:px-5 py-3 border border-blue-900 rounded-md text-gray-700 hover:bg-white/50 transition-colors">Learn more</Link>
                       </div>
                     </div>
                     {/* Right Image - visible on lg (laptop) and up only */}
-                    <div className="hidden lg:block shrink-0 lg:w-[40%]">
-                      <Image
-                        src={s.image?.src}
-                        alt={s.image?.alt}
-                        width={420}
-                        height={500}
-                        className="rounded-2xl object-cover w-full h-[500px]"
-                      />
-                    </div>
+                    {s.image && (
+                      <div className="hidden lg:block shrink-0 lg:w-[40%]">
+                        <Image
+                          src={s.image}
+                          alt={s.alt || 'Slide image'}
+                          width={420}
+                          height={500}
+                          className="rounded-2xl object-cover w-full h-[500px]"
+                          priority
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -130,32 +184,36 @@ export default function Hero() {
           </div>
 
           {/* Prev/Next arrows */}
-          <button
-            aria-label="Previous"
-            onClick={() => setIndex(i => Math.max(0, i - 1))}
-            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-900 cursor-pointer"
-          >
-            <ArrowBigLeftDash />
-          </button>
-          <button
-            aria-label="Next"
-            onClick={() => setIndex(i => Math.min(slides.length - 1, i + 1))}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-900 cursor-pointer"
-          >
-            <ArrowBigRightDash />
-          </button>          
-
-          {/* Dots */}
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-6 flex gap-2">
-            {slides.map((_, i) => (
+          {slides.length > 1 && (
+            <>
               <button
-                key={i}
-                aria-label={`Go to slide ${i + 1}`}
-                onClick={() => setIndex(i)}
-                className={`w-3 h-3 rounded-full ${i === index ? 'bg-blue-900' : 'bg-white/70 border border-gray-200'}`}
-              />
-            ))}
-          </div>
+                aria-label="Previous"
+                onClick={() => setIndex(i => Math.max(0, i - 1))}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-900 cursor-pointer transition-all"
+              >
+                <ArrowBigLeftDash />
+              </button>
+              <button
+                aria-label="Next"
+                onClick={() => setIndex(i => Math.min(slides.length - 1, i + 1))}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/30 md:bg-white/80 hover:bg-white p-0.5 md:p-2 rounded-full shadow-md text-blue-900 cursor-pointer transition-all"
+              >
+                <ArrowBigRightDash />
+              </button>          
+
+              {/* Dots */}
+              <div className="absolute left-1/2 -translate-x-1/2 bottom-6 flex gap-2">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    aria-label={`Go to slide ${i + 1}`}
+                    onClick={() => setIndex(i)}
+                    className={`w-3 h-3 rounded-full transition-all ${i === index ? 'bg-blue-900' : 'bg-white/70 border border-gray-200'}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </section>

@@ -1,11 +1,50 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Loader } from 'lucide-react';
+
+const DEFAULT_MILESTONES = [
+  { year: '2010', title: 'Company Founded', description: 'Rayob Engineering was established to deliver quality engineering solutions across industrial and commercial sectors.' },
+  { year: '2013', title: 'First Major Industrial Project', description: 'Completed our first large-scale industrial plant project, setting a standard for quality and efficiency.' },
+  { year: '2016', title: 'Expansion of Services', description: 'Expanded our service portfolio to include mechanical works and electrical installations.' },
+  { year: '2019', title: 'Award Recognition', description: 'Received industry awards for excellence in engineering and project management.' },
+  { year: '2023', title: 'Global Partnerships', description: 'Established partnerships with international firms, enhancing our global project reach.' },
+];
+
 export default function HistoryMilestones() {
-  const milestones = [
-    { year: "2010", title: "Company Founded", description: "Rayob Engineering was established to deliver quality engineering solutions across industrial and commercial sectors." },
-    { year: "2013", title: "First Major Industrial Project", description: "Completed our first large-scale industrial plant project, setting a standard for quality and efficiency." },
-    { year: "2016", title: "Expansion of Services", description: "Expanded our service portfolio to include mechanical works and electrical installations." },
-    { year: "2019", title: "Award Recognition", description: "Received industry awards for excellence in engineering and project management." },
-    { year: "2023", title: "Global Partnerships", description: "Established partnerships with international firms, enhancing our global project reach." },
-  ];
+  const [milestones, setMilestones] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMilestones = async () => {
+      try {
+        const response = await fetch('/api/milestones');
+        const data = await response.json();
+
+        if (data.success && data.milestones) {
+          const sortedMilestones = [...data.milestones].sort((a, b) => (a.order || 0) - (b.order || 0));
+          setMilestones(sortedMilestones);
+        }
+      } catch (error) {
+        console.error('Failed to fetch milestones:', error);
+        setMilestones(DEFAULT_MILESTONES);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMilestones();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="bg-white py-16">
+        <div className="container mx-auto px-6 lg:px-20 flex items-center justify-center min-h-96">
+          <Loader className="w-8 h-8 animate-spin text-blue-900" />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-white py-16">

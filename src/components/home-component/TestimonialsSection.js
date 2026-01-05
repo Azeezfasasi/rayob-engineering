@@ -1,12 +1,16 @@
-import { Star } from "lucide-react";
+'use client';
 
-const testimonials = [
+import { Star, Loader } from "lucide-react";
+import { useEffect, useState } from "react";
+
+const DEFAULT_TESTIMONIALS = [
   {
     id: 1,
     name: "John Adewale",
     position: "Project Manager, Alpha Industries",
     message:
       "Rayob Engineering delivered beyond expectations. Their team showed exceptional professionalism and technical expertise throughout our factory upgrade project.",
+    rating: 5,
   },
   {
     id: 2,
@@ -14,17 +18,51 @@ const testimonials = [
     position: "Director, GreenBuild Ltd.",
     message:
       "The Rayob team provided innovative solutions that reduced our construction costs and improved overall efficiency. Highly recommended for quality engineering services.",
+    rating: 5,
   },
   {
     id: 3,
     name: "Engr. David Uche",
     position: "CEO, Uche Group",
     message:
-      "They combine strong technical skills with a great sense of client service. Every project we’ve done with Rayob Engineering has been a success story.",
-  },
+      "They combine strong technical skills with a great sense of client service. Every project we’ve done with Rayob Engineering has been a success story.",    rating: 5,  },
 ];
 
 export default function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const response = await fetch('/api/testimonials');
+        const data = await response.json();
+
+        if (data.success && data.testimonials) {
+          const sortedTestimonials = [...data.testimonials].sort((a, b) => (a.order || 0) - (b.order || 0));
+          setTestimonials(sortedTestimonials);
+        }
+      } catch (error) {
+        console.error('Failed to fetch testimonials:', error);
+        setTestimonials(DEFAULT_TESTIMONIALS);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="bg-gray-50 py-16">
+        <div className="container mx-auto px-6 lg:px-20 flex items-center justify-center min-h-64">
+          <Loader className="w-8 h-8 animate-spin text-blue-900" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-gray-50 py-16">
       <div className="container mx-auto px-6 lg:px-20">
@@ -43,12 +81,12 @@ export default function TestimonialsSection() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial) => (
             <div
-              key={testimonial.id}
+              key={testimonial._id || testimonial.id}
               className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition"
             >
               {/* Stars */}
               <div className="flex gap-1 text-yellow-500 mb-4">
-                {[...Array(5)].map((_, i) => (
+                {[...Array(testimonial.rating || 5)].map((_, i) => (
                   <Star key={i} size={18} fill="currentColor" />
                 ))}
               </div>

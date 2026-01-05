@@ -2,6 +2,7 @@ import '../globals.css'
 import MainHeader from '@/components/home-component/MainHeader'
 import Footer from '@/components/home-component/Footer'
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Rayob Engineering & Mgt. Co. Ltd',
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
           <div className="site-main-header">
             <Footer />
           </div>
+          <Toaster position="top-center" reverseOrder={false} />
         </AuthProvider>
       </body>
     </html>

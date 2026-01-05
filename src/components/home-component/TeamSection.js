@@ -1,6 +1,10 @@
-import Image from "next/image";
+'use client';
 
-const teamMembers = [
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Loader } from "lucide-react";
+
+const DEFAULT_TEAM = [
   {
     name: "Engr. Chukwudi U. Afonne",
     position: "MD/CEO",
@@ -24,6 +28,39 @@ const teamMembers = [
 ];
 
 export default function TeamSection() {
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTeam = async () => {
+      try {
+        const response = await fetch('/api/team');
+        const data = await response.json();
+
+        if (data.success && data.members) {
+          const sortedMembers = [...data.members].sort((a, b) => (a.order || 0) - (b.order || 0));
+          setTeamMembers(sortedMembers);
+        }
+      } catch (error) {
+        console.error('Failed to fetch team members:', error);
+        setTeamMembers(DEFAULT_TEAM);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeam();
+  }, []);
+  if (loading) {
+    return (
+      <section className="bg-gray-50 py-16">
+        <div className="container mx-auto px-6 lg:px-20 flex items-center justify-center min-h-96">
+          <Loader className="w-8 h-8 animate-spin text-blue-900" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="bg-gray-50 py-16">
       <div className="container mx-auto px-6 lg:px-20">

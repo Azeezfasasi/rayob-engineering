@@ -13,14 +13,22 @@ const API_BASE = getApiBase();
 /**
  * Upload image to Cloudinary via API with retry logic
  */
-export const uploadImageToCloudinary = async (fileData, folderName = 'rayob/gallery', maxRetries = 2) => {
+export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery', maxRetries = 2) => {
   let lastError;
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      if (!fileData) {
-        throw new Error('File data is required');
+      if (!file) {
+        throw new Error('File is required');
       }
+
+      // Convert file to base64
+      const base64Data = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second client timeout
@@ -30,7 +38,7 @@ export const uploadImageToCloudinary = async (fileData, folderName = 'rayob/gall
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ fileData, folderName }),
+        body: JSON.stringify({ fileData: base64Data, folderName }),
         signal: controller.signal,
       });
 
@@ -41,7 +49,8 @@ export const uploadImageToCloudinary = async (fileData, folderName = 'rayob/gall
         throw new Error(error.message || 'Failed to upload image');
       }
 
-      return await response.json();
+      const data = await response.json();
+      return data.url || data;
     } catch (error) {
       lastError = error;
       

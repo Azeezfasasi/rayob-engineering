@@ -113,6 +113,30 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
     },
     { href: '/gallery', label: 'Our Gallery', icon: 'projects', roles: ['client'] },
     { href: '/dashboard/my-profile', label: 'Profile', icon: 'dashboard', roles: ['admin', 'client', 'staff-member'] },
+    {
+      href: '/dashboard/home',
+      label: 'Homepage Contents',
+      icon: 'Gallery',
+      roles: ['admin', 'staff-member'],
+      children: [
+        { href: '/dashboard/hero-slider', label: 'Hero Slider', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/home-cta', label: 'Home CTA', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/our-services-contents', label: 'Our Services', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/our-clients', label: 'Our Clients & Partners', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/testimonials', label: 'Testimonials', roles: ['admin', 'staff-member'] },
+      ]
+    },
+    {
+      href: '/dashboard/about-page',
+      label: 'About Page Contents',
+      icon: 'Gallery',
+      roles: ['admin', 'staff-member'],
+      children: [
+        { href: '/dashboard/company-overview', label: 'Company Overview', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/history-milestones', label: 'History & Milestones', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/team-section', label: 'Our Team Manager', roles: ['admin', 'staff-member'] },
+      ]
+    },
   ]
 
    // Helper function to check if user has access to item
