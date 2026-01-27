@@ -1,6 +1,7 @@
 "use client"
 import React, { useState, useEffect } from 'react'
-import { Loader } from 'lucide-react'
+import { Loader, ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 
 // SVG Icons
 function ServiceIcon({ name }) {
@@ -96,7 +97,21 @@ function ServiceIcon({ name }) {
 
 // Modal Component
 function ServiceModal({ service, isOpen, onClose }) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+
   if (!isOpen || !service) return null
+
+  const serviceImages = service.images && service.images.length > 0
+    ? [...service.images].sort((a, b) => (a.order || 0) - (b.order || 0))
+    : []
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? serviceImages.length - 1 : prev - 1))
+  }
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === serviceImages.length - 1 ? 0 : prev + 1))
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -118,6 +133,58 @@ function ServiceModal({ service, isOpen, onClose }) {
             </svg>
           </button>
         </div>
+
+        {/* Image Slider */}
+        {serviceImages.length > 0 && (
+          <div className="relative bg-gray-900 aspect-video w-full">
+            <Image
+              src={serviceImages[currentImageIndex].url}
+              alt={serviceImages[currentImageIndex].alt || `${service.title} image`}
+              fill
+              className="object-cover"
+              priority
+            />
+
+            {/* Navigation Buttons */}
+            {serviceImages.length > 1 && (
+              <>
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-gray-900 rounded-full p-2 transition z-10"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 text-gray-900 rounded-full p-2 transition z-10"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-6 h-6" />
+                </button>
+
+                {/* Image Indicators */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {serviceImages.map((_, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => setCurrentImageIndex(idx)}
+                      className={`w-2 h-2 rounded-full transition ${
+                        idx === currentImageIndex ? 'bg-white w-6' : 'bg-white bg-opacity-50'
+                      }`}
+                      aria-label={`Go to image ${idx + 1}`}
+                    />
+                  ))}
+                </div>
+
+                {/* Image Counter */}
+                <div className="absolute top-4 right-4 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm">
+                  {currentImageIndex + 1} / {serviceImages.length}
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="p-6 space-y-4 text-gray-700">
           {service.details && service.details.length > 0 ? (

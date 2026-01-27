@@ -28,6 +28,20 @@ const ServiceSchema = new mongoose.Schema({
     type: String,
     default: 'from-blue-600 to-blue-700',
   },
+  images: [
+    {
+      url: {
+        type: String,
+        required: true,
+      },
+      publicId: String,
+      alt: String,
+      order: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   order: {
     type: Number,
     default: 0,

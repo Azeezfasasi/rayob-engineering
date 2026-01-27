@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Plus, Edit2, Trash2, X, Loader, ArrowUp, ArrowDown, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, Edit2, Trash2, X, Loader, ArrowUp, ArrowDown, ChevronDown, ChevronUp, Upload } from 'lucide-react';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import toast from 'react-hot-toast';
 
@@ -32,6 +32,7 @@ export default function OurServicesContentsManager() {
     icon: '',
     color: 'from-blue-600 to-blue-700',
     details: [],
+    images: [],
   });
 
   useEffect(() => {
@@ -110,6 +111,7 @@ export default function OurServicesContentsManager() {
       icon: service.icon || '',
       color: service.color || 'from-blue-600 to-blue-700',
       details: service.details || [],
+      images: service.images || [],
     });
     setEditingId(service._id);
     setIsFormOpen(true);
@@ -146,6 +148,7 @@ export default function OurServicesContentsManager() {
       icon: '',
       color: 'from-blue-600 to-blue-700',
       details: [],
+      images: [],
     });
   };
 
@@ -171,6 +174,64 @@ export default function OurServicesContentsManager() {
     } catch (error) {
       toast.error('Failed to move service');
     }
+  };
+
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    
+    if (!files.length) return;
+
+    toast.promise(
+      Promise.all(files.map(async (file) => {
+        const reader = new FileReader();
+        return new Promise((resolve, reject) => {
+          reader.onload = async (event) => {
+            try {
+              const response = await fetch('/api/cloudinary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  fileData: event.target.result,
+                  folderName: 'rayob/services',
+                }),
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                setFormData(prev => ({
+                  ...prev,
+                  images: [...(prev.images || []), {
+                    url: data.url,
+                    publicId: data.publicId,
+                    alt: file.name.split('.')[0],
+                    order: (prev.images || []).length,
+                  }],
+                }));
+                resolve();
+              } else {
+                reject(new Error(data.error || 'Upload failed'));
+              }
+            } catch (error) {
+              reject(error);
+            }
+          };
+          reader.readAsDataURL(file);
+        });
+      })),
+      {
+        loading: 'Uploading images...',
+        success: 'Images uploaded successfully!',
+        error: 'Failed to upload images',
+      }
+    );
+  };
+
+  const removeImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
   };
 
   if (loading) {
@@ -395,6 +456,66 @@ export default function OurServicesContentsManager() {
                         </button>
                       ))}
                     </div>
+                  </div>
+
+                  {/* Service Images */}
+                  <div className="border-t border-gray-200 pt-6">
+                    <label className="block text-sm font-semibold text-gray-700 mb-4">
+                      Service Images
+                    </label>
+
+                    {/* Upload Area */}
+                    <div className="mb-4">
+                      <label className="flex items-center justify-center gap-2 px-4 py-8 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 cursor-pointer transition bg-gray-50 hover:bg-gray-100">
+                        <Upload className="w-5 h-5 text-gray-600" />
+                        <span className="text-sm font-medium text-gray-700">Click to upload images</span>
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      <p className="text-xs text-gray-500 mt-2">Supported formats: JPG, PNG, WebP, GIF. Multiple files allowed.</p>
+                    </div>
+
+                    {/* Image Gallery */}
+                    {formData.images && formData.images.length > 0 ? (
+                      <div className="grid grid-cols-3 gap-4">
+                        {formData.images.map((image, idx) => (
+                          <div key={idx} className="relative group">
+                            <div className="aspect-square bg-gray-200 rounded-lg overflow-hidden">
+                              <img
+                                src={image.url}
+                                alt={image.alt || `Service image ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeImage(idx)}
+                              className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            <input
+                              type="text"
+                              value={image.alt || ''}
+                              onChange={(e) => {
+                                const newImages = [...formData.images];
+                                newImages[idx].alt = e.target.value;
+                                setFormData(prev => ({ ...prev, images: newImages }));
+                              }}
+                              placeholder="Alt text"
+                              className="w-full mt-2 px-2 py-1 border border-gray-300 rounded text-xs focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 italic text-center py-4">No images uploaded yet</p>
+                    )}
                   </div>
 
                   {/* Service Details */}
