@@ -99,11 +99,22 @@ function ServiceIcon({ name }) {
 function ServiceModal({ service, isOpen, onClose }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
 
-  if (!isOpen || !service) return null
-
-  const serviceImages = service.images && service.images.length > 0
+  const serviceImages = service && service.images && service.images.length > 0
     ? [...service.images].sort((a, b) => (a.order || 0) - (b.order || 0))
     : []
+
+  // Auto-slide effect
+  useEffect(() => {
+    if (!isOpen || serviceImages.length <= 1) return
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev === serviceImages.length - 1 ? 0 : prev + 1))
+    }, 5000) // Change image every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [isOpen, serviceImages.length])
+
+  if (!isOpen || !service) return null
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => (prev === 0 ? serviceImages.length - 1 : prev - 1))
@@ -135,13 +146,13 @@ function ServiceModal({ service, isOpen, onClose }) {
         </div>
 
         {/* Image Slider */}
-        {serviceImages.length > 0 && (
+        {serviceImages.length > 0 && serviceImages[currentImageIndex] && (
           <div className="relative bg-gray-900 aspect-video w-full">
             <Image
               src={serviceImages[currentImageIndex].url}
               alt={serviceImages[currentImageIndex].alt || `${service.title} image`}
               fill
-              className="object-cover"
+              className="object-contain"
               priority
             />
 
