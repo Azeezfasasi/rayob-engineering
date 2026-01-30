@@ -8,6 +8,7 @@ import CallToAction from '@/components/home-component/CallToAction'
 import RequestQuote from '@/components/home-component/RequestQuote'
 import ClientsLogoSlider from '@/components/home-component/ClientsLogoSlider'
 import SubscribeToNewsletter from '@/components/home-component/SubscribeToNewsletter'
+import WhyRayob from '@/components/home-component/WhyRayob'
 
 export default function HomePage() {
   return (
@@ -17,6 +18,7 @@ export default function HomePage() {
       <OurServices />
       <FeaturedProjects />
       <ClientsLogoSlider />
+      <WhyRayob />
       <TestimonialsSection />
       <CallToAction />
       <RequestQuote />

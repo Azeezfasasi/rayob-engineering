@@ -124,6 +124,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
         { href: '/dashboard/our-services-contents', label: 'Our Services', roles: ['admin', 'staff-member'] },
         { href: '/dashboard/our-clients', label: 'Our Clients & Partners', roles: ['admin', 'staff-member'] },
         { href: '/dashboard/testimonials', label: 'Testimonials', roles: ['admin', 'staff-member'] },
+        { href: '/dashboard/why-rayob', label: 'Why Rayob', roles: ['admin', 'staff-member'] },
       ]
     },
     {
