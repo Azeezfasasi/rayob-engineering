@@ -109,7 +109,7 @@ function ServiceModal({ service, isOpen, onClose }) {
 
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev === serviceImages.length - 1 ? 0 : prev + 1))
-    }, 5000) // Change image every 5 seconds
+    }, 4000) // Change image every 4 seconds
 
     return () => clearInterval(interval)
   }, [isOpen, serviceImages.length])
