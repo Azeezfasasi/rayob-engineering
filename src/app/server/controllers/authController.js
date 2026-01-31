@@ -20,6 +20,56 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Brevo API endpoint and key
+const BREVO_API_KEY = process.env.BREVO_API_KEY;
+const BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
+const SENDER_EMAIL = process.env.BREVO_SENDER_EMAIL || "info@rayobengineering.com";
+const SENDER_NAME = process.env.BREVO_SENDER_NAME || "Rayob Engineering";
+
+// Helper function to send emails via Brevo
+const sendEmailViaBrevo = async (toEmail, subject, htmlContent) => {
+  if (!BREVO_API_KEY) {
+    console.error("BREVO_API_KEY not configured");
+    throw new Error("Email service not configured");
+  }
+
+  const payload = {
+    sender: {
+      name: SENDER_NAME,
+      email: SENDER_EMAIL,
+    },
+    to: [
+      {
+        email: toEmail,
+      },
+    ],
+    subject: subject,
+    htmlContent: htmlContent,
+  };
+
+  try {
+    const response = await fetch(BREVO_API_URL, {
+      method: "POST",
+      headers: {
+        "api-key": BREVO_API_KEY,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Brevo API error:", errorData);
+      throw new Error(`Brevo API error: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error sending email via Brevo:", error.message);
+    throw error;
+  }
+};
+
 // Generate JWT Token
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn: JWT_EXPIRE });
@@ -375,20 +425,61 @@ export const forgotPassword = async (req) => {
     const resetToken = user.getPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    // Send reset email
+    // Send reset email via Brevo
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+            .button { display: inline-block; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin-top: 15px; font-weight: bold; }
+            .footer { text-align: center; font-size: 12px; color: #666; margin-top: 20px; }
+            .warning { background: #fef3c7; padding: 10px 15px; border-radius: 5px; margin-top: 15px; color: #92400e; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>Reset Your Password</h2>
+            </div>
+            <div class="content">
+              <p>Hello ${user.firstName},</p>
+              <p>We received a request to reset your password for your Rayob Engineering account.</p>
+              <p>Click the button below to reset your password:</p>
+              <a href="${resetLink}" class="button">Reset Password</a>
+              <div class="warning">
+                <strong>This link expires in 1 hour</strong><br>
+                If you didn't request this password reset, please ignore this email or contact support immediately.
+              </div>
+              <p>Or copy and paste this link in your browser:<br><small>${resetLink}</small></p>
+              <hr>
+              <p><small>Best regards,<br>Rayob Engineering Team</small></p>
+            </div>
+            <div class="footer">
+              <p>© 2026 Rayob Engineering. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
 
     try {
-      await transporter.sendMail({
-        to: email,
-        subject: "Password Reset - Rayob Engineering",
-        html: `<h2>Password Reset Request</h2>
-               <p>Click the link below to reset your password:</p>
-               <a href="${resetLink}">Reset Password</a>
-               <p>This link expires in 30 minutes.</p>`,
-      });
+      await sendEmailViaBrevo(email, "Password Reset - Rayob Engineering", htmlContent);
+      console.log(`Password reset email sent to ${email}`);
     } catch (mailError) {
-      console.log("Email sending failed:", mailError.message);
+      console.error("Failed to send password reset email:", mailError.message);
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Failed to send reset email. Please try again later.",
+          error: mailError.message,
+        },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json(
@@ -403,7 +494,7 @@ export const forgotPassword = async (req) => {
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to send reset email",
+        message: "Failed to process password reset request",
         error: error.message,
       },
       { status: 500 }
