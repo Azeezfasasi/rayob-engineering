@@ -127,7 +127,7 @@ function ServiceModal({ service, isOpen, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
       <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-blue-900 text-white p-6 flex items-start justify-between">
+        <div className="sticky top-0 bg-blue-900 text-white p-6 flex items-start justify-between z-30">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
               <ServiceIcon name={service.title} />
