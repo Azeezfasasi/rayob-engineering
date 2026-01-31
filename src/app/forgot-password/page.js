@@ -48,10 +48,10 @@ export default function ForgotPassword() {
       setSuccess(true);
       setEmail("");
       
-      // Redirect to login after 3 seconds
+      // Redirect to login after 5 seconds
       setTimeout(() => {
         router.push("/login");
-      }, 3000);
+      }, 5000);
     } catch (err) {
       console.error("Forgot password error:", err);
       setError(err.message || "An error occurred. Please try again.");
