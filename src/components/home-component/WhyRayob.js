@@ -62,22 +62,22 @@ export default function WhyRayob() {
             return (
               <div
                 key={reason.id}
-                className="group bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6 md:p-8 border border-gray-100 hover:border-blue-300"
+                className="group bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-6 md:p-8 border border-gray-100 hover:border-blue-400"
               >
                 {/* Icon and Number */}
                 <div className="flex items-start gap-4 mb-4">
                   <div className="flex-shrink-0">
                     <div className="flex items-center justify-center h-12 w-12 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                      <IconComponent className="h-6 w-6 text-blue-600" />
+                      <IconComponent className="h-6 w-6 text-blue-800" />
                     </div>
                   </div>
-                  <span className="flex bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg rounded-full h-8 w-8 items-center justify-center">
+                  <span className="flex bg-gradient-to-r from-blue-800 to-blue-900 text-white font-bold text-lg rounded-full h-8 w-8 items-center justify-center">
                     {reason.id}
                   </span>
                 </div>
 
                 {/* Title */}
-                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-800 transition-colors">
                   {reason.title}
                 </h3>
 

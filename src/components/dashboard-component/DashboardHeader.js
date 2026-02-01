@@ -2,14 +2,20 @@ import React, { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useAuth } from '../../context/AuthContext';
+import useNotifications from './useNotifications';
+import NotificationModal from './NotificationModal';
+import { ArrowRightLeft } from 'lucide-react';
 
 export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu }) {
   const { user, logout } = useAuth();
+  const { notifications, unreadCount } = useNotifications();
   const fullName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '';
   const avatar = user && user.avatar ? user.avatar : '/images/profile1.jpg';
   const role = user?.role ? user.role.replace('-', ' ') : 'User';
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -25,7 +31,7 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [dropdownOpen]);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -53,22 +59,38 @@ export default function DashboardHeader({ onToggleSidebar, onToggleMobileMenu })
               onClick={onToggleSidebar}
               className="hidden md:inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-900"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
-              </svg>
+              <ArrowRightLeft className="w-6 h-6" />
             </button>
 
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/images/rayobnew.svg" alt="Rayob Logo" width={160} height={40} className="w-14 md:w-16 block rounded-md p-1" />
+              <Image src="/images/rayobnew.svg" alt="Rayob Logo" width={160} height={40} className="w-14 md:w-16 block rounded-lg p-1" />
             </Link>
           </div>
 
           <div className="flex items-center gap-4">
-            <button aria-label="Notifications" className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-900">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            {/* Notification Button */}
+            <button 
+              aria-label="Notifications"
+              onClick={() => setNotificationOpen(true)}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-900 relative transition-colors duration-200"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
               </svg>
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
             </button>
+
+            {/* Notification Modal */}
+            <NotificationModal 
+              isOpen={notificationOpen}
+              onClose={() => setNotificationOpen(false)}
+              notifications={notifications}
+              unreadCount={unreadCount}
+            />
 
             <div className="relative" ref={dropdownRef}>
               <button

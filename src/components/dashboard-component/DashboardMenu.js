@@ -50,8 +50,13 @@ function Icon({ name }) {
 }
 
 export default function DashboardMenu({ collapsed, mobileOpen = false, onClose = () => { } }) {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const pathname = usePathname() || ''
+
+  const handleLogout = () => {
+    logout();
+    onClose();
+  };
   const items = [
     { href: '/dashboard', label: 'Dashboard', icon: 'dashboard', roles: ['admin', 'client', 'staff-member'] },
     {
@@ -218,7 +223,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
     <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/40" onClick={onClose} />
 
-      <nav className="relative z-50 h-full w-70 bg-blue-900 border-r border-gray-100">
+      <nav className="relative z-50 h-full w-[80%] bg-blue-900 border-r border-gray-100">
         <div className="h-full overflow-y-auto py-6 px-4">
           <div className="flex items-center justify-between mb-6">
             <Link href="/" className="flex flex-col items-center gap-3">
@@ -279,6 +284,19 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
                 )
               })}
           </ul>
+        </div>
+
+        {/* Logout button */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-700">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 11-6 0v-1m6 0H9"></path>
+            </svg>
+            <span>Logout</span>
+          </button>
         </div>
       </nav>
     </div>
