@@ -97,7 +97,7 @@ export default function MainHeader() {
           {/* Logo */}
           <div className="flex items-center gap-3 p-1">
             <Link href="/" className="flex items-center gap-3">
-              <Image src="/images/rayob3.svg" alt="Rayob Logo" width={170} height={50} className="w-[70px] md:w-24 block rounded-md" />
+              <Image src="/images/rayoblogonew.jpeg" alt="Rayob Logo" width={170} height={50} className="w-[70px] md:w-24 block rounded-md" />
             </Link>
           </div>
 
@@ -244,7 +244,7 @@ export default function MainHeader() {
           <div className="p-6">
             <div className="flex items-center justify-between mb-6">
               <Link href="/" className="flex items-center gap-3">
-                <Image src="/images/rayob.svg" alt="Rayob Logo" width={100} height={50} className="w-40 block rounded-md" />
+                <Image src="/images/rayoblogonew.jpeg" alt="Rayob Logo" width={100} height={50} className="w-16 block rounded-md" />
               </Link>
               <button onClick={() => setOpen(false)} className="text-red-600 text-2xl font-semibold">✕</button>
             </div>
