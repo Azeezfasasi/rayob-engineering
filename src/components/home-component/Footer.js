@@ -93,11 +93,14 @@ export default function Footer() {
         <div>
           <h4 className="text-white text-lg font-semibold mb-4">Contact Info</h4>
           <ul className="space-y-4 text-sm">
-            <li className="flex items-start gap-3">
-              <MapPin size={18} className="text-blue-500 mt-1" />
+            <li className="flex items-center gap-3">
+              <MapPin size={18} className="text-blue-500 mt-1 w-[38px]" />
               <span>
-                31/35 Ebute kekere way,
-                <br /> Akesan Lagos.
+                Suite 26 Sure-Peace Plaza,
+                <br />
+                Plot CP 02 Nigerian Army Post Service Housing Estate Commercial Layout,
+                <br />
+                LASU-Isheri Road, Ojo, Lagos.
               </span>
             </li>
             <li className="flex items-center gap-3">

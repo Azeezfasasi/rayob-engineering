@@ -96,7 +96,7 @@ export default function ContactUsMain() {
             <div className="rounded-xl overflow-hidden shadow-md h-64 relative">
               <iframe
                 title="Rayob Engineering Location"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.1234567890!2d3.3792!3d6.5244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103bf0f1e4e92dff%3A0x123456789abcdef!2sIkeja%2C%20Lagos!5e0!3m2!1sen!2sng!4v1234567890"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d991.0951117816845!2d3.202563417718644!3d6.473400600000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b869a1c831351%3A0xf2181f6108a8cb34!2sPost%20Service%20Estate%20Ojo%20Lagos!5e0!3m2!1sen!2sng!4v1771002440550!5m2!1sen!2sng"
                 className="w-full h-full border-0"
                 allowFullScreen=""
                 loading="lazy"
@@ -106,8 +106,9 @@ export default function ContactUsMain() {
             {/* Details */}
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <MapPin className="text-blue-900" />
-                <p>31/35 Ebute kekere way, Akesan Lagos.</p>
+                <MapPin className="text-blue-900 w-[60px] md:w-[40px]" />
+                <p>
+                  Suite 26 Sure-Peace Plaza, Plot CP 02 Nigerian Army Post Service Housing Estate Commercial Layout, LASU-Isheri Road, Ojo, Lagos.</p>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="text-blue-900" />
