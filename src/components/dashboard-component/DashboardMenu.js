@@ -159,7 +159,7 @@ export default function DashboardMenu({ collapsed, mobileOpen = false, onClose =
 
   // Desktop / large screens: persistent sidebar
   const desktopNav = (
-    <nav className={`hidden md:flex h-full bg-blue-900 border-r border-gray-100 ${collapsed ? 'w-16' : 'w-75'} transition-width duration-200`} aria-label="Dashboard navigation">
+    <nav className={`hidden md:flex h-screen bg-blue-900 border-r border-gray-100 md:overflow-y-auto ${collapsed ? 'w-16' : 'w-75'} transition-width duration-200`} aria-label="Dashboard navigation">
       <div className="h-full overflow-y-auto py-6 px-2">
         <ul className="space-y-1">
           {items.map(i => {

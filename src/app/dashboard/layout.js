@@ -31,7 +31,7 @@ export default function DashboardLayout({ children }) {
         <div className="flex">
           <DashboardMenu collapsed={collapsed} mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
 
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex-1 p-6 h-screen overflow-y-auto">{children}</main>
         </div>
       </div>
     </ProtectedRoute>
