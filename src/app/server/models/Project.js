@@ -29,6 +29,13 @@ const projectSchema = new mongoose.Schema({
   projectHighlights: { type: String },
   featuredImage: { type: String }, // Cloudinary URL
   galleryImages: [{ type: String }], // Array of Cloudinary URLs
+  galleryVideos: [
+    {
+      url: { type: String, required: true },
+      publicId: { type: String },
+      title: { type: String, default: '' },
+    },
+  ],
   isDisabled: { type: Boolean, default: false },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

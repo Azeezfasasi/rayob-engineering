@@ -39,17 +39,18 @@ export const uploadToCloudinary = async (fileData, folderName = 'rayob') => {
 };
 
 /**
- * Delete image from Cloudinary using destructuring
+ * Delete image or video from Cloudinary using destructuring
  * @param {string} publicId - Cloudinary public ID
+ * @param {string} resourceType - 'image' or 'video'
  * @returns {Promise<Object>} Delete result
  */
-export const deleteFromCloudinary = async (publicId) => {
+export const deleteFromCloudinary = async (publicId, resourceType = 'image') => {
   try {
     if (!publicId) {
       throw new Error('Public ID is required');
     }
 
-    const response = await cloudinary.uploader.destroy(publicId);
+    const response = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
 
     return {
       success: response.result === 'ok',
@@ -62,14 +63,15 @@ export const deleteFromCloudinary = async (publicId) => {
 };
 
 /**
- * Delete multiple images from Cloudinary
+ * Delete multiple images/videos from Cloudinary
  * @param {Array<string>} publicIds - Array of Cloudinary public IDs
+ * @param {string} resourceType - 'image' or 'video'
  * @returns {Promise<Array>} Array of delete results
  */
-export const deleteMultipleFromCloudinary = async (publicIds) => {
+export const deleteMultipleFromCloudinary = async (publicIds, resourceType = 'image') => {
   try {
     const results = await Promise.all(
-      publicIds.map(publicId => deleteFromCloudinary(publicId))
+      publicIds.map(publicId => deleteFromCloudinary(publicId, resourceType))
     );
     return results;
   } catch (error) {

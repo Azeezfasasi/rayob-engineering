@@ -187,6 +187,25 @@ export default function GalleryDetailPage() {
               )}
             </div>
 
+            {/* Videos Section */}
+            {gallery.videos && gallery.videos.length > 0 && (
+              <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6 shadow-md">
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">
+                  Videos ({gallery.videos.length})
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {gallery.videos.map((video, idx) => (
+                    <div key={idx} className="rounded-lg overflow-hidden bg-black">
+                      <video src={video.url} controls className="w-full aspect-video object-contain" />
+                      {video.title && (
+                        <p className="text-xs sm:text-sm text-gray-300 bg-gray-900 px-2 py-1 truncate">{video.title}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Description Section */}
             {gallery.description && (
               <div className="mt-6 sm:mt-8 bg-white rounded-lg p-4 sm:p-6 shadow-md">

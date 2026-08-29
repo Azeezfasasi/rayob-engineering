@@ -10,32 +10,39 @@ import {
  */
 export const createGallery = async (req, res) => {
   try {
-    const { title, description, category, images, featured, status, businessName, location, tags, createdBy } = req.body;
+    const { title, description, category, images, videos, featured, status, businessName, location, tags, createdBy } = req.body;
 
     // Validate required fields
     if (!title) {
       return res.status(400).json({ message: 'Title is required' });
     }
 
-    if (!Array.isArray(images) || images.length === 0) {
-      return res.status(400).json({ message: 'At least one image is required' });
-    }
+    // Validate and process images (optional)
+    const processedImages = Array.isArray(images)
+      ? images.map((img, index) => ({
+          url: img.url,
+          publicId: img.publicId,
+          alt: img.alt || '',
+          displayOrder: index,
+        }))
+      : [];
 
-    // Validate and process images
-    const processedImages = images.map((img, index) => {
-      return {
-        url: img.url,
-        publicId: img.publicId,
-        alt: img.alt || '',
-        displayOrder: index,
-      };
-    });
+    // Validate and process videos (optional)
+    const processedVideos = Array.isArray(videos)
+      ? videos.map((video, index) => ({
+          url: video.url,
+          publicId: video.publicId,
+          title: video.title || '',
+          displayOrder: index,
+        }))
+      : [];
 
     const newGallery = new Gallery({
       title,
       description: description || '',
       category: category || 'other',
       images: processedImages,
+      videos: processedVideos,
       featured: featured || false,
       status: status || 'active',
       businessName: businessName || '',
@@ -157,7 +164,7 @@ export const getAllGalleries = async (req, res) => {
 export const updateGallery = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, category, featured, status, businessName, location, tags, images } = req.body;
+    const { title, description, category, featured, status, businessName, location, tags, images, videos } = req.body;
 
     if (!id) {
       return res.status(400).json({ message: 'Gallery ID is required' });
@@ -195,6 +202,26 @@ export const updateGallery = async (req, res) => {
         url: img.url,
         publicId: img.publicId,
         alt: img.alt || '',
+        displayOrder: index,
+      }));
+    }
+
+    // Update videos if provided
+    if (videos && Array.isArray(videos)) {
+      // Delete removed videos from Cloudinary
+      const oldPublicIds = gallery.videos.map(video => video.publicId);
+      const newPublicIds = videos.map(video => video.publicId);
+      const idsToDelete = oldPublicIds.filter(id => !newPublicIds.includes(id));
+
+      if (idsToDelete.length > 0) {
+        await deleteMultipleFromCloudinary(idsToDelete, 'video');
+      }
+
+      // Update videos with new display order
+      gallery.videos = videos.map((video, index) => ({
+        url: video.url,
+        publicId: video.publicId,
+        title: video.title || '',
         displayOrder: index,
       }));
     }
@@ -241,6 +268,18 @@ export const deleteGallery = async (req, res) => {
         await deleteMultipleFromCloudinary(publicIds);
       } catch (cloudinaryError) {
         console.error('Error deleting images from Cloudinary:', cloudinaryError);
+        // Continue deletion from DB even if Cloudinary deletion fails
+      }
+    }
+
+    // Delete videos from Cloudinary
+    const videoPublicIds = (gallery.videos || []).map(video => video.publicId);
+
+    if (videoPublicIds.length > 0) {
+      try {
+        await deleteMultipleFromCloudinary(videoPublicIds, 'video');
+      } catch (cloudinaryError) {
+        console.error('Error deleting videos from Cloudinary:', cloudinaryError);
         // Continue deletion from DB even if Cloudinary deletion fails
       }
     }

@@ -26,6 +26,8 @@ export default function EditProjectPage() {
     featuredImagePreview: '',
     galleryImages: [],
     galleryImagePreviews: [],
+    galleryVideos: [],
+    galleryVideoPreviews: [],
     technologies: '',
     materialsUsed: '',
     completion: 0,
@@ -37,6 +39,7 @@ export default function EditProjectPage() {
   const [message, setMessage] = useState(null)
   const [existingFeaturedImage, setExistingFeaturedImage] = useState(null)
   const [existingGalleryImages, setExistingGalleryImages] = useState([])
+  const [existingGalleryVideos, setExistingGalleryVideos] = useState([])
 
   // Load project data from backend on mount
   useEffect(() => {
@@ -62,6 +65,8 @@ export default function EditProjectPage() {
             featuredImagePreview: data.project.featuredImage || '',
             galleryImages: [],
             galleryImagePreviews: data.project.galleryImages || [],
+            galleryVideos: [],
+            galleryVideoPreviews: (data.project.galleryVideos || []).map(v => v.url),
             technologies: (data.project.technologies || []).join(', '),
             materialsUsed: (data.project.materialsUsed || []).join(', '),
             completion: data.project.completion,
@@ -69,6 +74,7 @@ export default function EditProjectPage() {
           });
           setExistingFeaturedImage(data.project.featuredImage || null);
           setExistingGalleryImages(data.project.galleryImages || []);
+          setExistingGalleryVideos(data.project.galleryVideos || []);
         }
       } catch (err) {
         setMessage({ type: 'error', text: 'Failed to load project' });
@@ -149,6 +155,33 @@ export default function EditProjectPage() {
     }));
   }
 
+  function handleVideoChange(e) {
+    const fileList = Array.from(e.target.files || [])
+    setFormData(prev => ({
+      ...prev,
+      galleryVideos: fileList,
+      galleryVideoPreviews: [...existingGalleryVideos.map(v => v.url), ...fileList.map((file) => URL.createObjectURL(file))]
+    }))
+  }
+
+  function removeGalleryVideo(index) {
+    const newIndex = index - existingGalleryVideos.length
+    setFormData(prev => ({
+      ...prev,
+      galleryVideos: prev.galleryVideos.filter((_, i) => i !== newIndex),
+      galleryVideoPreviews: prev.galleryVideoPreviews.filter((_, i) => i !== index)
+    }))
+  }
+
+  function removeExistingGalleryVideo(index) {
+    const updatedVideos = existingGalleryVideos.filter((_, i) => i !== index);
+    setExistingGalleryVideos(updatedVideos);
+    setFormData(prev => ({
+      ...prev,
+      galleryVideoPreviews: prev.galleryVideoPreviews.filter((_, i) => i !== index)
+    }));
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     setSaving(true);
@@ -169,19 +202,25 @@ export default function EditProjectPage() {
           : [],
         budget: formData.budget ? Number(formData.budget) : 0,
         completion: formData.completion ? Number(formData.completion) : 0,
-        // Send existing gallery images that weren't removed
-        existingGalleryImages: existingGalleryImages
+        // Send existing gallery images/videos that weren't removed
+        existingGalleryImages: existingGalleryImages,
+        existingGalleryVideos: existingGalleryVideos
       };
       delete fields.featuredImage;
       delete fields.galleryImages;
       delete fields.featuredImagePreview;
       delete fields.galleryImagePreviews;
+      delete fields.galleryVideos;
+      delete fields.galleryVideoPreviews;
       data.append('fields', JSON.stringify(fields));
       if (formData.featuredImage) {
         data.append('featuredImage', formData.featuredImage);
       }
       if (formData.galleryImages && formData.galleryImages.length > 0) {
         formData.galleryImages.forEach((file) => data.append('galleryImages', file));
+      }
+      if (formData.galleryVideos && formData.galleryVideos.length > 0) {
+        formData.galleryVideos.forEach((file) => data.append('galleryVideos', file));
       }
       const response = await fetch(`/api/project/${projectId}`, { method: 'PUT', body: data });
       const result = await response.json();
@@ -394,6 +433,38 @@ export default function EditProjectPage() {
                           </button>
                           <p className="text-xs text-gray-600 mt-1 truncate">
                             {formData.galleryImages[idx]?.name || 'Existing image'}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div>
+                <label htmlFor="galleryVideos" className="block text-sm font-medium text-gray-700 mb-2">Project Videos (multiple)</label>
+                <input type="file" id="galleryVideos" name="galleryVideos" onChange={handleVideoChange} accept="video/*" multiple className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                {formData.galleryVideoPreviews && formData.galleryVideoPreviews.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Videos ({formData.galleryVideoPreviews.length})</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {formData.galleryVideoPreviews.map((preview, idx) => (
+                        <div key={idx} className="relative group">
+                          <video src={preview} controls className="w-full h-32 object-cover rounded-lg border border-gray-300 bg-black" />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (preview.startsWith('http')) {
+                                removeExistingGalleryVideo(idx);
+                              } else {
+                                removeGalleryVideo(idx);
+                              }
+                            }}
+                            className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
+                          >
+                            Remove
+                          </button>
+                          <p className="text-xs text-gray-600 mt-1 truncate">
+                            {existingGalleryVideos[idx]?.title || formData.galleryVideos[idx - existingGalleryVideos.length]?.name || 'Video'}
                           </p>
                         </div>
                       ))}

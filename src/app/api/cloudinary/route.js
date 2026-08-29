@@ -90,7 +90,7 @@ export async function POST(req) {
  */
 export async function DELETE(req) {
   try {
-    const { publicId } = await req.json();
+    const { publicId, resourceType = 'image' } = await req.json();
 
     if (!publicId) {
       return Response.json(
@@ -99,7 +99,7 @@ export async function DELETE(req) {
       );
     }
 
-    const result = await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
 
     return Response.json({
       success: result.result === 'ok',

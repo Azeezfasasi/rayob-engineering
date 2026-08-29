@@ -180,6 +180,23 @@ export default function ViewGalleryPage() {
               )}
             </div>
 
+            {/* Videos */}
+            {gallery.videos && gallery.videos.length > 0 && (
+              <div className="mt-6 sm:mt-8">
+                <h3 className="text-xs sm:text-sm font-semibold text-gray-700 mb-4">
+                  Videos ({gallery.videos.length})
+                </h3>
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+                  {gallery.videos.map((video, index) => (
+                    <div key={index} className="relative group">
+                      <video src={video.url} controls className="w-full h-20 sm:h-32 lg:h-40 object-cover rounded-lg bg-black" />
+                      {video.title && <p className="text-xs text-gray-600 mt-1 truncate">{video.title}</p>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Metadata */}
             <div className="mt-8 pt-8 border-t border-gray-200">
               <div className="grid grid-cols-2 gap-4 text-sm text-gray-500">

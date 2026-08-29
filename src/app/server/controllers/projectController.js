@@ -1,9 +1,9 @@
 import Project from "../models/Project";
 import { connectDB } from "../db/connect";
 import { NextResponse } from "next/server";
-import { uploadToCloudinary } from "../utils/cloudinary";
+import { uploadToCloudinary, uploadMediaToCloudinary, deleteFromCloudinary } from "../utils/cloudinary";
 
-// Create a new project (with Cloudinary image upload)
+// Create a new project (with Cloudinary image/video upload)
 export const createProject = async (req) => {
   try {
     await connectDB();
@@ -11,6 +11,7 @@ export const createProject = async (req) => {
     const fields = JSON.parse(formData.get("fields"));
     let featuredImageUrl = "";
     let galleryUrls = [];
+    let galleryVideos = [];
 
     // Handle featured image
     if (formData.get("featuredImage")) {
@@ -27,10 +28,20 @@ export const createProject = async (req) => {
       }
     }
 
+    // Handle gallery videos (multiple)
+    if (formData.getAll("galleryVideos").length > 0) {
+      const files = formData.getAll("galleryVideos");
+      for (const file of files) {
+        const uploaded = await uploadMediaToCloudinary(file, "projects/videos", "video");
+        galleryVideos.push({ url: uploaded.url, publicId: uploaded.publicId, title: file.name });
+      }
+    }
+
     const project = new Project({
       ...fields,
       featuredImage: featuredImageUrl,
       galleryImages: galleryUrls,
+      galleryVideos,
     });
     await project.save();
     return NextResponse.json({ success: true, project }, { status: 201 });
@@ -56,7 +67,7 @@ export const editProject = async (req, projectId) => {
     // Handle gallery images - merge with existing if not completely replacing
     const newGalleryFiles = formData.getAll("galleryImages");
     const existingGalleryImages = fields.existingGalleryImages || [];
-    
+
     if (newGalleryFiles.length > 0 || existingGalleryImages.length > 0) {
       update.galleryImages = [...existingGalleryImages];
       for (const file of newGalleryFiles) {
@@ -64,9 +75,31 @@ export const editProject = async (req, projectId) => {
         update.galleryImages.push(url);
       }
     }
-    
-    // Remove existingGalleryImages from update as it's not a database field
+
+    // Handle gallery videos - merge with existing, deleting any that were removed
+    const newVideoFiles = formData.getAll("galleryVideos");
+    const existingGalleryVideos = fields.existingGalleryVideos || [];
+
+    if (newVideoFiles.length > 0 || fields.existingGalleryVideos !== undefined) {
+      const currentProject = await Project.findById(projectId);
+      const keepPublicIds = new Set(existingGalleryVideos.map((v) => v.publicId));
+      const removedVideos = (currentProject?.galleryVideos || []).filter(
+        (v) => !keepPublicIds.has(v.publicId)
+      );
+      for (const video of removedVideos) {
+        await deleteFromCloudinary(video.publicId, "video");
+      }
+
+      update.galleryVideos = [...existingGalleryVideos];
+      for (const file of newVideoFiles) {
+        const uploaded = await uploadMediaToCloudinary(file, "projects/videos", "video");
+        update.galleryVideos.push({ url: uploaded.url, publicId: uploaded.publicId, title: file.name });
+      }
+    }
+
+    // Remove client-only fields from update as they're not database fields
     delete update.existingGalleryImages;
+    delete update.existingGalleryVideos;
 
     const project = await Project.findByIdAndUpdate(projectId, update, { new: true });
     if (!project) return NextResponse.json({ success: false, message: "Project not found" }, { status: 404 });
@@ -82,6 +115,9 @@ export const deleteProject = async (req, projectId) => {
     await connectDB();
     const project = await Project.findByIdAndDelete(projectId);
     if (!project) return NextResponse.json({ success: false, message: "Project not found" }, { status: 404 });
+    for (const video of project.galleryVideos || []) {
+      await deleteFromCloudinary(video.publicId, "video");
+    }
     return NextResponse.json({ success: true, message: "Project deleted" }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ success: false, message: error.message }, { status: 500 });

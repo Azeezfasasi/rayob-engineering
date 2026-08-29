@@ -14,20 +14,22 @@ const TAGS = ['vip', 'active', 'engaged', 'new', 'featured', 'recommended'];
 export default function AddGalleryPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const [uploadingVideos, setUploadingVideos] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    category: 'accommodation',
+    category: 'project',
     featured: false,
     status: 'active',
     businessName: '',
     location: '',
     tags: [],
     images: [],
+    videos: [],
   });
 
   const handleInputChange = (e) => {
@@ -51,14 +53,14 @@ export default function AddGalleryPage() {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
-    setUploading(true);
+    setUploadingImages(true);
     setError('');
 
     try {
       // Process files sequentially to avoid timeout issues
       for (const file of files) {
         const reader = new FileReader();
-        
+
         await new Promise((resolve, reject) => {
           reader.onloadend = async () => {
             try {
@@ -95,7 +97,7 @@ export default function AddGalleryPage() {
     } catch (err) {
       setError(err.message || `Upload failed: ${err.message}`);
     } finally {
-      setUploading(false);
+      setUploadingImages(false);
     }
   };
 
@@ -103,6 +105,65 @@ export default function AddGalleryPage() {
     setFormData(prev => ({
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleVideoUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    setUploadingVideos(true);
+    setError('');
+
+    try {
+      // Process files sequentially to avoid timeout issues
+      for (const file of files) {
+        const reader = new FileReader();
+
+        await new Promise((resolve, reject) => {
+          reader.onloadend = async () => {
+            try {
+              const base64 = reader.result;
+
+              const result = await uploadImageToCloudinary(base64, 'rayob/gallery/videos');
+
+              setFormData(prev => ({
+                ...prev,
+                videos: [...prev.videos, {
+                  url: result.url,
+                  publicId: result.publicId,
+                  title: file.name,
+                  displayOrder: prev.videos.length,
+                }],
+              }));
+
+              resolve();
+            } catch (err) {
+              reject(new Error(`Failed to upload ${file.name}: ${err.message}`));
+            }
+          };
+
+          reader.onerror = () => {
+            reject(new Error(`Failed to read ${file.name}`));
+          };
+
+          reader.readAsDataURL(file);
+        });
+      }
+
+      setSuccess(`${files.length} video(s) uploaded successfully`);
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message || `Upload failed: ${err.message}`);
+    } finally {
+      setUploadingVideos(false);
+    }
+  };
+
+  const removeVideo = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      videos: prev.videos.filter((_, i) => i !== index),
     }));
   };
 
@@ -114,11 +175,6 @@ export default function AddGalleryPage() {
     // Validate
     if (!formData.title.trim()) {
       setError('Title is required');
-      return;
-    }
-
-    if (formData.images.length === 0) {
-      setError('At least one image is required');
       return;
     }
 
@@ -293,7 +349,7 @@ export default function AddGalleryPage() {
             {/* Image Upload */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Images * (At least 1 required)
+                Images (optional)
               </label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6">
                 <div className="text-center">
@@ -306,20 +362,18 @@ export default function AddGalleryPage() {
                     multiple
                     accept="image/*"
                     onChange={handleImageUpload}
-                    disabled={uploading}
+                    disabled={uploadingImages}
                     className="block mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                   />
                 </div>
               </div>
+              {uploadingImages && (
+                <div className="flex items-center gap-2 text-blue-600 mt-2">
+                  <Loader className="h-4 w-4 animate-spin" />
+                  <span>Uploading image(s)...</span>
+                </div>
+              )}
             </div>
-
-            {/* Upload Progress */}
-            {uploading && (
-              <div className="flex items-center gap-2 text-blue-600">
-                <Loader className="h-4 w-4 animate-spin" />
-                <span>Uploading images...</span>
-              </div>
-            )}
 
             {/* Uploaded Images Preview */}
             {formData.images.length > 0 && (
@@ -353,11 +407,64 @@ export default function AddGalleryPage() {
               </div>
             )}
 
+            {/* Video Upload */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Videos (optional)
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6">
+                <div className="text-center">
+                  <Upload className="mx-auto h-12 w-12 text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600 mb-2">
+                    Drag and drop your videos here, or click to select
+                  </p>
+                  <input
+                    type="file"
+                    multiple
+                    accept="video/*"
+                    onChange={handleVideoUpload}
+                    disabled={uploadingVideos}
+                    className="block mx-auto text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                </div>
+              </div>
+              {uploadingVideos && (
+                <div className="flex items-center gap-2 text-blue-600 mt-2">
+                  <Loader className="h-4 w-4 animate-spin" />
+                  <span>Uploading video(s)... this may take a moment for larger files</span>
+                </div>
+              )}
+            </div>
+
+            {/* Uploaded Videos Preview */}
+            {formData.videos.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Uploaded Videos ({formData.videos.length})
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+                  {formData.videos.map((video, index) => (
+                    <div key={index} className="relative group">
+                      <video src={video.url} controls className="w-full h-24 sm:h-32 object-cover rounded-lg bg-black" />
+                      <button
+                        type="button"
+                        onClick={() => removeVideo(index)}
+                        className="absolute top-0.5 right-0.5 sm:top-1 sm:right-1 bg-red-500 text-white rounded-full p-0.5 sm:p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                      </button>
+                      <p className="text-xs text-gray-600 mt-1 truncate">{video.title}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Submit Button */}
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 pt-4 sm:pt-6">
               <button
                 type="submit"
-                disabled={loading || uploading || formData.images.length === 0}
+                disabled={loading || uploadingImages || uploadingVideos}
                 className="flex-1 bg-blue-600 text-white py-2.5 px-4 text-sm sm:text-base rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
               >
                 {loading ? (

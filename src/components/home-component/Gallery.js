@@ -220,6 +220,7 @@ export default function Gallery() {
                         {/* Image Count */}
                         <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 bg-black bg-opacity-70 text-white px-2.5 sm:px-3 py-1 rounded-full text-xs font-medium">
                           {gallery.images?.length || 0} images
+                          {gallery.videos?.length > 0 ? ` · ${gallery.videos.length} videos` : ''}
                         </div>
 
                         {/* Like Button */}
@@ -407,9 +408,14 @@ export default function Gallery() {
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-1 text-gray-500">
-                            <Eye className="h-4 w-4" />
-                            <span>{gallery.viewCount || 0} views</span>
+                          <div className="flex items-center gap-3 text-gray-500">
+                            {gallery.videos?.length > 0 && (
+                              <span>{gallery.videos.length} videos</span>
+                            )}
+                            <div className="flex items-center gap-1">
+                              <Eye className="h-4 w-4" />
+                              <span>{gallery.viewCount || 0} views</span>
+                            </div>
                           </div>
                         </div>
                       </div>

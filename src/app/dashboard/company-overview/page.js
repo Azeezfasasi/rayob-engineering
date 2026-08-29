@@ -70,7 +70,8 @@ export default function CompanyOverviewManager() {
 
     setUploading(true);
     try {
-      const uploadedUrl = await uploadImageToCloudinary(file, 'company-overview');
+      const result = await uploadImageToCloudinary(file, 'company-overview');
+      const uploadedUrl = result.url;
       setCompanyInfoForm(prev => ({
         ...prev,
         image: uploadedUrl,

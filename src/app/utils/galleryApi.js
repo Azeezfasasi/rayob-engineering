@@ -22,13 +22,15 @@ export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery'
         throw new Error('File is required');
       }
 
-      // Convert file to base64
-      const base64Data = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      // Accept either a raw File/Blob or an already-encoded base64 data URL
+      const base64Data = typeof file === 'string'
+        ? file
+        : await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second client timeout
@@ -49,8 +51,7 @@ export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery'
         throw new Error(error.message || 'Failed to upload image');
       }
 
-      const data = await response.json();
-      return data.url || data;
+      return await response.json();
     } catch (error) {
       lastError = error;
       
@@ -72,9 +73,9 @@ export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery'
 };
 
 /**
- * Delete image from Cloudinary via API
+ * Delete image or video from Cloudinary via API
  */
-export const deleteImageFromCloudinary = async (publicId) => {
+export const deleteImageFromCloudinary = async (publicId, resourceType = 'image') => {
   try {
     if (!publicId) {
       throw new Error('Public ID is required');
@@ -85,7 +86,7 @@ export const deleteImageFromCloudinary = async (publicId) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ publicId }),
+      body: JSON.stringify({ publicId, resourceType }),
     });
 
     if (!response.ok) {
@@ -159,10 +160,6 @@ export const createGallery = async (galleryData) => {
   try {
     if (!galleryData.title) {
       throw new Error('Title is required');
-    }
-
-    if (!galleryData.images || galleryData.images.length === 0) {
-      throw new Error('At least one image is required');
     }
 
     const response = await fetch(`${API_BASE}/api/gallery`, {

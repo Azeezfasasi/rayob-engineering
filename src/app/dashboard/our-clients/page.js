@@ -56,7 +56,8 @@ export default function OurClientsManager() {
 
     setUploading(true);
     try {
-      const uploadedUrl = await uploadImageToCloudinary(file, 'clients');
+      const result = await uploadImageToCloudinary(file, 'clients');
+      const uploadedUrl = result.url;
       setFormData(prev => ({
         ...prev,
         logo: uploadedUrl,

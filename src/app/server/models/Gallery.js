@@ -36,6 +36,26 @@ const galleryItemSchema = new mongoose.Schema({
       },
     },
   ],
+  videos: [
+    {
+      url: {
+        type: String,
+        required: true,
+      },
+      publicId: {
+        type: String,
+        required: true, // Cloudinary public ID for deletion
+      },
+      title: {
+        type: String,
+        default: '',
+      },
+      displayOrder: {
+        type: Number,
+        default: 0,
+      },
+    },
+  ],
   featured: {
     type: Boolean,
     default: false,

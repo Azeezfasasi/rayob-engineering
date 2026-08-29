@@ -19,6 +19,8 @@ export default function AddProjectsPage() {
     featuredImagePreview: '',
     galleryImages: [],
     galleryImagePreviews: [],
+    galleryVideos: [],
+    galleryVideoPreviews: [],
     technologies: '', // comma separated string, will convert to array
     materialsUsed: '', // comma separated string, will convert to array
     completion: 0,
@@ -81,6 +83,23 @@ export default function AddProjectsPage() {
     }))
   }
 
+  function handleVideoChange(e) {
+    const fileList = Array.from(e.target.files || [])
+    setFormData(prev => ({
+      ...prev,
+      galleryVideos: fileList,
+      galleryVideoPreviews: fileList.map((file) => URL.createObjectURL(file))
+    }))
+  }
+
+  function removeGalleryVideo(index) {
+    setFormData(prev => ({
+      ...prev,
+      galleryVideos: prev.galleryVideos.filter((_, i) => i !== index),
+      galleryVideoPreviews: prev.galleryVideoPreviews.filter((_, i) => i !== index)
+    }))
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
@@ -107,6 +126,8 @@ export default function AddProjectsPage() {
       // Remove file fields from fields object
       delete fields.featuredImage;
       delete fields.galleryImages;
+      delete fields.galleryVideos;
+      delete fields.galleryVideoPreviews;
       // Send all fields as JSON string
       data.append('fields', JSON.stringify(fields));
       // Attach images
@@ -115,6 +136,9 @@ export default function AddProjectsPage() {
       }
       if (formData.galleryImages && formData.galleryImages.length > 0) {
         formData.galleryImages.forEach((file) => data.append('galleryImages', file));
+      }
+      if (formData.galleryVideos && formData.galleryVideos.length > 0) {
+        formData.galleryVideos.forEach((file) => data.append('galleryVideos', file));
       }
 
       const response = await fetch('/api/project', { method: 'POST', body: data })
@@ -125,7 +149,7 @@ export default function AddProjectsPage() {
         setFormData({
           projectName: '', projectDescription: '', category: '', location: '', budget: '', startDate: '', expectedEndDate: '',
           projectStatus: 'planning', clientName: '', teamLead: '', teamMembers: '', featuredImage: null,
-          galleryImages: [], technologies: '', materialsUsed: '', completion: 0, projectHighlights: ''
+          galleryImages: [], galleryVideos: [], galleryVideoPreviews: [], technologies: '', materialsUsed: '', completion: 0, projectHighlights: ''
         })
       } else {
         setMessage({ type: 'error', text: result.message || 'Failed to add project' })
@@ -301,6 +325,30 @@ export default function AddProjectsPage() {
                             <span className="text-white text-sm font-medium">Remove</span>
                           </button>
                           <p className="text-xs text-gray-600 mt-1 truncate">{formData.galleryImages[idx]?.name}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div>
+                <label htmlFor="galleryVideos" className="block text-sm font-medium text-gray-700 mb-2">Project Videos (multiple)</label>
+                <input type="file" id="galleryVideos" name="galleryVideos" onChange={handleVideoChange} accept="video/*" multiple className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none" />
+                {formData.galleryVideoPreviews && formData.galleryVideoPreviews.length > 0 && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">Videos ({formData.galleryVideoPreviews.length})</p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                      {formData.galleryVideoPreviews.map((preview, idx) => (
+                        <div key={idx} className="relative group">
+                          <video src={preview} controls className="w-full h-32 object-cover rounded-lg border border-gray-300 bg-black" />
+                          <button
+                            type="button"
+                            onClick={() => removeGalleryVideo(idx)}
+                            className="absolute top-1 right-1 bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
+                          >
+                            Remove
+                          </button>
+                          <p className="text-xs text-gray-600 mt-1 truncate">{formData.galleryVideos[idx]?.name}</p>
                         </div>
                       ))}
                     </div>

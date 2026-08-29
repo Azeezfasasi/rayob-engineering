@@ -200,6 +200,36 @@ export default function ProjectDetails({ projectId }) {
           </div>
         )}
 
+        {/* Videos Section */}
+        {project.galleryVideos && project.galleryVideos.length > 0 && (
+          <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 bg-blue-100 rounded-lg">
+                  <svg className="w-6 h-6 text-blue-900" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zm12.553 1.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h2 className="text-[17px] md:text-[24px] font-bold text-gray-900">Project Videos</h2>
+              </div>
+              <span className="text-sm bg-blue-100 text-blue-900 px-4 py-2 rounded-full font-bold">
+                {project.galleryVideos.length} {project.galleryVideos.length === 1 ? 'Video' : 'Videos'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 bg-white rounded-2xl p-6 shadow-sm border border-gray-200">
+              {project.galleryVideos.map((video, i) => (
+                <div key={video.publicId || i} className="rounded-xl overflow-hidden bg-black shadow-md">
+                  <video src={video.url} controls className="w-full aspect-video object-contain" />
+                  {video.title && (
+                    <p className="text-xs sm:text-sm text-gray-300 bg-gray-900 px-3 py-2 truncate">{video.title}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Popup for image slider */}
         {popupIndex !== null && (
           <div className="fixed inset-0 bg-black/90 backdrop-blur-sm flex items-center justify-center z-50 px-2 py-8 animate-in fade-in duration-300" onClick={() => setPopupIndex(null)}>

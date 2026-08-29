@@ -9,12 +9,14 @@ import RequestQuote from '@/components/home-component/RequestQuote'
 import ClientsLogoSlider from '@/components/home-component/ClientsLogoSlider'
 import SubscribeToNewsletter from '@/components/home-component/SubscribeToNewsletter'
 import WhyRayob from '@/components/home-component/WhyRayob'
+import WelcomeImageAndVideos from '@/components/home-component/WelcomeImageAndVideos'
 
 export default function HomePage() {
   return (
     <>
       <Hero />
       <HomeAbout />
+      <WelcomeImageAndVideos />
       <OurServices />
       <FeaturedProjects />
       <ClientsLogoSlider />
