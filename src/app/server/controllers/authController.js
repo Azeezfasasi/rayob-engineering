@@ -1006,24 +1006,60 @@ export const adminResetPassword = async (req, userId) => {
     user.notes += `Password reset by admin on ${new Date().toISOString()}`;
     await user.save();
 
-    // Send notification email
+    // Send notification email with the new password
+    let emailSent = false;
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center; }
+            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
+            .password-box { background: #eef2ff; border: 1px dashed #4338ca; border-radius: 6px; padding: 14px 18px; margin: 15px 0; font-size: 18px; font-weight: bold; letter-spacing: 1px; text-align: center; color: #1e3a8a; }
+            .footer { text-align: center; font-size: 12px; color: #666; margin-top: 20px; }
+            .warning { background: #fef3c7; padding: 10px 15px; border-radius: 5px; margin-top: 15px; color: #92400e; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>Your Password Has Been Reset</h2>
+            </div>
+            <div class="content">
+              <p>Hello ${user.firstName},</p>
+              <p>An administrator has reset your password for your Rayob Engineering account. Your new password is:</p>
+              <div class="password-box">${newPassword}</div>
+              <div class="warning">
+                For your security, please log in and change this password as soon as possible.
+              </div>
+              <hr>
+              <p><small>Best regards,<br>Rayob Engineering Team</small></p>
+            </div>
+            <div class="footer">
+              <p>&copy; 2026 Rayob Engineering. All rights reserved.</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
     try {
-      await transporter.sendMail({
-        to: user.email,
-        subject: "Your Password Has Been Reset",
-        html: `<h2>Password Reset by Administrator</h2>
-               <p>Your password has been reset to: <strong>${newPassword}</strong></p>
-               <p>Please change this password immediately after logging in.</p>`,
-      });
+      await sendEmailViaBrevo(user.email, "Your Password Has Been Reset - Rayob Engineering", htmlContent);
+      emailSent = true;
     } catch (mailError) {
-      console.log("Email notification failed:", mailError.message);
+      console.error("Password reset email failed:", mailError.message);
     }
 
     return NextResponse.json(
       {
         success: true,
-        message: "User password reset successfully",
+        message: emailSent
+          ? "User password reset successfully and emailed to the user"
+          : "User password reset successfully, but the notification email could not be sent",
         temporaryPassword: newPassword,
+        emailSent,
       },
       { status: 200 }
     );

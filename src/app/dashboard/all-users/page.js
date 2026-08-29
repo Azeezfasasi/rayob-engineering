@@ -5,6 +5,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useRouter } from "next/navigation";
 import { Commet } from "react-loading-indicators";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import Link from "next/link";
 
 const PAGE_SIZE = 10;
 
@@ -331,6 +332,7 @@ export default function AllUsersPage() {
                     <button onClick={() => handleEdit(user)} className="px-2 py-1 md:py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs text-nowrap cursor-pointer">Edit</button>
                     <button onClick={() => handleChangeRole(user)} className="px-2 py-1 md:py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs text-nowrap cursor-pointer">Change Role</button>
                     <button onClick={() => handleChangeStatus(user)} className="px-2 py-1 md:py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 text-xs text-nowrap cursor-pointer">Change Status</button>
+                    <Link href={`/dashboard/change-user-password?userId=${user._id}`} className="px-2 py-1 md:py-2 bg-purple-600 text-white rounded hover:bg-purple-700 text-xs text-nowrap cursor-pointer">Change Password</Link>
                     <button onClick={() => handleDelete(user)} className="px-2 py-1 md:py-2 bg-red-600 text-white rounded hover:bg-red-700 text-xs text-nowrap cursor-pointer">Delete</button>
                   </td>
                 </tr>
