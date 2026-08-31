@@ -11,36 +11,32 @@ const getApiBase = () => {
 const API_BASE = getApiBase();
 
 /**
- * Upload image to Cloudinary via API with retry logic
+ * Upload a file to Cloudinary via multipart form data
+ * This avoids JSON body bloat and prevents 413 payload-too-large errors in production.
  */
 export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery', maxRetries = 2) => {
   let lastError;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       if (!file) {
         throw new Error('File is required');
       }
 
-      // Accept either a raw File/Blob or an already-encoded base64 data URL
-      const base64Data = typeof file === 'string'
-        ? file
-        : await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          });
+      const formData = new FormData();
+      const uploadFile = typeof file === 'string' && file.startsWith('data:')
+        ? new File([file], 'upload', { type: file.substring(file.indexOf(':') + 1, file.indexOf(';')) || 'application/octet-stream' })
+        : file;
+
+      formData.append('file', uploadFile);
+      formData.append('folderName', folderName);
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 second client timeout
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const response = await fetch(`${API_BASE}/api/cloudinary`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fileData: base64Data, folderName }),
+        body: formData,
         signal: controller.signal,
       });
 
@@ -54,21 +50,20 @@ export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery'
       return await response.json();
     } catch (error) {
       lastError = error;
-      
-      // Only retry on timeout errors
+
       if (error.name === 'AbortError' && attempt < maxRetries) {
         const delay = Math.pow(2, attempt - 1) * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
-      
+
       if (attempt === maxRetries) {
         console.error('Error uploading to Cloudinary:', error);
         throw error;
       }
     }
   }
-  
+
   throw lastError;
 };
 

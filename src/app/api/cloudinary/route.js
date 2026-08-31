@@ -1,58 +1,62 @@
 import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
-  timeout: 60000, // 60 second timeout
+  timeout: 60000,
 });
 
-/**
- * Retry upload with exponential backoff
- */
-async function uploadWithRetry(fileData, folderName, maxRetries = 3) {
+async function uploadWithRetry(fileBuffer, folderName, maxRetries = 3) {
   let lastError;
-  
+
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const result = await cloudinary.uploader.upload(fileData, {
-        folder: folderName,
-        resource_type: 'auto',
-        quality: 'auto',
-        fetch_format: 'auto',
-        timeout: 60000,
+      const result = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          {
+            folder: folderName,
+            resource_type: 'auto',
+            quality: 'auto',
+            fetch_format: 'auto',
+          },
+          (error, uploaded) => {
+            if (error) return reject(error);
+            resolve(uploaded);
+          }
+        );
+
+        Readable.from(fileBuffer).pipe(uploadStream);
       });
-      
+
       return result;
     } catch (error) {
       lastError = error;
-      
-      // Only retry on timeout or connection errors
-      if (!error.message.includes('Timeout') && !error.message.includes('ECONNREFUSED') && attempt === maxRetries) {
+
+      if (!error.message?.includes('Timeout') && !error.message?.includes('ECONNREFUSED') && attempt === maxRetries) {
         throw error;
       }
-      
+
       if (attempt < maxRetries) {
-        // Exponential backoff: 1s, 2s, 4s
         const delay = Math.pow(2, attempt - 1) * 1000;
         await new Promise(resolve => setTimeout(resolve, delay));
       }
     }
   }
-  
+
   throw lastError;
 }
 
-/**
- * Upload image to Cloudinary
- */
 export async function POST(req) {
   try {
-    const { fileData, folderName = 'rayob/gallery' } = await req.json();
+    const formData = await req.formData();
+    const file = formData.get('file');
+    const folderName = formData.get('folderName') || 'rayob/gallery';
 
-    if (!fileData) {
+    if (!file || typeof file === 'string') {
       return Response.json(
-        { message: 'File data is required' },
+        { message: 'File is required' },
         { status: 400 }
       );
     }
@@ -64,7 +68,8 @@ export async function POST(req) {
       );
     }
 
-    const result = await uploadWithRetry(fileData, folderName);
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const result = await uploadWithRetry(fileBuffer, folderName);
 
     return Response.json({
       success: true,
@@ -77,7 +82,7 @@ export async function POST(req) {
     console.error('Cloudinary upload error:', error);
     return Response.json(
       {
-        message: 'Failed to upload image to Cloudinary',
+        message: 'Failed to upload media to Cloudinary',
         error: error.message,
       },
       { status: 500 }
