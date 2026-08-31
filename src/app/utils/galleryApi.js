@@ -10,9 +10,43 @@ const getApiBase = () => {
 
 const API_BASE = getApiBase();
 
+const directCloudinaryUpload = async (file, folderName = 'rayob/gallery') => {
+  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+  if (!cloudName || !uploadPreset) {
+    throw new Error('Cloudinary direct upload is not configured');
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', uploadPreset);
+  formData.append('folder', folderName);
+  formData.append('resource_type', 'auto');
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data?.error?.message || 'Direct Cloudinary upload failed');
+  }
+
+  return {
+    success: true,
+    url: data.secure_url,
+    publicId: data.public_id,
+    width: data.width,
+    height: data.height,
+  };
+};
+
 /**
- * Upload a file to Cloudinary via multipart form data
- * This avoids JSON body bloat and prevents 413 payload-too-large errors in production.
+ * Upload a file to Cloudinary via direct browser upload when the media is too large
+ * for a Vercel serverless function request limit.
  */
 export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery', maxRetries = 2) => {
   let lastError;
@@ -21,6 +55,12 @@ export const uploadImageToCloudinary = async (file, folderName = 'rayob/gallery'
     try {
       if (!file) {
         throw new Error('File is required');
+      }
+
+      const shouldUseDirectUpload = typeof file === 'object' && file.size > 4 * 1024 * 1024;
+
+      if (shouldUseDirectUpload) {
+        return await directCloudinaryUpload(file, folderName);
       }
 
       const formData = new FormData();
